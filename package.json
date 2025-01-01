@@ -1,0 +1,116 @@
+{
+	"name": "storybook-addon-test-codegen",
+	"version": "0.0.7",
+	"description": "Addon for Storybook that generates test code for your stories.",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/igrlk/storybook-addon-test-codegen.git"
+	},
+	"type": "module",
+	"license": "MIT",
+	"author": "igrlk",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		},
+		"./preview": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/preview.js",
+			"require": "./dist/preview.cjs"
+		},
+		"./preset": "./dist/preset.cjs",
+		"./manager": "./dist/manager.js",
+		"./package.json": "./package.json"
+	},
+	"files": ["dist/**/*", "README.md", "*.js", "*.d.ts"],
+	"scripts": {
+		"build": "tsup",
+		"build:watch": "concurrently \"npm run build -- --watch\" \"npm run tailwind:watch\"",
+		"check": "biome check --write",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"start": "concurrently \"pnpm build:watch\" \"pnpm storybook\"",
+		"prerelease": "zx scripts/prepublish-checks.js && npm run build && auto version",
+		"release": "npm run build && auto shipit",
+		"eject-ts": "zx scripts/eject-typescript.js",
+		"storybook": "storybook dev -p 6006",
+		"build-storybook": "storybook build",
+		"prepare": "husky",
+		"tailwind:watch": "tailwindcss -i ./src/tailwind.css -o ./.storybook/tailwind.css --watch"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@chromatic-com/storybook": "^3",
+		"@medv/finder": "^4.0.2",
+		"@playwright/test": "^1.49.1",
+		"@storybook/addon-essentials": "^8.4.7",
+		"@storybook/addon-interactions": "^8.4.7",
+		"@storybook/addon-links": "^8.4.7",
+		"@storybook/addon-themes": "^8.4.7",
+		"@storybook/blocks": "^8.4.7",
+		"@storybook/icons": "^1.2.10",
+		"@storybook/react": "^8.4.7",
+		"@storybook/react-vite": "^8.4.7",
+		"@storybook/test": "^8.4.7",
+		"@types/jsdom": "^21.1.7",
+		"@types/node": "^18.15.0",
+		"@types/react": "^18.2.65",
+		"@types/react-dom": "^18.2.21",
+		"@vitejs/plugin-react": "^4.2.1",
+		"auto": "^11.1.1",
+		"boxen": "^7.1.1",
+		"dedent": "^1.5.1",
+		"dom-accessibility-api": "^0.7.0",
+		"globals": "^15.14.0",
+		"husky": "^9.1.7",
+		"jsdom": "^25.0.1",
+		"lint-staged": "^15.2.11",
+		"npm-run-all2": "^6.2.3",
+		"prettier": "^3.3.3",
+		"prompts": "^2.4.2",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"storybook": "^8.4.7",
+		"tsup": "^8.2.4",
+		"typescript": "^5.5.4",
+		"vite": "^5.3.5",
+		"vitest": "^2.1.8",
+		"zx": "^7.2.3",
+		"@testing-library/dom": "^10.4.0",
+		"concurrently": "^9.1.0",
+		"happy-dom": "^15.11.7",
+		"tailwindcss": "^3.4.17",
+		"use-debounce": "^10.0.4"
+	},
+	"peerDependencies": {
+		"storybook": "workspace:*"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bundler": {
+		"exportEntries": ["src/index.ts"],
+		"managerEntries": ["src/manager.tsx"],
+		"previewEntries": ["src/preview.ts"]
+	},
+	"storybook": {
+		"displayName": "Test Codegen",
+		"supportedFrameworks": [
+			"react",
+			"vue",
+			"angular",
+			"web-components",
+			"ember",
+			"html",
+			"svelte",
+			"preact",
+			"react-native"
+		],
+		"icon": "https://user-images.githubusercontent.com/321738/63501763-88dbf600-c4cc-11e9-96cd-94adadc2fd72.png"
+	},
+	"lint-staged": {
+		"*": ["pnpm check"]
+	}
+}
