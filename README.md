@@ -4,10 +4,6 @@ Interact with your Storybook and get test code generated for you.
 
 ![Alt Text](/assets/addon.gif)
 
-## Introduction
-
-TODO
-
 ## Installation
 
 First, install the package.
@@ -68,3 +64,7 @@ This addon contributes the following parameters to Storybook, under the `testCod
 Type: `string`
 
 The attribute to use for generating `findByTestId` queries. Defaults to `'data-testid'`.
+
+## Contributing
+
+Any contributions are welcome. Feel free to open an issue or a pull request.

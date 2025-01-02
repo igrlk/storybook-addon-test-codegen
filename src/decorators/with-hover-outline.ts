@@ -35,36 +35,43 @@ export const withHoverOutline: DecoratorFunction = (storyFn, context) => {
 
 			const { top, left, width, height } = targetElement.getBoundingClientRect();
 
-			const topWithOffset = top + window.scrollY;
-			const leftWithOffset = left + window.scrollX;
+			const highlightTop = top + window.scrollY;
+			const highlightLeft = left + window.scrollX;
 
 			element = document.createElement('div');
 			element.style.position = 'absolute';
 			element.style.zIndex = '2147483647';
-			element.style.top = `${topWithOffset}px`;
-			element.style.left = `${leftWithOffset}px`;
-			element.style.width = `${width}px`;
-			element.style.height = `${height}px`;
+			element.style.top = '0';
+			element.style.left = '0';
+			element.style.width = '100%';
+			element.style.height = '100%';
 			element.style.pointerEvents = 'none';
-			element.style.background = 'rgba(255, 0, 0, 0.5)';
-			element.style.borderRadius =
+
+			const highlight = document.createElement('div');
+			highlight.style.position = 'absolute';
+			highlight.style.top = `${highlightTop}px`;
+			highlight.style.left = `${highlightLeft}px`;
+			highlight.style.width = `${width}px`;
+			highlight.style.height = `${height}px`;
+			highlight.style.background = 'rgba(255, 0, 0, 0.5)';
+			highlight.style.borderRadius =
 				window.getComputedStyle(targetElement).borderRadius;
 
 			const tooltip = document.createElement('div');
 			tooltip.style.position = 'absolute';
-			tooltip.style.top = 'calc(100% + 5px)';
-			tooltip.style.left = '0';
 			tooltip.style.padding = '4px 10px';
 			tooltip.style.background = 'white';
 			tooltip.style.borderRadius = '4px';
 			tooltip.style.boxShadow = '0 0 5px rgba(0, 0, 0, 0.2)';
 			tooltip.style.fontSize = '12px';
 			tooltip.style.whiteSpace = 'nowrap';
+			tooltip.style.visibility = 'hidden';
 			tooltip.style.fontFamily =
 				'"Nunito Sans", "Helvetica Neue", Helvetica, Arial, sans-serif';
-			tooltip.textContent = `${query.method}(${argsToString(query.args)})${query.nth ? `[${query.nth}]` : ''}`;
+			tooltip.textContent = `${query.method}(${argsToString(query.args)})${query.nth === null ? '' : `[${query.nth}]`}`;
 			tooltip.setAttribute('data-no-query', 'true');
 
+			element.appendChild(highlight);
 			element.appendChild(tooltip);
 			document.body.appendChild(element);
 
@@ -85,6 +92,43 @@ export const withHoverOutline: DecoratorFunction = (storyFn, context) => {
 			});
 
 			observer.observe(document.body, { childList: true, subtree: true });
+
+			const highlightRect = highlight.getBoundingClientRect();
+			const tooltipRect = tooltip.getBoundingClientRect();
+			const OFFSET = 5;
+
+			// If the tooltip goes outside the viewport, push it left if there is enough space
+			const rightSpaceOutside =
+				highlightLeft + tooltipRect.width - document.documentElement.scrollWidth;
+			const hasEnoughRightSpace = rightSpaceOutside <= 0;
+			if (!hasEnoughRightSpace) {
+				const hasEnoughHorizontalSpace =
+					document.documentElement.scrollWidth - tooltipRect.width >= 0;
+				if (hasEnoughHorizontalSpace) {
+					tooltip.style.left = `${highlightLeft - rightSpaceOutside}px`;
+				} else {
+					tooltip.style.left = `${highlightLeft}px`;
+				}
+			} else {
+				tooltip.style.left = `${highlightLeft}px`;
+			}
+
+			// If the tooltip goes outside the viewport, show it on top if there is enough space
+			const hasEnoughBottomSpace =
+				highlightTop + highlightRect.height + OFFSET + tooltipRect.height <=
+				document.documentElement.scrollHeight;
+			if (!hasEnoughBottomSpace) {
+				const hasEnoughTopSpace = highlightTop - tooltipRect.height - OFFSET >= 0;
+				if (hasEnoughTopSpace) {
+					tooltip.style.top = `${highlightTop - tooltipRect.height - OFFSET}px`;
+				} else {
+					tooltip.style.top = `${highlightTop}px`;
+				}
+			} else {
+				tooltip.style.top = `${highlightTop + highlightRect.height + OFFSET}px`;
+			}
+
+			tooltip.style.visibility = 'visible';
 		};
 
 		const removeOutline = () => {
