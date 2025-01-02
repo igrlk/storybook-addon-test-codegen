@@ -1,6 +1,6 @@
 {
 	"name": "storybook-addon-test-codegen",
-	"version": "0.0.8",
+	"version": "0.0.7",
 	"description": "Addon for Storybook that generates test code for your stories.",
 	"repository": {
 		"type": "git",
@@ -24,12 +24,7 @@
 		"./manager": "./dist/manager.js",
 		"./package.json": "./package.json"
 	},
-	"files": [
-		"dist/**/*",
-		"README.md",
-		"*.js",
-		"*.d.ts"
-	],
+	"files": ["dist/**/*", "README.md", "*.js", "*.d.ts"],
 	"scripts": {
 		"build": "tsup",
 		"build:watch": "concurrently \"npm run build -- --watch\" \"npm run tailwind:watch\"",
@@ -96,15 +91,9 @@
 		"access": "public"
 	},
 	"bundler": {
-		"exportEntries": [
-			"src/index.ts"
-		],
-		"managerEntries": [
-			"src/manager.tsx"
-		],
-		"previewEntries": [
-			"src/preview.ts"
-		]
+		"exportEntries": ["src/index.ts"],
+		"managerEntries": ["src/manager.tsx"],
+		"previewEntries": ["src/preview.ts"]
 	},
 	"storybook": {
 		"displayName": "Test Codegen",
@@ -122,8 +111,6 @@
 		"icon": "https://user-images.githubusercontent.com/321738/63501763-88dbf600-c4cc-11e9-96cd-94adadc2fd72.png"
 	},
 	"lint-staged": {
-		"*": [
-			"pnpm check"
-		]
+		"*": ["pnpm check"]
 	}
 }
