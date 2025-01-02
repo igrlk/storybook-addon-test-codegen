@@ -5,4 +5,4 @@ build-storybook.log
 .DS_Store
 .env
 .idea
-tailwind.css
+.storybook/tailwind.css
