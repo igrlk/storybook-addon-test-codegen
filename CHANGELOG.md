@@ -1,3 +1,15 @@
+# v0.0.10 (Tue Jan 07 2025)
+
+#### ⚠️ Pushed to `main`
+
+- add test keyword (iluchenkov@gmail.com)
+
+#### Authors: 1
+
+- igrlk (iluchenkov@gmail.com)
+
+---
+
 # v0.0.9 (Tue Jan 07 2025)
 
 #### ⚠️ Pushed to `main`
