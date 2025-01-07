@@ -1,3 +1,15 @@
+# v0.0.9 (Tue Jan 07 2025)
+
+#### ⚠️ Pushed to `main`
+
+- add keywords for storybook catalog (iluchenkov@gmail.com)
+
+#### Authors: 1
+
+- igrlk (iluchenkov@gmail.com)
+
+---
+
 # v0.0.8 (Thu Jan 02 2025)
 
 #### 🐛 Bug Fix
