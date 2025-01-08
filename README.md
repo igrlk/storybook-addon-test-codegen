@@ -12,7 +12,17 @@ First, install the package.
 npm install --save-dev storybook-addon-test-codegen
 ```
 
-Then, register it as an addon in `.storybook/main.js`.
+### Peer Dependency
+This addon requires `storybook` version `^8` to be installed in your project. Ensure you have a compatible version by running:
+
+```sh
+npm install --save-dev storybook@^8
+````
+If you’re not using Storybook already, you can refer to the [Storybook Getting Started Guide](https://storybook.js.org/docs) for installation instructions.
+
+### Register the Addon
+Once installed, register it as an addon in `.storybook/main.js`.
+
 
 ```js
 // .storybook/main.ts
@@ -23,7 +33,7 @@ import type { StorybookConfig } from '@storybook/your-framework';
 const config: StorybookConfig = {
   // ...rest of config
   addons: [
-    '@storybook/addon-essentials'
+    '@storybook/addon-essentials',
     'storybook-addon-test-codegen', // 👈 register the addon here
   ],
 };
