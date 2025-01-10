@@ -2,6 +2,10 @@ import { describe, expect, test } from 'vitest';
 import type { Interaction } from '../state';
 import { convertInteractionsToCode, tab } from './interactions-to-code';
 
+const withImports = (imports: string[]) => [
+	`import { ${imports.join(', ')} } from '@storybook/test';`,
+];
+
 const withPlay = (codeLines: string[]) => [
 	'play: async ({ canvasElement }) => {',
 	...codeLines.map(tab),
@@ -37,7 +41,10 @@ const TEST_CASES = [
 				event: { type: 'click' },
 			},
 		],
-		withCanvas([`await userEvent.click(await canvas.findByRole('button'));`]),
+		[
+			withImports(['userEvent', 'within']),
+			withCanvas([`await userEvent.click(await canvas.findByRole('button'));`]),
+		],
 	],
 	[
 		'Double click',
@@ -51,7 +58,10 @@ const TEST_CASES = [
 				event: { type: 'dblclick' },
 			},
 		],
-		withCanvas([`await userEvent.dblClick(await canvas.getByText('Submit'));`]),
+		[
+			withImports(['userEvent', 'within']),
+			withCanvas([`await userEvent.dblClick(await canvas.getByText('Submit'));`]),
+		],
 	],
 	[
 		'Type',
@@ -65,9 +75,12 @@ const TEST_CASES = [
 				event: { type: 'type', value: 'John Doe' },
 			},
 		],
-		withCanvas([
-			`await userEvent.type(await canvas.findByPlaceholderText('Enter your name'), 'John Doe');`,
-		]),
+		[
+			withImports(['userEvent', 'within']),
+			withCanvas([
+				`await userEvent.type(await canvas.findByPlaceholderText('Enter your name'), 'John Doe');`,
+			]),
+		],
 	],
 	[
 		'Type multiline',
@@ -81,10 +94,13 @@ const TEST_CASES = [
 				event: { type: 'type', value: 'hello\nworld' },
 			},
 		],
-		withCanvas([
-			`await userEvent.type(await canvas.findByPlaceholderText('Enter your name'), \`hello
+		[
+			withImports(['userEvent', 'within']),
+			withCanvas([
+				`await userEvent.type(await canvas.findByPlaceholderText('Enter your name'), \`hello
 world\`);`,
-		]),
+			]),
+		],
 	],
 	[
 		'Type empty string calls clear',
@@ -98,9 +114,12 @@ world\`);`,
 				event: { type: 'type', value: '' },
 			},
 		],
-		withCanvas([
-			`await userEvent.clear(await canvas.findByPlaceholderText('Enter your name'));`,
-		]),
+		[
+			withImports(['userEvent', 'within']),
+			withCanvas([
+				`await userEvent.clear(await canvas.findByPlaceholderText('Enter your name'));`,
+			]),
+		],
 	],
 	[
 		'Keydown',
@@ -114,7 +133,10 @@ world\`);`,
 				event: { type: 'keydown', key: '{enter}' },
 			},
 		],
-		withPlay([`await userEvent.keyboard('{enter}');`]),
+		[
+			withImports(['userEvent']),
+			withPlay([`await userEvent.keyboard('{enter}');`]),
+		],
 	],
 	[
 		'Select',
@@ -128,9 +150,12 @@ world\`);`,
 				event: { type: 'select', options: ['Option1', 'Option2'] },
 			},
 		],
-		withCanvas([
-			`await userEvent.selectOptions(await canvas.findByLabelText('Choose your options'), ['Option1', 'Option2']);`,
-		]),
+		[
+			withImports(['userEvent', 'within']),
+			withCanvas([
+				`await userEvent.selectOptions(await canvas.findByLabelText('Choose your options'), ['Option1', 'Option2']);`,
+			]),
+		],
 	],
 	[
 		'Upload',
@@ -144,9 +169,12 @@ world\`);`,
 				event: { type: 'upload', files: ['file1.txt', 'file2.png'] },
 			},
 		],
-		withCanvas([
-			`await userEvent.upload(await canvas.findByTestId('file-upload'), [new File(['file1.txt'], 'file1.txt'), new File(['file2.png'], 'file2.png')]);`,
-		]),
+		[
+			withImports(['userEvent', 'within']),
+			withCanvas([
+				`await userEvent.upload(await canvas.findByTestId('file-upload'), [new File(['file1.txt'], 'file1.txt'), new File(['file2.png'], 'file2.png')]);`,
+			]),
+		],
 	],
 	[
 		'Multiple interactions',
@@ -168,11 +196,14 @@ world\`);`,
 				event: { type: 'type', value: 'Sample Text with quotes \'"`' },
 			},
 		],
-		withBodyCanvas([
-			`await userEvent.click(await canvas.findByRole('button'));`,
-			`await waitFor(() => expect(body.querySelector('#input-field')).toBeInTheDocument());`,
-			`await userEvent.type(body.querySelector('#input-field') as HTMLElement, 'Sample Text with quotes \\'"\`');`,
-		]),
+		[
+			withImports(['userEvent', 'within', 'waitFor', 'expect']),
+			withBodyCanvas([
+				`await userEvent.click(await canvas.findByRole('button'));`,
+				`await waitFor(() => expect(body.querySelector('#input-field')).toBeInTheDocument());`,
+				`await userEvent.type(body.querySelector('#input-field') as HTMLElement, 'Sample Text with quotes \\'"\`');`,
+			]),
+		],
 	],
 	[
 		'Tab',
@@ -186,7 +217,7 @@ world\`);`,
 				event: { type: 'focus', shift: false },
 			},
 		],
-		withPlay(['await userEvent.tab();']),
+		[withImports(['userEvent']), withPlay(['await userEvent.tab();'])],
 	],
 	[
 		'Tab shift',
@@ -200,7 +231,10 @@ world\`);`,
 				event: { type: 'focus', shift: true },
 			},
 		],
-		withPlay(['await userEvent.tab({ shift: true });']),
+		[
+			withImports(['userEvent']),
+			withPlay(['await userEvent.tab({ shift: true });']),
+		],
 	],
 	[
 		'Some events are ignored',
@@ -214,7 +248,7 @@ world\`);`,
 				event: { type: 'keydown', key: 'shift' },
 			},
 		],
-		[],
+		[[], []],
 	],
 	[
 		'findAll*',
@@ -247,11 +281,14 @@ world\`);`,
 				event: { type: 'click' },
 			},
 		],
-		withCanvas([
-			`await userEvent.click((await canvas.findAllByRole('button'))[0]);`,
-			`await userEvent.type((await canvas.findAllByRole('textarea'))[1], 'test');`,
-			`await userEvent.click((await canvas.findAllByText('hello world', { exact: false, collapseWhitespace: false }))[1]);`,
-		]),
+		[
+			withImports(['userEvent', 'within']),
+			withCanvas([
+				`await userEvent.click((await canvas.findAllByRole('button'))[0]);`,
+				`await userEvent.type((await canvas.findAllByRole('textarea'))[1], 'test');`,
+				`await userEvent.click((await canvas.findAllByText('hello world', { exact: false, collapseWhitespace: false }))[1]);`,
+			]),
+		],
 	],
 	[
 		'Query selector and find',
@@ -273,11 +310,14 @@ world\`);`,
 				event: { type: 'click' },
 			},
 		],
-		withBodyCanvas([
-			`await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());`,
-			`await userEvent.click(body.querySelector('input') as HTMLElement);`,
-			`await userEvent.click(await canvas.findByRole('button'));`,
-		]),
+		[
+			withImports(['userEvent', 'within', 'waitFor', 'expect']),
+			withBodyCanvas([
+				`await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());`,
+				`await userEvent.click(body.querySelector('input') as HTMLElement);`,
+				`await userEvent.click(await canvas.findByRole('button'));`,
+			]),
+		],
 	],
 	[
 		'Query selector',
@@ -291,10 +331,13 @@ world\`);`,
 				event: { type: 'click' },
 			},
 		],
-		withBody([
-			`await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());`,
-			`await userEvent.click(body.querySelector('input') as HTMLElement);`,
-		]),
+		[
+			withImports(['userEvent', 'waitFor', 'expect']),
+			withBody([
+				`await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());`,
+				`await userEvent.click(body.querySelector('input') as HTMLElement);`,
+			]),
+		],
 	],
 ] satisfies [
 	string,
@@ -307,11 +350,11 @@ world\`);`,
 		};
 		event: Interaction['event'];
 	}[],
-	string[],
+	[string[], string[]],
 ][];
 
 describe('convertInteractionsToCode', () => {
-	test.each(TEST_CASES)('%s', (_, interactions, expected) => {
+	test.each(TEST_CASES)('%s', (_, interactions, [imports, play]) => {
 		expect(
 			convertInteractionsToCode(
 				interactions.map((interaction) => ({
@@ -324,6 +367,6 @@ describe('convertInteractionsToCode', () => {
 					event: interaction.event,
 				})),
 			),
-		).toEqual(expected);
+		).toEqual({ imports, play });
 	});
 });

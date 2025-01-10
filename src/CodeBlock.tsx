@@ -1,15 +1,42 @@
 import { CheckIcon, CopyIcon } from '@storybook/icons';
 import { useState } from 'react';
 import {
+	IconButton,
 	SyntaxHighlighter,
 	TooltipNote,
 	WithTooltip,
 } from 'storybook/internal/components';
 import { styled } from 'storybook/internal/theming';
 
-const Container = styled.div({
+const Container = styled.div(({ theme }) => ({
+	display: 'flex',
+	flexDirection: 'column',
+	borderRadius: theme.appBorderRadius,
+	border: `1px solid ${theme.appBorderColor}`,
+}));
+
+const Label = styled.div<{
+	isSticky?: boolean;
+}>(({ theme, isSticky }) => ({
+	fontSize: theme.typography.size.s1,
+	fontWeight: 'bold',
+	marginBottom: 4,
+	padding: '6px 7px',
+	background: theme.barBg,
+	borderBottom: `1px solid ${theme.appBorderColor}`,
 	position: 'relative',
-	padding: '11px 15px',
+
+	...(isSticky
+		? {
+				position: 'sticky',
+				top: 0,
+				zIndex: 1,
+			}
+		: {}),
+}));
+
+const Code = styled.div({
+	padding: '6px 7px 10px',
 	height: '100%',
 	tabSize: '8px',
 	pre: {
@@ -20,56 +47,67 @@ const Container = styled.div({
 
 const CopyIconContainer = styled.div({
 	position: 'absolute',
-	top: 7,
-	right: 7,
-	padding: 5,
-	cursor: 'pointer',
+	top: '50%',
+	transform: 'translateY(-50%)',
+	right: 0,
 	zIndex: 1,
-	'*': {
-		cursor: 'pointer',
-	},
 });
 
 export function CodeBlock({
-	code,
+	name,
+	codeLines,
+	isSticky,
 }: {
-	code: string;
+	name: string;
+	codeLines: string[];
+	isSticky?: boolean;
 }) {
 	const [isCopied, setIsCopied] = useState(false);
 	const [copiedTimeoutId, setCopiedTimeoutId] = useState<ReturnType<
 		typeof setTimeout
 	> | null>(null);
 
+	const code = codeLines.join('\n');
+
 	return (
 		<Container>
-			<CopyIconContainer
-				onClick={() =>
-					navigator.clipboard.writeText(code).then(() => {
-						setIsCopied(true);
-						if (copiedTimeoutId) {
-							clearTimeout(copiedTimeoutId);
-						}
+			<Label isSticky={isSticky}>
+				{name}
 
-						setCopiedTimeoutId(
-							setTimeout(() => {
-								setIsCopied(false);
-								setCopiedTimeoutId(null);
-							}, 2000),
-						);
-					})
-				}
-			>
-				<WithTooltip
-					as="div"
-					hasChrome={false}
-					trigger="hover"
-					tooltip={<TooltipNote note="Copy" />}
-				>
-					{isCopied ? <CheckIcon size={16} /> : <CopyIcon size={16} />}
-				</WithTooltip>
-			</CopyIconContainer>
+				<CopyIconContainer>
+					<WithTooltip
+						placement={'top'}
+						as="div"
+						hasChrome={false}
+						trigger="hover"
+						tooltip={<TooltipNote note="Copy" />}
+					>
+						<IconButton
+							onClick={() =>
+								navigator.clipboard.writeText(code).then(() => {
+									setIsCopied(true);
+									if (copiedTimeoutId) {
+										clearTimeout(copiedTimeoutId);
+									}
 
-			<SyntaxHighlighter language={'typescript'}>{code}</SyntaxHighlighter>
+									setCopiedTimeoutId(
+										setTimeout(() => {
+											setIsCopied(false);
+											setCopiedTimeoutId(null);
+										}, 2000),
+									);
+								})
+							}
+						>
+							{isCopied ? <CheckIcon size={16} /> : <CopyIcon size={16} />}
+						</IconButton>
+					</WithTooltip>
+				</CopyIconContainer>
+			</Label>
+
+			<Code>
+				<SyntaxHighlighter language={'typescript'}>{code}</SyntaxHighlighter>
+			</Code>
 		</Container>
 	);
 }

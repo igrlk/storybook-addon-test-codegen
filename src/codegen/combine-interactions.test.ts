@@ -19,7 +19,7 @@ const elementQuery: TestInteraction['elementQuery'] = {
 };
 
 const elementQuery2: TestInteraction['elementQuery'] = {
-e	object: 'body',
+	object: 'body',
 	method: 'querySelector',
 	args: ['button'],
 };
