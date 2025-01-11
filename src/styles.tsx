@@ -8,12 +8,17 @@ export const Container = styled.div(({ theme }) => ({
 	flexDirection: 'column',
 }));
 
+export const ContentWrapper = styled.div({
+	flex: 1,
+	overflow: 'auto',
+});
+
 export const SubnavWrapper = styled.div(({ theme }) => ({
 	background: theme.background.app,
 	borderBottom: `1px solid ${theme.appBorderColor}`,
 	position: 'sticky',
 	top: 0,
-	zIndex: 1,
+	zIndex: 2,
 }));
 
 export const StyledSubnav = styled.nav(({ theme }) => ({
@@ -58,3 +63,10 @@ export const RecordIcon = styled.span<{ isRecording: boolean }>(
 		display: 'inline-block',
 	}),
 );
+
+export const CodeBlocksWrapper = styled.div({
+	padding: '16px',
+	display: 'flex',
+	flexDirection: 'column',
+	gap: '12px',
+});

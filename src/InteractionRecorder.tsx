@@ -1,5 +1,5 @@
 import { DeleteIcon } from '@storybook/icons';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { Bar, EmptyTabContent } from 'storybook/internal/components';
 import { useChannel, useStorybookApi } from 'storybook/internal/manager-api';
 import { useDebounce } from 'use-debounce';
@@ -9,7 +9,9 @@ import { convertInteractionsToCode } from './codegen/interactions-to-code';
 import { EVENTS } from './constants';
 import { type Interaction, useIsRecording, useRecorderState } from './state';
 import {
+	CodeBlocksWrapper,
 	Container,
+	ContentWrapper,
 	EmptyStateDescription,
 	Group,
 	RecordIcon,
@@ -47,7 +49,7 @@ export const InteractionRecorder = () => {
 	}, [api.getCurrentStoryData()?.id]);
 
 	const [debouncedInteractions] = useDebounce(interactions, 100);
-	const codeLines = useMemo(
+	const code = useMemo(
 		() => convertInteractionsToCode(debouncedInteractions),
 		[debouncedInteractions],
 	);
@@ -58,6 +60,34 @@ export const InteractionRecorder = () => {
 			containerRef.current.parentElement.style.height = '100%';
 		}
 	}, []);
+
+	const codeBlocksRef = useRef<{
+		element: HTMLDivElement | null;
+		isScrolledToBottom: boolean;
+	}>({
+		element: null,
+		isScrolledToBottom: true,
+	});
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: Scroll the container to bottom when code changes
+	useLayoutEffect(() => {
+		const { element, isScrolledToBottom } = codeBlocksRef.current;
+		if (!element || !isScrolledToBottom) {
+			return;
+		}
+
+		const observer = new MutationObserver(() => {
+			if (isScrolledToBottom) {
+				setTimeout(() => {
+					element.scrollTop = element.scrollHeight;
+				});
+			}
+		});
+
+		observer.observe(element, { childList: true, subtree: true });
+
+		return () => observer.disconnect();
+	}, [code, codeBlocksRef.current.isScrolledToBottom]);
 
 	return (
 		<Container ref={containerRef}>
@@ -70,7 +100,7 @@ export const InteractionRecorder = () => {
 								{isRecording ? 'Stop' : 'Start'} recording
 							</StyledButton>
 
-							<StyledButton onClick={resetEvents} disabled={!codeLines.length}>
+							<StyledButton onClick={resetEvents} disabled={!code.play.length}>
 								<DeleteIcon />
 								Reset
 							</StyledButton>
@@ -79,33 +109,52 @@ export const InteractionRecorder = () => {
 				</Bar>
 			</SubnavWrapper>
 
-			{codeLines.length === 0 && !isRecording && (
-				<EmptyTabContent
-					title="No interactions have been recorded."
-					description={
-						<EmptyStateDescription>
-							Click the record button
-							<RecordIcon
-								isRecording={false}
-								onClick={toggleRecording}
-								style={{
-									cursor: 'pointer',
-								}}
-							/>
-							to start recording.
-						</EmptyStateDescription>
-					}
-				/>
-			)}
+			<ContentWrapper
+				ref={(div) => {
+					codeBlocksRef.current.element = div;
+				}}
+				onScroll={(e) => {
+					const { scrollTop, scrollHeight, clientHeight } =
+						e.target as HTMLDivElement;
 
-			{codeLines.length === 0 && isRecording && (
-				<EmptyTabContent
-					title="Recording is in progress..."
-					description="Interact with the story to record events."
-				/>
-			)}
+					codeBlocksRef.current.isScrolledToBottom =
+						scrollTop + clientHeight >= scrollHeight;
+				}}
+			>
+				{code.play.length === 0 && !isRecording && (
+					<EmptyTabContent
+						title="No interactions have been recorded."
+						description={
+							<EmptyStateDescription>
+								Click the record button
+								<RecordIcon
+									isRecording={false}
+									onClick={toggleRecording}
+									style={{
+										cursor: 'pointer',
+									}}
+								/>
+								to start recording.
+							</EmptyStateDescription>
+						}
+					/>
+				)}
 
-			{codeLines.length > 0 && <CodeBlock code={codeLines.join('\n')} />}
+				{code.play.length === 0 && isRecording && (
+					<EmptyTabContent
+						title="Recording is in progress..."
+						description="Interact with the story to record events."
+					/>
+				)}
+
+				{code.play.length > 0 && (
+					<CodeBlocksWrapper>
+						<CodeBlock name="Imports" codeLines={code.imports} />
+
+						<CodeBlock name="Play Function" codeLines={code.play} isSticky />
+					</CodeBlocksWrapper>
+				)}
+			</ContentWrapper>
 		</Container>
 	);
 };

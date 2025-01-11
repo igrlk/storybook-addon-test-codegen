@@ -13,7 +13,10 @@ const EVENT_TO_USER_EVENT = {
 
 export const convertInteractionsToCode = (
 	interactions: Interaction[],
-): string[] => {
+): {
+	imports: string[];
+	play: string[];
+} => {
 	const codeLines: string[] = [];
 	let usesBody = false;
 	let usesCanvas = false;
@@ -70,26 +73,42 @@ export const convertInteractionsToCode = (
 	}
 
 	if (!codeLines.length) {
-		return [];
+		return {
+			imports: [],
+			play: [],
+		};
 	}
 
-	const result = ['play: async ({ canvasElement }) => {'];
+	const importNames = ['userEvent'];
+
+	if (usesCanvas) {
+		importNames.push('within');
+	}
 
 	if (usesBody) {
-		result.push(tab('const body = canvasElement.ownerDocument.body;'));
+		importNames.push('waitFor', 'expect');
+	}
+
+	const play = ['play: async ({ canvasElement }) => {'];
+
+	if (usesBody) {
+		play.push(tab('const body = canvasElement.ownerDocument.body;'));
 	}
 
 	if (usesCanvas) {
 		if (usesBody) {
-			result.push(tab('const canvas = within(body);'));
+			play.push(tab('const canvas = within(body);'));
 		} else {
-			result.push(tab('const canvas = within(canvasElement.ownerDocument.body);'));
+			play.push(tab('const canvas = within(canvasElement.ownerDocument.body);'));
 		}
 	}
 
-	result.push(...codeLines.map(tab), '}');
+	play.push(...codeLines.map(tab), '}');
 
-	return result;
+	return {
+		imports: [`import { ${importNames.join(', ')} } from '@storybook/test';`],
+		play,
+	};
 };
 
 export const tab = (str: string) => `\t${str}`;
