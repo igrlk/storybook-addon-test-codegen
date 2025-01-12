@@ -1,3 +1,19 @@
+# v0.0.14 (Sun Jan 12 2025)
+
+#### 🐛 Bug Fix
+
+- add missing package.json fields [#8](https://github.com/igrlk/storybook-addon-test-codegen/pull/8) ([@igrlk](https://github.com/igrlk))
+
+#### 📝 Documentation
+
+- update addon.gif [#7](https://github.com/igrlk/storybook-addon-test-codegen/pull/7) ([@igrlk](https://github.com/igrlk))
+
+#### Authors: 1
+
+- Igor Luchenkov ([@igrlk](https://github.com/igrlk))
+
+---
+
 # v0.0.13 (Sun Jan 12 2025)
 
 #### 🐛 Bug Fix
