@@ -23,9 +23,9 @@ const Component = () => {
 
 	return (
 		<div className="flex items-center justify-center p-12">
-			<div className="mx-auto w-full max-w-[800px] bg-white">
+			<div className="mx-auto w-full max-w-[800px] bg-white p-5">
 				{isSubmitSuccessful ? (
-					<div className="flex items-center justify-center bg-green-100 flex-col gap-5 p-10">
+					<div className="flex items-center justify-center bg-green-100 flex-col gap-5 p-14">
 						<div>Thank you for submitting!</div>
 
 						<div className="flex flex-col items-center gap-3">
@@ -43,8 +43,8 @@ const Component = () => {
 					</div>
 				) : (
 					<form onSubmit={onSubmit} className="flex flex-col gap-5">
-						<div className="flex flex-wrap items-end">
-							<div className="px-3 sm:w-1/2">
+						<div className="flex flex-wrap items-end gap-3">
+							<div className="flex-1">
 								<label
 									htmlFor="email"
 									className="mb-3 block text-base font-medium text-[#07074D]"
@@ -61,7 +61,7 @@ const Component = () => {
 									className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
 								/>
 							</div>
-							<div className="px-3 sm:w-1/2">
+							<div className="flex-1">
 								<input
 									type="text"
 									name="username"
@@ -74,8 +74,8 @@ const Component = () => {
 							</div>
 						</div>
 
-						<div className="flex flex-wrap items-start">
-							<div className="px-3 sm:w-1/2">
+						<div className="flex flex-wrap items-start gap-3">
+							<div className="flex-1">
 								<label
 									htmlFor="note"
 									className="mb-3 block text-base font-medium text-[#07074D]"
@@ -91,7 +91,7 @@ const Component = () => {
 									className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
 								/>
 							</div>
-							<div className="px-3 sm:w-1/2">
+							<div className="flex-1">
 								<label
 									htmlFor="select"
 									className="mb-3 block text-base font-medium text-[#07074D]"
@@ -115,8 +115,8 @@ const Component = () => {
 							</div>
 						</div>
 
-						<div className="flex flex-wrap">
-							<div className="px-3 sm:w-1/2">
+						<div className="flex flex-wrap gap-3">
+							<div className="flex-1">
 								<label
 									htmlFor="file"
 									className="mb-3 block text-base font-medium text-[#07074D]"
@@ -130,7 +130,7 @@ const Component = () => {
 									className="w-full rounded-md border border-[#e0e0e0] bg-white p-2.5 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
 								/>
 							</div>
-							<div className="px-3 sm:w-1/2">
+							<div className="flex-1">
 								<label
 									htmlFor="date"
 									className="mb-3 block text-base font-medium text-[#07074D]"
@@ -152,7 +152,7 @@ const Component = () => {
 
 						<button
 							type="submit"
-							className="hover:shadow-form w-full rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none mx-3"
+							className="hover:shadow-form w-full rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none"
 						>
 							<div>Submit</div>
 						</button>

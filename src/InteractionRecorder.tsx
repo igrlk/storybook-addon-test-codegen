@@ -1,5 +1,5 @@
 import { DeleteIcon } from '@storybook/icons';
-import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Bar, EmptyTabContent } from 'storybook/internal/components';
 import { useChannel, useStorybookApi } from 'storybook/internal/manager-api';
 import { useDebounce } from 'use-debounce';
@@ -61,17 +61,12 @@ export const InteractionRecorder = () => {
 		}
 	}, []);
 
-	const codeBlocksRef = useRef<{
-		element: HTMLDivElement | null;
-		isScrolledToBottom: boolean;
-	}>({
-		element: null,
-		isScrolledToBottom: true,
-	});
+	const codeBlocksRef = useRef<HTMLDivElement | null>(null);
+	const [isScrolledToBottom, setIsScrolledToBottom] = useState(true);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: Scroll the container to bottom when code changes
 	useLayoutEffect(() => {
-		const { element, isScrolledToBottom } = codeBlocksRef.current;
+		const element = codeBlocksRef.current;
 		if (!element || !isScrolledToBottom) {
 			return;
 		}
@@ -87,7 +82,7 @@ export const InteractionRecorder = () => {
 		observer.observe(element, { childList: true, subtree: true });
 
 		return () => observer.disconnect();
-	}, [code, codeBlocksRef.current.isScrolledToBottom]);
+	}, [code, isScrolledToBottom]);
 
 	return (
 		<Container ref={containerRef}>
@@ -110,15 +105,12 @@ export const InteractionRecorder = () => {
 			</SubnavWrapper>
 
 			<ContentWrapper
-				ref={(div) => {
-					codeBlocksRef.current.element = div;
-				}}
+				ref={codeBlocksRef}
 				onScroll={(e) => {
 					const { scrollTop, scrollHeight, clientHeight } =
 						e.target as HTMLDivElement;
 
-					codeBlocksRef.current.isScrolledToBottom =
-						scrollTop + clientHeight >= scrollHeight;
+					setIsScrolledToBottom(scrollTop + clientHeight >= scrollHeight);
 				}}
 			>
 				{code.play.length === 0 && !isRecording && (
