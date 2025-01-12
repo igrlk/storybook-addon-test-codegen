@@ -1,3 +1,19 @@
+# v0.0.13 (Sun Jan 12 2025)
+
+#### 🐛 Bug Fix
+
+- release [#6](https://github.com/igrlk/storybook-addon-test-codegen/pull/6) ([@igrlk](https://github.com/igrlk))
+
+#### 📝 Documentation
+
+- update readme, add PR checks [#5](https://github.com/igrlk/storybook-addon-test-codegen/pull/5) ([@igrlk](https://github.com/igrlk))
+
+#### Authors: 1
+
+- Igor Luchenkov ([@igrlk](https://github.com/igrlk))
+
+---
+
 # v0.0.12 (Sat Jan 11 2025)
 
 #### 🐛 Bug Fix
