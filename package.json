@@ -6,6 +6,7 @@
 		"type": "git",
 		"url": "git+https://github.com/igrlk/storybook-addon-test-codegen.git"
 	},
+	"packageManager": "pnpm@9.15.3",
 	"keywords": ["storybook-addons", "interactions", "test", "codegen"],
 	"type": "module",
 	"license": "MIT",
