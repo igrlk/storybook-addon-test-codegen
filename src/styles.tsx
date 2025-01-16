@@ -26,7 +26,7 @@ export const StyledSubnav = styled.nav(({ theme }) => ({
 	display: 'flex',
 	alignItems: 'center',
 	justifyContent: 'space-between',
-	paddingLeft: 15,
+	padding: '0 15px',
 }));
 
 export const StyledButton = styled(Button)(({ theme }) => ({

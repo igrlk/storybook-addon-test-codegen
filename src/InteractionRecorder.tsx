@@ -4,6 +4,7 @@ import { Bar, EmptyTabContent } from 'storybook/internal/components';
 import { useChannel, useStorybookApi } from 'storybook/internal/manager-api';
 import { useDebounce } from 'use-debounce';
 import { CodeBlock } from './CodeBlock';
+import { SaveStoryButton } from './SaveStory';
 import { combineInteractions } from './codegen/combine-interactions';
 import { convertInteractionsToCode } from './codegen/interactions-to-code';
 import { EVENTS } from './constants';
@@ -19,6 +20,27 @@ import {
 	StyledSubnav,
 	SubnavWrapper,
 } from './styles';
+
+const MOCK_CODE = {
+	imports: [
+		"import { userEvent, within, waitFor, expect } from '@storybook/test';",
+	],
+	play: [
+		'play: async ({ canvasElement }) => {',
+		'\tconst body = canvasElement.ownerDocument.body;',
+		'\tconst canvas = within(body);',
+		"\tawait userEvent.click(await canvas.findByText('Email Address', { exact: true }));",
+		"\tawait userEvent.click(await canvas.findByRole('textbox', { name: 'Email Address' }));",
+		"\tawait waitFor(() => expect(body.querySelector('.items-end > div:nth-of-type(1)')).toBeInTheDocument());",
+		"\tawait userEvent.click(body.querySelector('.items-end > div:nth-of-type(1)') as HTMLElement);",
+		"\tawait userEvent.click(await canvas.findByText('Email Address', { exact: true }));",
+		"\tawait userEvent.click(await canvas.findByPlaceholderText('Enter your username', { exact: true }));",
+		"\tawait userEvent.click(await canvas.findByRole('textbox', { name: 'Email Address' }));",
+		"\tawait userEvent.click(await canvas.findByRole('textbox', { name: 'Email Address' }));",
+		"\tawait userEvent.click(await canvas.findByText('Email Address', { exact: true }));",
+		'}',
+	],
+};
 
 export const InteractionRecorder = () => {
 	const [{ interactions }, setState] = useRecorderState();
@@ -50,7 +72,7 @@ export const InteractionRecorder = () => {
 
 	const [debouncedInteractions] = useDebounce(interactions, 100);
 	const code = useMemo(
-		() => convertInteractionsToCode(debouncedInteractions),
+		() => MOCK_CODE ?? convertInteractionsToCode(debouncedInteractions),
 		[debouncedInteractions],
 	);
 
@@ -100,6 +122,8 @@ export const InteractionRecorder = () => {
 								Reset
 							</StyledButton>
 						</Group>
+
+						<SaveStoryButton code={code} />
 					</StyledSubnav>
 				</Bar>
 			</SubnavWrapper>
