@@ -11,12 +11,14 @@ const EVENT_TO_USER_EVENT = {
 	focus: 'focus',
 };
 
-export const convertInteractionsToCode = (
-	interactions: Interaction[],
-): {
+export type GeneratedCode = {
 	imports: string[];
 	play: string[];
-} => {
+};
+
+export const convertInteractionsToCode = (
+	interactions: Interaction[],
+): GeneratedCode => {
 	const codeLines: string[] = [];
 	let usesBody = false;
 	let usesCanvas = false;

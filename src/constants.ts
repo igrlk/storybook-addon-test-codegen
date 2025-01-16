@@ -6,6 +6,7 @@ export const IS_RECORDING_KEY = `${ADDON_ID}/is-recording`;
 
 export const EVENTS = {
 	INTERACTION: `${ADDON_ID}/interaction`,
+	SAVE_NEW_STORY: `${ADDON_ID}/save-new-story`,
 };
 
 export const DOM_EVENTS = [
