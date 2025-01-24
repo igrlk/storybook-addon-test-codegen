@@ -27,11 +27,6 @@ jobs:
       - name: Build Storybook
         run: pnpm build; pnpm tailwind; pnpm build-storybook
 
-      - name:
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist/storybook
-
       - name: Deploy preview
         if: github.event_name == 'pull_request'
         uses: rossjrw/pr-preview-action@v1
