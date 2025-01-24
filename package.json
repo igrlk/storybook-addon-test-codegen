@@ -43,7 +43,8 @@
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build",
 		"prepare": "husky",
-		"tailwind:watch": "tailwindcss -i ./src/tailwind.css -o ./.storybook/tailwind.css --watch",
+		"tailwind": "tailwindcss -i ./src/tailwind.css -o ./.storybook/tailwind.css",
+		"tailwind:watch": "pnpm tailwind -- --watch",
 		"pr:check": "concurrently \"npm run check\" \"npm run test\" \"npm run build\""
 	},
 	"devDependencies": {
