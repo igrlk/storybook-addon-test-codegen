@@ -1,16 +1,9 @@
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { storyNameFromExport, toId } from '@storybook/csf';
 import type { Channel } from 'storybook/internal/channels';
-import { formatFileContent } from 'storybook/internal/common';
-import { printCsf, readCsf } from 'storybook/internal/csf-tools';
+import { readCsf } from 'storybook/internal/csf-tools';
 import type { Options } from 'storybook/internal/types';
-import {
-	duplicateStoryWithNewName,
-	parseArgs,
-	removeExtraNewlines,
-	updateArgsInCsfFile,
-} from './codegen/save-story';
+import { generateStoryCode } from './codegen/generate-story-code';
 import { EVENTS } from './constants';
 import type { SaveNewStoryRequestPayload } from './data';
 
@@ -24,39 +17,7 @@ export const handler = async (payload: SaveNewStoryRequestPayload) => {
 			makeTitle: (userTitle: string) => userTitle || 'myTitle',
 		});
 
-		const parsed = csf.parse();
-		const stories = Object.entries(parsed._stories);
-
-		const [componentId, storyId] = csfId.split('--');
-		const newStoryName = name && storyNameFromExport(name);
-		const newStoryId = newStoryName && toId(componentId, newStoryName);
-
-		const [storyName] =
-			stories.find(([key, value]) => value.id.endsWith(`--${storyId}`)) || [];
-		if (!storyName) {
-			console.error('Source story not found.');
-			return;
-		}
-		if (name && csf.getStoryExport(name)) {
-			console.error('Story already exists.');
-			return;
-		}
-
-		const sourceStoryName = storyNameFromExport(storyName);
-
-		await updateArgsInCsfFile(
-			name
-				? duplicateStoryWithNewName(parsed, storyName, name)
-				: csf.getStoryExport(storyName),
-			args ? parseArgs(args) : {},
-		);
-
-		const code = await formatFileContent(
-			sourceFilePath,
-			removeExtraNewlines(printCsf(csf).code, name || storyName),
-		);
-
-		console.log(code);
+		const storyCode = await generateStoryCode({ csf, csfId, name, args, code });
 
 		// Writing the CSF file should trigger HMR, which causes the story to rerender. Delay the
 		// response until that happens, but don't wait too long.
@@ -65,12 +26,14 @@ export const handler = async (payload: SaveNewStoryRequestPayload) => {
 			// 	channel.on(STORY_RENDERED, resolve);
 			// 	setTimeout(() => resolve(channel.off(STORY_RENDERED, resolve)), 3000);
 			// }),
-			writeFile(sourceFilePath, code),
+			writeFile(sourceFilePath, storyCode),
 		]);
-	} catch (error: any) {
-		console.error(
-			`Error saving story: ${error.stack || error.message || error.toString()}`,
-		);
+	} catch (error) {
+		if (error instanceof Error) {
+			console.error(
+				`Error saving story: ${error.stack || error.message || error.toString()}`,
+			);
+		}
 	}
 };
 
