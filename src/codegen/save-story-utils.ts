@@ -1,19 +1,23 @@
+// Copied from storybook package
+// Except for "updatePlayInCsfFile" and "updateImportsInCsfFile"
+
 import { parser, types as t, traverse } from 'storybook/internal/babel';
 import type { CsfFile } from 'storybook/internal/csf-tools';
 
+class SaveStoryError extends Error {}
+
+// biome-ignore lint/suspicious/noExplicitAny:
 export function valueToAST<T>(literal: T): any {
 	if (literal === null) {
 		return t.nullLiteral();
 	}
 	switch (typeof literal) {
 		case 'function':
-			const ast = parser.parse(literal.toString(), {
+			return parser.parse(literal.toString(), {
 				allowReturnOutsideFunction: true,
 				allowSuperOutsideMethod: true,
-			});
-
-			// @ts-expect-error (it's the contents of the function, it's an expression, trust me)
-			return ast.program.body[0]?.expression;
+				// @ts-expect-error (it's the contents of the function, it's an expression, trust me)
+			}).program.body[0]?.expression;
 
 		case 'number':
 			return t.numericLiteral(literal);
@@ -45,6 +49,7 @@ export function valueToAST<T>(literal: T): any {
 
 export const updateArgsInCsfFile = async (
 	node: t.Node,
+	// biome-ignore lint/suspicious/noExplicitAny:
 	input: Record<string, any>,
 ) => {
 	let found = false;
@@ -56,7 +61,7 @@ export const updateArgsInCsfFile = async (
 
 	// detect CSF2 and throw
 	if (t.isArrowFunctionExpression(node) || t.isCallExpression(node)) {
-		throw new SaveStoryError(`Updating a CSF2 story is not supported`);
+		throw new SaveStoryError('Updating a CSF2 story is not supported');
 	}
 
 	if (t.isObjectExpression(node)) {
@@ -73,7 +78,7 @@ export const updateArgsInCsfFile = async (
 			if (t.isObjectProperty(argsProperty)) {
 				const a = argsProperty.value;
 				if (t.isObjectExpression(a)) {
-					a.properties.forEach((p) => {
+					for (const p of a.properties) {
 						if (t.isObjectProperty(p)) {
 							const key = p.key;
 							if (t.isIdentifier(key) && key.name in args) {
@@ -81,13 +86,13 @@ export const updateArgsInCsfFile = async (
 								delete args[key.name];
 							}
 						}
-					});
+					}
 
 					const remainder = Object.entries(args);
 					if (Object.keys(args).length) {
-						remainder.forEach(([key, value]) => {
+						for (const [key, value] of remainder) {
 							a.properties.push(t.objectProperty(t.identifier(key), value));
-						});
+						}
 					}
 				}
 			}
@@ -139,12 +144,12 @@ export const updateArgsInCsfFile = async (
 
 						const remainder = Object.entries(args);
 						if (Object.keys(args).length) {
-							remainder.forEach(([key, value]) => {
+							for (const [key, value] of remainder) {
 								a.pushContainer(
 									'properties',
 									t.objectProperty(t.identifier(key), value),
 								);
-							});
+							}
 						}
 					}
 				}
@@ -171,14 +176,14 @@ type In = ReturnType<CsfFile['parse']>;
 
 export const duplicateStoryWithNewName = (
 	csfFile: In,
-	storyName: string,
+	originalStoryName: string,
 	newStoryName: string,
 ) => {
-	const node = csfFile._storyExports[storyName];
+	const node = csfFile._storyExports[originalStoryName];
 	const cloned = t.cloneNode(node) as t.VariableDeclarator;
 
 	if (!cloned) {
-		throw new SaveStoryError(`cannot clone Node`);
+		throw new SaveStoryError('cannot clone Node');
 	}
 
 	let found = false;
@@ -188,7 +193,7 @@ export const duplicateStoryWithNewName = (
 				return;
 			}
 
-			if (path.node.name === storyName) {
+			if (path.node.name === originalStoryName) {
 				found = true;
 				path.node.name = newStoryName;
 			}
@@ -209,7 +214,7 @@ export const duplicateStoryWithNewName = (
 		t.isCallExpression(cloned.init)
 	) {
 		throw new SaveStoryError(
-			`Creating a new story based on a CSF2 story is not supported`,
+			'Creating a new story based on a CSF2 story is not supported',
 		);
 	}
 
@@ -225,6 +230,7 @@ export const duplicateStoryWithNewName = (
 	return cloned;
 };
 
+// biome-ignore lint/suspicious/noExplicitAny:
 export const parseArgs = (args: string): Record<string, any> =>
 	JSON.parse(args, (_, value) => {
 		if (value === '__sb_empty_function_arg__') {
@@ -253,4 +259,141 @@ export const removeExtraNewlines = (code: string, name: string) => {
 				) +
 				after
 		: code;
+};
+
+export const updatePlayInCsfFile = async (node: t.Node, play: string[]) => {
+	let found = false;
+
+	// detect CSF2 and throw
+	if (t.isArrowFunctionExpression(node) || t.isCallExpression(node)) {
+		throw new SaveStoryError('Updating a CSF2 story is not supported');
+	}
+
+	traverse(node, {
+		ObjectExpression(path) {
+			if (found) {
+				return;
+			}
+
+			found = true;
+			const properties = path.get('properties');
+			const playProperty = properties.find((property) => {
+				if (property.isObjectProperty()) {
+					const key = property.get('key');
+					return key.isIdentifier() && key.node.name === 'play';
+				}
+				return false;
+			});
+
+			const playExpression = t.arrowFunctionExpression(
+				[t.identifier('async ({ canvasElement })')],
+				t.blockStatement(
+					preparePlay(play).map((line) => t.expressionStatement(t.identifier(line))),
+				),
+			);
+
+			if (playProperty) {
+				if (playProperty.isObjectProperty()) {
+					playProperty.get('value').replaceWith(playExpression);
+				}
+			} else {
+				path.pushContainer(
+					'properties',
+					t.objectProperty(t.identifier('play'), playExpression),
+				);
+			}
+		},
+
+		noScope: true,
+	});
+};
+
+const preparePlay = (play: string[]) => play.slice(1, -1).map(prepareLine);
+
+const prepareLine = (line: string) => {
+	let result = line;
+
+	if (result.endsWith(';')) {
+		result = result.slice(0, -1);
+	}
+
+	if (result.startsWith('\t')) {
+		result = result.slice(1);
+	}
+
+	return result;
+};
+
+export const updateImportsInCsfFile = async (
+	node: t.Node,
+	imports: string[],
+) => {
+	let found = false;
+
+	// detect CSF2 and throw an error
+	if (t.isArrowFunctionExpression(node) || t.isCallExpression(node)) {
+		throw new SaveStoryError('Updating a CSF2 story is not supported');
+	}
+
+	traverse(node, {
+		Program(path) {
+			if (found) {
+				return;
+			}
+
+			found = true;
+
+			const parser = require('@babel/parser');
+
+			const packagesToImport = imports.map((importString) => {
+				const importStatement = parser.parse(importString, {
+					sourceType: 'module',
+				});
+
+				return {
+					importNode: importStatement.program.body[0],
+					importString,
+				};
+			});
+
+			const importNodesBySource = new Map<string, t.ImportDeclaration>();
+			for (const { node } of path.get('body')) {
+				if (t.isImportDeclaration(node)) {
+					importNodesBySource.set(node.source.value, node);
+				}
+			}
+
+			for (const { importNode, importString } of packagesToImport) {
+				const source = importNode.source.value;
+				const existingImport = importNodesBySource.get(source);
+
+				if (existingImport) {
+					const specifiers = importNode.specifiers;
+					const existingSpecifiers = existingImport.specifiers;
+
+					const existingSpecifierNames = new Set(
+						existingSpecifiers.map((s) => s.local.name),
+					);
+
+					for (const specifier of specifiers) {
+						if (!existingSpecifierNames.has(specifier.local.name)) {
+							existingSpecifiers.push(specifier);
+						}
+					}
+				} else {
+					if (t.isFile(node)) {
+						node.program.body.unshift(
+							t.expressionStatement(
+								t.identifier(
+									importString.endsWith(';') ? importString.slice(0, -1) : importString,
+								),
+							),
+						);
+					}
+				}
+			}
+		},
+
+		noScope: true,
+	});
 };
