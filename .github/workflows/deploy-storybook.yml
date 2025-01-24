@@ -25,7 +25,7 @@ jobs:
         uses: ./.github/actions/install-dependencies
 
       - name: Build Storybook
-        run: pnpm build-storybook
+        run: pnpm build; pnpm build-storybook
 
       - name:
         uses: actions/upload-pages-artifact@v3
