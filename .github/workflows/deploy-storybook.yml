@@ -35,6 +35,7 @@ jobs:
         run: cp -r storybook-static deploy
 
       - name: Deploy Storybook
+        id: build-publish
         uses: bitovi/github-actions-storybook-to-github-pages@v1.0.3
         with:
           install_command: ''
