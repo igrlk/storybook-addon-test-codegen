@@ -16,6 +16,10 @@ concurrency:
 
 jobs:
   deploy-storybook:
+    environment:
+      name: github-pages
+      url: ${{ steps.build-publish.outputs.page_url }}
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
