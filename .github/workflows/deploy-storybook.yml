@@ -37,7 +37,7 @@ jobs:
           action: auto
 
       - name: Deploy main
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: storybook-static
