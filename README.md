@@ -4,7 +4,8 @@
 [![NPM downloads](https://img.shields.io/npm/dt/storybook-addon-test-codegen)](https://www.npmjs.com/package/storybook-addon-test-codegen)
 [![GitHub license](https://img.shields.io/github/license/igrlk/storybook-addon-test-codegen)](https://github.com/igrlk/storybook-addon-test-codegen/blob/main/LICENSE)
 
-Interact with your Storybook and get test code generated for you.
+Interact with your Storybook and get test code generated for
+you. To see this live, check out the [demo](https://igrlk.github.io/storybook-addon-test-codegen/).
 
 ![Alt Text](/assets/addon.gif)
 
