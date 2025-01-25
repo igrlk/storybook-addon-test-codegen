@@ -1,3 +1,19 @@
+# v0.0.15 (Sat Jan 25 2025)
+
+#### 🐛 Bug Fix
+
+- extend readme with demo link [#11](https://github.com/igrlk/storybook-addon-test-codegen/pull/11) ([@igrlk](https://github.com/igrlk))
+
+#### 📝 Documentation
+
+- GitHub pages deployment [#10](https://github.com/igrlk/storybook-addon-test-codegen/pull/10) ([@igrlk](https://github.com/igrlk))
+
+#### Authors: 1
+
+- Igor Luchenkov ([@igrlk](https://github.com/igrlk))
+
+---
+
 # v0.0.14 (Sun Jan 12 2025)
 
 #### 🐛 Bug Fix
