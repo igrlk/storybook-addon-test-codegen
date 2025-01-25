@@ -4,16 +4,10 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
-      - closed
+      - github-pages-deployment
 
 permissions:
   contents: write
-  pull-requests: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -34,22 +28,12 @@ jobs:
       - name: Copy build files
         run: cp -r storybook-static deploy
 
-      - name: Deploy preview
-        if: github.event_name == 'pull_request'
-        uses: rossjrw/pr-preview-action@v1
-        with:
-          source-dir: deploy
-          preview-branch: gh-pages
-          umbrella-dir: pr-preview
-          action: auto
-
       - name: Deploy main
-        # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: deploy
           branch: gh-pages
           clean-exclude: pr-preview
-          force: false
+          force: true
 
 
