@@ -1,0 +1,43 @@
+name: Deploy Storybook
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  deploy-storybook:
+    environment:
+      name: github-pages
+      url: ${{ steps.build-publish.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        uses: ./.github/actions/install-dependencies
+
+      - name: Build Storybook
+        run: pnpm build; pnpm tailwind; pnpm build-storybook
+
+      - name: Copy build files
+        run: cp -r storybook-static deploy
+
+      - name: Deploy Storybook
+        id: build-publish
+        uses: bitovi/github-actions-storybook-to-github-pages@v1.0.3
+        with:
+          install_command: ''
+          path: storybook-static
+          checkout: false # default: true
+
