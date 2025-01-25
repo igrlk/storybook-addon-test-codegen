@@ -31,7 +31,7 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: rossjrw/pr-preview-action@v1
         with:
-          source-dir: .
+          source-dir: storybook-static
           preview-branch: gh-pages
           umbrella-dir: pr-preview
           action: auto
@@ -40,7 +40,7 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: .
+          folder: storybook-static
           branch: gh-pages
           clean-exclude: pr-preview
           force: false
