@@ -1,2 +1,0 @@
-pnpm check && pnpm test
-git add .
