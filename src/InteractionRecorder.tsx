@@ -102,7 +102,7 @@ export const InteractionRecorder = () => {
 							</StyledButton>
 						</Group>
 
-						<SaveStoryButton code={code} />
+						{code.play.length > 0 && <SaveStoryButton code={code} />}
 					</StyledSubnav>
 				</Bar>
 			</SubnavWrapper>
