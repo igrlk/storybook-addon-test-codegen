@@ -1,12 +1,10 @@
-import { CheckIcon, SaveIcon } from '@storybook/icons';
+import { CheckIcon } from '@storybook/icons';
 import { dequal as deepEqual } from 'dequal';
 import { type ChangeEvent, useEffect, useState } from 'react';
-import { Form } from 'storybook/internal/components';
 import {
 	experimental_requestResponse,
 	useStorybookApi,
 } from 'storybook/internal/manager-api';
-import { styled } from 'storybook/internal/theming';
 import type { Args } from 'storybook/internal/types';
 import type { GeneratedCode } from './codegen/interactions-to-code';
 import { EVENTS } from './constants';
@@ -15,40 +13,14 @@ import type {
 	SaveNewStoryRequestPayload,
 	SaveNewStoryResponsePayload,
 } from './data';
-import { StyledButton } from './styles';
-
-const Container = styled.form({
-	display: 'flex',
-	alignItems: 'center',
-	gap: 8,
-});
-
-const SaveIconColorful = styled(SaveIcon)(({ theme }) => ({
-	color: theme.color.secondary,
-}));
-
-const Input = styled(Form.Input)(({ theme }) => ({
-	paddingLeft: 10,
-	paddingRight: 10,
-	fontSize: theme.typography.size.s1,
-	height: 28,
-	minHeight: 'unset',
-
-	...(theme.base === 'light' && {
-		color: theme.color.darkest,
-	}),
-
-	'::placeholder': {
-		color: theme.color.mediumdark,
-	},
-	'&:invalid:not(:placeholder-shown)': {
-		boxShadow: `${theme.color.negative} 0 0 0 1px inset`,
-	},
-	'&::-webkit-search-decoration, &::-webkit-search-cancel-button, &::-webkit-search-results-button, &::-webkit-search-results-decoration':
-		{
-			display: 'none',
-		},
-}));
+import {
+	RotatingIcon,
+	SaveContainer,
+	SaveIconColorful,
+	SaveInput,
+	StyledButton,
+	StyledCheckIcon,
+} from './styles';
 
 const stringifyArgs = (args: Record<string, unknown>) =>
 	JSON.stringify(args, (_, value) => {
@@ -64,16 +36,17 @@ export const SaveStoryButton = ({
 	code: GeneratedCode;
 }) => {
 	const api = useStorybookApi();
+
 	const [name, setName] = useState('');
+	const [state, setState] = useState<
+		'button' | 'input' | 'creating' | 'success'
+	>('button');
 
 	const storyData = api.getCurrentStoryData();
 	useEffect(() => {
 		setName(storyData?.name);
+		setState('button');
 	}, [storyData?.name]);
-
-	const [state, setState] = useState<
-		'button' | 'input' | 'creating' | 'success'
-	>('button');
 
 	const saveStory = async () => {
 		setState('creating');
@@ -108,6 +81,7 @@ export const SaveStoryButton = ({
 			SaveNewStoryResponsePayload,
 			SaveNewStoryErrorPayload
 		>(
+			// biome-ignore lint/suspicious/noExplicitAny: Should be fixed with new package version
 			channel as any,
 			EVENTS.SAVE_NEW_STORY_REQUEST,
 			EVENTS.SAVE_NEW_STORY_RESPONSE,
@@ -137,41 +111,40 @@ export const SaveStoryButton = ({
 	};
 
 	return (
-		<Container>
+		<SaveContainer>
 			{state === 'button' && (
 				<StyledButton onClick={() => setState('input')} variant="outline">
 					<SaveIconColorful size={16} /> Save story
 				</StyledButton>
 			)}
 
-			{(state === 'input' || state === 'creating') && (
+			{state === 'input' && (
 				<>
-					<Input
+					<SaveInput
 						placeholder="Type story name"
 						required
 						autoFocus
 						value={name}
 						onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-						disabled={state === 'creating'}
-						onBlur
 					/>
-					<StyledButton
-						onClick={saveStory}
-						type="submit"
-						variant="outline"
-						disabled={state === 'creating'}
-					>
+					<StyledButton onClick={saveStory} type="submit" variant="outline">
 						Save
 					</StyledButton>
 				</>
 			)}
 
-			{state === 'success' && (
-				<StyledButton variant="outline" type="button">
-					<SaveIconColorful size={16} /> Story saved
+			{state === 'creating' && (
+				<StyledButton onClick={() => setState('input')} variant="outline">
+					<RotatingIcon /> Save to story
 				</StyledButton>
 			)}
-		</Container>
+
+			{state === 'success' && (
+				<StyledButton variant="outline" type="button">
+					<StyledCheckIcon /> Saved
+				</StyledButton>
+			)}
+		</SaveContainer>
 	);
 };
 
