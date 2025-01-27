@@ -7,3 +7,9 @@ export type SaveNewStoryRequestPayload = {
 	args: string;
 	name: string;
 };
+
+export type SaveNewStoryResponsePayload = {
+	newStoryId: string;
+};
+
+export type SaveNewStoryErrorPayload = {};

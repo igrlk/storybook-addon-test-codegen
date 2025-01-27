@@ -21,27 +21,6 @@ import {
 	SubnavWrapper,
 } from './styles';
 
-const MOCK_CODE = {
-	imports: [
-		"import { userEvent, within, waitFor, expect } from '@storybook/test';",
-	],
-	play: [
-		'play: async ({ canvasElement }) => {',
-		'\tconst body = canvasElement.ownerDocument.body;',
-		'\tconst canvas = within(body);',
-		"\tawait userEvent.click(await canvas.findByText('Email Address', { exact: true }));",
-		"\tawait userEvent.click(await canvas.findByRole('textbox', { name: 'Email Address' }));",
-		"\tawait waitFor(() => expect(body.querySelector('.items-end > div:nth-of-type(1)')).toBeInTheDocument());",
-		"\tawait userEvent.click(body.querySelector('.items-end > div:nth-of-type(1)') as HTMLElement);",
-		"\tawait userEvent.click(await canvas.findByText('Email Address', { exact: true }));",
-		"\tawait userEvent.click(await canvas.findByPlaceholderText('Enter your username', { exact: true }));",
-		"\tawait userEvent.click(await canvas.findByRole('textbox', { name: 'Email Address' }));",
-		"\tawait userEvent.click(await canvas.findByRole('textbox', { name: 'Email Address' }));",
-		"\tawait userEvent.click(await canvas.findByText('Email Address', { exact: true }));",
-		'}',
-	],
-};
-
 export const InteractionRecorder = () => {
 	const [{ interactions }, setState] = useRecorderState();
 	const [isRecording, setIsRecording] = useIsRecording();
@@ -72,7 +51,7 @@ export const InteractionRecorder = () => {
 
 	const [debouncedInteractions] = useDebounce(interactions, 100);
 	const code = useMemo(
-		() => MOCK_CODE ?? convertInteractionsToCode(debouncedInteractions),
+		() => convertInteractionsToCode(debouncedInteractions),
 		[debouncedInteractions],
 	);
 
