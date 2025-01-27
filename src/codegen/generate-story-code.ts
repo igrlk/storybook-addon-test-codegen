@@ -1,3 +1,4 @@
+import { toId } from '@storybook/csf';
 import { formatFileContent } from 'storybook/internal/common';
 import { type CsfFile, printCsf } from 'storybook/internal/csf-tools';
 import type { GeneratedCode } from './interactions-to-code';
@@ -26,7 +27,7 @@ export const generateStoryCode = async ({
 	const parsed = csf.parse();
 	const stories = Object.entries(parsed._stories);
 
-	const [, storyId] = csfId.split('--');
+	const [componentId, storyId] = csfId.split('--');
 
 	const [originalStoryName] =
 		stories.find(([key, value]) => value.id.endsWith(`--${storyId}`)) || [];
@@ -42,6 +43,8 @@ export const generateStoryCode = async ({
 			match.toUpperCase().replace(/[-_ ]/g, ''),
 		); // from https://github.com/storybookjs/storybook/blob/1fdd2d6c675b81269125af5027e45a357c09f1fa/code/addons/controls/src/SaveStory.tsx#L122
 
+	const newStoryId = toId(componentId, newStoryName);
+
 	const node =
 		csf._storyExports[newStoryName] ??
 		duplicateStoryWithNewName(parsed, originalStoryName, newStoryName);
@@ -55,8 +58,11 @@ export const generateStoryCode = async ({
 
 	await updateImportsInCsfFile(csf._ast, code.imports);
 
-	return formatFileContent(
-		'.',
-		removeExtraNewlines(printCsf(csf).code, newStoryName),
-	);
+	return {
+		storyCode: await formatFileContent(
+			'.',
+			removeExtraNewlines(printCsf(csf).code, newStoryName),
+		),
+		newStoryId,
+	};
 };
