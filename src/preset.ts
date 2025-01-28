@@ -56,6 +56,12 @@ export const experimental_serverChannel = async (
 					error: null,
 				} satisfies ResponseData<SaveNewStoryResponsePayload>);
 			} catch (error) {
+				channel.emit(EVENTS.SAVE_NEW_STORY_RESPONSE, {
+					id,
+					success: false,
+					error: error instanceof Error ? error.message : 'Unknown error',
+				} satisfies ResponseData<SaveNewStoryResponsePayload>);
+
 				if (error instanceof Error) {
 					console.error(
 						`Error saving story: ${error.stack || error.message || error.toString()}`,

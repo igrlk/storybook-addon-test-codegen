@@ -25,6 +25,8 @@ const Label = styled.div<{
 	background: theme.barBg,
 	borderBottom: `1px solid ${theme.appBorderColor}`,
 	position: 'relative',
+	borderTopLeftRadius: theme.appBorderRadius,
+	borderTopRightRadius: theme.appBorderRadius,
 
 	...(isSticky
 		? {

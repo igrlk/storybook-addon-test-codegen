@@ -44,6 +44,7 @@ export const NewStory: Story = {
         await userEvent.click(await canvas.findByRole('button'));
     }
 };`,
+			newStoryId: 'form--new-story',
 		},
 	],
 
@@ -88,6 +89,7 @@ export const NewStory: Story = {
         await userEvent.click(await canvas.findByRole('button'));
     }
 };`,
+			newStoryId: 'form--new-story',
 		},
 	],
 
@@ -132,6 +134,7 @@ export const NewStory: Story = {
         await userEvent.click(await canvas.findByRole('button'));
     }
 };`,
+			newStoryId: 'form--new-story',
 		},
 	],
 
@@ -174,13 +177,14 @@ export const Default: Story = {
         await userEvent.click(await canvas.findByRole('button'));
     }
 };`,
+			newStoryId: 'form--default',
 		},
 	],
 
 	[
 		'Pure javascript',
 		{
-			storyName: '123New Story',
+			storyName: '!@#$%^&*() New Story1 2!@#$%^&*()',
 			story: `import { Component } from './Component';
 
 export default {
@@ -206,12 +210,13 @@ export default {
 
 export const Default = {};
 
-export const NewStory = {
+export const NewStory12 = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
     }
 };`,
+			newStoryId: 'form--new-story-12',
 		},
 	],
 
@@ -276,6 +281,7 @@ export const NewStory: Story = {
         await userEvent.click(await canvas.findByRole('button'));
     }
 };`,
+			newStoryId: 'form--new-story',
 		},
 	],
 
@@ -344,6 +350,7 @@ export const Default: Story = {
         await userEvent.click(await canvas.findByRole('button'));
     }
 };`,
+			newStoryId: 'form--default',
 		},
 	],
 ] satisfies [
@@ -354,19 +361,20 @@ export const Default: Story = {
 		story: string;
 		code: GeneratedCode;
 		result: string;
+		newStoryId: string;
 	},
 ][];
 
 describe('generate-story-code', () => {
 	it.each(TEST_CASES)('%s', async (_, params) => {
-		expect(
-			await generateStoryCode({
-				code: params.code,
-				name: 'storyName' in params ? params.storyName : 'NewStory',
-				args: 'args' in params ? params.args : '{}',
-				csfId: 'form--default',
-				csf: loadCsf(params.story, { makeTitle: () => 'story' }),
-			}),
-		).toBe(params.result);
+		const { storyCode, newStoryId } = await generateStoryCode({
+			code: params.code,
+			name: 'storyName' in params ? params.storyName : 'NewStory',
+			args: 'args' in params ? params.args : '{}',
+			csfId: 'form--default',
+			csf: loadCsf(params.story, { makeTitle: () => 'story' }),
+		});
+		expect(storyCode).toBe(params.result);
+		expect(newStoryId).toBe(params.newStoryId);
 	});
 });

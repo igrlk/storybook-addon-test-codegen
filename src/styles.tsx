@@ -1,4 +1,4 @@
-import { CheckIcon, SaveIcon, SyncIcon } from '@storybook/icons';
+import { CheckIcon, CrossIcon, SaveIcon, SyncIcon } from '@storybook/icons';
 import { Button, Form } from 'storybook/internal/components';
 import { styled } from 'storybook/internal/theming';
 
@@ -42,6 +42,14 @@ export const StyledButton = styled(Button)(({ theme }) => ({
 	marginBottom: 1,
 	lineHeight: '12px',
 }));
+
+export const DisabledButton = styled(StyledButton)({
+	cursor: 'not-allowed',
+});
+
+export const SavedButton = styled(Button)({
+	color: 'white',
+});
 
 export const Group = styled.div({
 	display: 'flex',
@@ -107,10 +115,16 @@ export const SaveInput = styled(Form.Input)(({ theme }) => ({
 
 export const RotatingIcon = styled(SyncIcon)(({ theme }) => ({
 	animation: `${theme.animation.rotate360} 1s linear infinite;`,
-	marginRight: 2,
 }));
 
 export const StyledCheckIcon = styled(CheckIcon)({
-	width: 14,
-	marginRight: 2,
+	width: 12,
 });
+
+export const ErrorButton = styled(Button)(({ theme }) => ({
+	color: theme.color.negative,
+}));
+
+export const ErrorIcon = styled(CrossIcon)(({ theme }) => ({
+	color: theme.color.negative,
+}));

@@ -1,4 +1,4 @@
-import { toId } from '@storybook/csf';
+import { storyNameFromExport, toId } from '@storybook/csf';
 import { formatFileContent } from 'storybook/internal/common';
 import { type CsfFile, printCsf } from 'storybook/internal/csf-tools';
 import type { GeneratedCode } from './interactions-to-code';
@@ -43,7 +43,7 @@ export const generateStoryCode = async ({
 			match.toUpperCase().replace(/[-_ ]/g, ''),
 		); // from https://github.com/storybookjs/storybook/blob/1fdd2d6c675b81269125af5027e45a357c09f1fa/code/addons/controls/src/SaveStory.tsx#L122
 
-	const newStoryId = toId(componentId, newStoryName);
+	const newStoryId = toId(componentId, storyNameFromExport(newStoryName));
 
 	const node =
 		csf._storyExports[newStoryName] ??

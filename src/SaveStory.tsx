@@ -1,6 +1,7 @@
 import { CheckIcon } from '@storybook/icons';
 import { dequal as deepEqual } from 'dequal';
 import { type ChangeEvent, useEffect, useState } from 'react';
+import { TooltipNote, WithTooltip } from 'storybook/internal/components';
 import {
 	experimental_requestResponse,
 	useStorybookApi,
@@ -14,10 +15,14 @@ import type {
 	SaveNewStoryResponsePayload,
 } from './data';
 import {
+	DisabledButton,
+	ErrorButton,
+	ErrorIcon,
 	RotatingIcon,
 	SaveContainer,
 	SaveIconColorful,
 	SaveInput,
+	SavedButton,
 	StyledButton,
 	StyledCheckIcon,
 } from './styles';
@@ -39,7 +44,7 @@ export const SaveStoryButton = ({
 
 	const [name, setName] = useState('');
 	const [state, setState] = useState<
-		'button' | 'input' | 'creating' | 'success'
+		'button' | 'input' | 'creating' | 'success' | 'error'
 	>('button');
 
 	const storyData = api.getCurrentStoryData();
@@ -76,46 +81,84 @@ export const SaveStoryButton = ({
 			return;
 		}
 
-		const { newStoryId } = await experimental_requestResponse<
-			SaveNewStoryRequestPayload,
-			SaveNewStoryResponsePayload,
-			SaveNewStoryErrorPayload
-		>(
-			// biome-ignore lint/suspicious/noExplicitAny: Should be fixed with new package version
-			channel as any,
-			EVENTS.SAVE_NEW_STORY_REQUEST,
-			EVENTS.SAVE_NEW_STORY_RESPONSE,
-			payload,
-		);
+		try {
+			const { newStoryId } = await experimental_requestResponse<
+				SaveNewStoryRequestPayload,
+				SaveNewStoryResponsePayload,
+				SaveNewStoryErrorPayload
+			>(
+				// biome-ignore lint/suspicious/noExplicitAny: Should be fixed with new package version
+				channel as any,
+				EVENTS.SAVE_NEW_STORY_REQUEST,
+				EVENTS.SAVE_NEW_STORY_RESPONSE,
+				payload,
+			);
 
-		if (newStoryId === storyData.id) {
-			setState('success');
+			if (newStoryId === storyData.id) {
+				setState('success');
 
-			setTimeout(() => {
+				setTimeout(() => {
+					setState('button');
+				}, 2000);
+			} else {
 				setState('button');
-			}, 2000);
-		} else {
+
+				api.addNotification({
+					id: 'create-new-story-file-success',
+					content: {
+						headline: 'Story file created',
+						subHeadline: `${name} was created`,
+					},
+					duration: 8_000,
+					icon: <CheckIcon />,
+				});
+			}
+
+			await trySelectNewStory(api.selectStory, newStoryId);
+		} catch (ex) {
+			console.error(ex);
+
 			api.addNotification({
-				id: 'create-new-story-file-success',
+				id: 'create-new-story-file-error',
 				content: {
-					headline: 'Story file created',
-					subHeadline: `${name} was created`,
+					headline: 'Failed to save story',
+					subHeadline: 'Please try again',
 				},
 				duration: 8_000,
 				icon: <CheckIcon />,
 			});
-			setState('button');
-		}
 
-		await trySelectNewStory(api.selectStory, newStoryId);
+			setState('error');
+
+			setTimeout(() => {
+				setState('button');
+			}, 2000);
+		}
 	};
+
+	const isDevelopment =
+		// biome-ignore lint/suspicious/noExplicitAny:
+		(global as any as { CONFIG_TYPE: string }).CONFIG_TYPE === 'DEVELOPMENT';
 
 	return (
 		<SaveContainer>
-			{state === 'button' && (
+			{state === 'button' && isDevelopment && (
 				<StyledButton onClick={() => setState('input')} variant="outline">
-					<SaveIconColorful size={16} /> Save story
+					<SaveIconColorful size={16} /> Save to story
 				</StyledButton>
+			)}
+
+			{state === 'button' && !isDevelopment && (
+				<WithTooltip
+					as="div"
+					hasChrome={false}
+					trigger="hover"
+					tooltip={<TooltipNote note="Only available in development mode" />}
+				>
+					<DisabledButton variant="outline" type="button">
+						<SaveIconColorful size={16} /> Save to story
+					</DisabledButton>
+				</WithTooltip>
 			)}
 
 			{state === 'input' && (
@@ -135,14 +178,20 @@ export const SaveStoryButton = ({
 
 			{state === 'creating' && (
 				<StyledButton onClick={() => setState('input')} variant="outline">
-					<RotatingIcon /> Save to story
+					<RotatingIcon /> Saving
 				</StyledButton>
 			)}
 
 			{state === 'success' && (
-				<StyledButton variant="outline" type="button">
+				<SavedButton variant="solid" type="button">
 					<StyledCheckIcon /> Saved
-				</StyledButton>
+				</SavedButton>
+			)}
+
+			{state === 'error' && (
+				<ErrorButton variant="ghost" type="button">
+					<ErrorIcon /> Failed to save
+				</ErrorButton>
 			)}
 		</SaveContainer>
 	);
