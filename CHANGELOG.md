@@ -1,3 +1,15 @@
+# v0.0.16 (Wed Jan 29 2025)
+
+#### 🐛 Bug Fix
+
+- better addon gif, new story [#12](https://github.com/igrlk/storybook-addon-test-codegen/pull/12) ([@igrlk](https://github.com/igrlk))
+
+#### Authors: 1
+
+- Igor Luchenkov ([@igrlk](https://github.com/igrlk))
+
+---
+
 # v0.0.15 (Sat Jan 25 2025)
 
 #### 🐛 Bug Fix
