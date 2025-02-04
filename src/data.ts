@@ -11,5 +11,3 @@ export type SaveNewStoryRequestPayload = {
 export type SaveNewStoryResponsePayload = {
 	newStoryId: string;
 };
-
-export type SaveNewStoryErrorPayload = {};

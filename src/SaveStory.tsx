@@ -10,7 +10,6 @@ import type { Args } from 'storybook/internal/types';
 import type { GeneratedCode } from './codegen/interactions-to-code';
 import { EVENTS } from './constants';
 import type {
-	SaveNewStoryErrorPayload,
 	SaveNewStoryRequestPayload,
 	SaveNewStoryResponsePayload,
 } from './data';
@@ -84,8 +83,7 @@ export const SaveStoryButton = ({
 		try {
 			const { newStoryId } = await experimental_requestResponse<
 				SaveNewStoryRequestPayload,
-				SaveNewStoryResponsePayload,
-				SaveNewStoryErrorPayload
+				SaveNewStoryResponsePayload
 			>(
 				// biome-ignore lint/suspicious/noExplicitAny: Should be fixed with new package version
 				channel as any,

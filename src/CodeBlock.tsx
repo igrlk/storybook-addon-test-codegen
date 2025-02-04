@@ -11,7 +11,6 @@ import { styled } from 'storybook/internal/theming';
 const Container = styled.div(({ theme }) => ({
 	display: 'flex',
 	flexDirection: 'column',
-	borderRadius: theme.appBorderRadius,
 	border: `1px solid ${theme.appBorderColor}`,
 }));
 
@@ -25,8 +24,6 @@ const Label = styled.div<{
 	background: theme.barBg,
 	borderBottom: `1px solid ${theme.appBorderColor}`,
 	position: 'relative',
-	borderTopLeftRadius: theme.appBorderRadius,
-	borderTopRightRadius: theme.appBorderRadius,
 
 	...(isSticky
 		? {
