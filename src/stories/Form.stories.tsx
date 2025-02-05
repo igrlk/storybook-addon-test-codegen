@@ -163,7 +163,6 @@ const Component = () => {
 };
 
 const meta: Meta<typeof Component> = {
-	title: 'Form',
 	component: Component,
 };
 
