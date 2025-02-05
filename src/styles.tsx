@@ -1,4 +1,4 @@
-import { CheckIcon, CrossIcon, SaveIcon, SyncIcon } from '@storybook/icons';
+import { CheckIcon, CrossIcon, SyncIcon } from '@storybook/icons';
 import { Button, Form } from 'storybook/internal/components';
 import { styled } from 'storybook/internal/theming';
 
@@ -32,7 +32,7 @@ export const StyledSubnav = styled.nav(({ theme }) => ({
 
 export const StyledButton = styled(Button)(({ theme }) => ({
 	borderRadius: 4,
-	padding: 6,
+	padding: '6px 8px',
 	color: theme.textMutedColor,
 	'&:not(:disabled)': {
 		'&:hover,&:focus-visible': {
@@ -86,7 +86,8 @@ export const SaveContainer = styled.form({
 	gap: 8,
 });
 
-export const SaveIconColorful = styled(SaveIcon)(({ theme }) => ({
+export const SaveIconColorful = styled(CheckIcon)(({ theme }) => ({
+	width: 12,
 	color: theme.color.secondary,
 }));
 
