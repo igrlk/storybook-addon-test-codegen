@@ -19,11 +19,11 @@ npm install --save-dev storybook-addon-test-codegen
 
 ### Peer Dependency
 
-This addon requires `storybook` version `^8` to be installed in your project. Ensure you have a compatible version by
-running:
+This addon requires `storybook` version `>=8.2.0` to be installed in your project. Ensure you have a compatible version
+by running:
 
 ```sh
-npm install --save-dev storybook@^8
+npm install --save-dev storybook@latest
 ````
 
 If you’re not using Storybook already, you can refer to
