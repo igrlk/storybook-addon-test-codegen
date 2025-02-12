@@ -11,12 +11,15 @@ const EVENT_TO_USER_EVENT = {
 	focus: 'focus',
 };
 
-export const convertInteractionsToCode = (
-	interactions: Interaction[],
-): {
+export type GeneratedCode = {
 	imports: string[];
 	play: string[];
-} => {
+};
+
+export const convertInteractionsToCode = (
+	interactions: Interaction[],
+	hasTypescript: boolean,
+): GeneratedCode => {
 	const codeLines: string[] = [];
 	let usesBody = false;
 	let usesCanvas = false;
@@ -31,7 +34,10 @@ export const convertInteractionsToCode = (
 		}
 
 		let beginning = `await userEvent.${EVENT_TO_USER_EVENT[event.type]}`;
-		let { queryString, assertion } = getQueryString(interaction.elementQuery);
+		let { queryString, assertion } = getQueryString(
+			interaction.elementQuery,
+			hasTypescript,
+		);
 		let valueStr = '';
 
 		if (event.type === 'type') {
@@ -113,11 +119,15 @@ export const convertInteractionsToCode = (
 
 export const tab = (str: string) => `\t${str}`;
 
-const getQueryString = (query: Interaction['elementQuery']) => {
+const getQueryString = (
+	query: Interaction['elementQuery'],
+	hasTypescript: boolean,
+) => {
 	const beginning = `${query.object === 'canvas' ? 'await ' : ''}${query.object}.${query.method}`;
 	const args = argsToString(query.args);
 
-	const asElement = query.object === 'body' ? ' as HTMLElement' : '';
+	const asElement =
+		query.object === 'body' && hasTypescript ? ' as HTMLElement' : '';
 	const queryString = `${beginning}(${args})${asElement}`;
 
 	const result =
