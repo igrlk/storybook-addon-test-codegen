@@ -49,6 +49,8 @@ export const InteractionRecorder = () => {
 		resetEvents();
 	}, [api.getCurrentStoryData()?.id]);
 
+	console.log(api.getCurrentStoryData());
+
 	const [debouncedInteractions] = useDebounce(interactions, 100);
 	const code = useMemo(
 		() => convertInteractionsToCode(debouncedInteractions),

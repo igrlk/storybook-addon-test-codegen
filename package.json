@@ -85,7 +85,7 @@
 		"prompts": "^2.4.2",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"storybook": "^8.0.0",
+		"storybook": "^8.5.3",
 		"tailwindcss": "^3.4.17",
 		"tsup": "^8.2.4",
 		"typescript": "^5.5.4",
@@ -95,7 +95,7 @@
 		"zx": "^7.2.3"
 	},
 	"peerDependencies": {
-		"storybook": ">=8.2.0"
+		"storybook": ">=8.3.0"
 	},
 	"publishConfig": {
 		"access": "public"
