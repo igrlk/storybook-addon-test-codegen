@@ -1,3 +1,15 @@
+# v1.0.2 (Wed Feb 12 2025)
+
+#### 🐛 Bug Fix
+
+- don't type-cast if story is in javascript [#15](https://github.com/igrlk/storybook-addon-test-codegen/pull/15) ([@igrlk](https://github.com/igrlk))
+
+#### Authors: 1
+
+- Igor Luchenkov ([@igrlk](https://github.com/igrlk))
+
+---
+
 # v1.0.1 (Tue Feb 11 2025)
 
 #### 🐛 Bug Fix
