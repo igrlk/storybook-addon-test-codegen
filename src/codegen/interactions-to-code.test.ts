@@ -366,7 +366,31 @@ describe('convertInteractionsToCode', () => {
 					},
 					event: interaction.event,
 				})),
+				true,
 			),
 		).toEqual({ imports, play });
+	});
+
+	test("doesn't generate 'as HTMLElement' without typescript", () => {
+		expect(
+			convertInteractionsToCode(
+				[
+					{
+						elementQuery: {
+							object: 'body',
+							method: 'querySelector',
+							args: ['input'],
+							nth: null,
+						},
+						event: { type: 'click' },
+					},
+				],
+				false,
+			),
+		).toMatchObject({
+			play: expect.arrayContaining([
+				tab(`await userEvent.click(body.querySelector('input'));`),
+			]),
+		});
 	});
 });

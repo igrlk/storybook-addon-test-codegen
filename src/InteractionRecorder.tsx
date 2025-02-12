@@ -48,10 +48,13 @@ export const InteractionRecorder = () => {
 		resetEvents();
 	}, [api.getCurrentStoryData()?.id]);
 
+	const { importPath } = api.getCurrentStoryData();
+	const hasTypescript = ['.ts', '.tsx'].some((ext) => importPath.endsWith(ext));
+
 	const [debouncedInteractions] = useDebounce(interactions, 100);
 	const code = useMemo(
-		() => convertInteractionsToCode(debouncedInteractions),
-		[debouncedInteractions],
+		() => convertInteractionsToCode(debouncedInteractions, hasTypescript),
+		[debouncedInteractions, hasTypescript],
 	);
 
 	const containerRef = useRef<HTMLDivElement | null>(null);
