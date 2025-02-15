@@ -3,10 +3,10 @@ import { addons, types } from 'storybook/internal/manager-api';
 import { AddonPanel, Badge, Spaced } from 'storybook/internal/components';
 import { InteractionRecorder } from './InteractionRecorder';
 import { ADDON_ID, PANEL_ID } from './constants';
-import { useIsRecording, useRecorderState } from './state';
+import { useInteractions, useIsRecording } from './state';
 
 function Title() {
-	const [{ interactions }] = useRecorderState();
+	const [interactions] = useInteractions();
 	const [isRecording] = useIsRecording();
 
 	return (
@@ -15,7 +15,9 @@ function Title() {
 				<span style={{ display: 'inline-block', verticalAlign: 'middle' }}>
 					Interaction Recorder
 				</span>
-				{isRecording && <Badge status="neutral">{interactions.length}</Badge>}
+				{isRecording && (
+					<Badge status="neutral">{JSON.parse(interactions).length}</Badge>
+				)}
 			</Spaced>
 		</div>
 	);
