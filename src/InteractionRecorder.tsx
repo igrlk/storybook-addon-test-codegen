@@ -44,13 +44,16 @@ export const InteractionRecorder = () => {
 
 	const api = useStorybookApi();
 
+	const storyData = api.getCurrentStoryData();
+
 	// biome-ignore lint/correctness/useExhaustiveDependencies: reset events & recording when story changes
 	useEffect(() => {
 		resetEvents();
-	}, [api.getCurrentStoryData()?.id]);
+	}, [storyData?.id]);
 
-	const { importPath } = api.getCurrentStoryData();
-	const hasTypescript = ['.ts', '.tsx'].some((ext) => importPath.endsWith(ext));
+	const hasTypescript = ['.ts', '.tsx'].some((ext) =>
+		storyData?.importPath.endsWith(ext),
+	);
 
 	const [debouncedInteractions] = useDebounce(interactions, 100);
 	const code = useMemo(

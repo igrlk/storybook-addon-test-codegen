@@ -104,25 +104,5 @@ export default defineConfig(async (options) => {
 		});
 	}
 
-	// if (options.watch) {
-	// 	configs.push({
-	// 		entry: [
-	// 			...exportEntries,
-	// 			...managerEntries,
-	// 			...previewEntries,
-	// 			...nodeEntries,
-	// 		],
-	// 		external: [...globalManagerPackages, ...globalPreviewPackages],
-	// 		async onSuccess() {
-	// 			const process = exec('pnpm storybook --no-open');
-	// 			process.stdout?.on('data', console.log);
-	//
-	// 			return () => {
-	// 				process.kill();
-	// 			};
-	// 		},
-	// 	});
-	// }
-
 	return configs;
 });
