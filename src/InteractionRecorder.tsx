@@ -7,7 +7,7 @@ import { CodeBlock } from './CodeBlock';
 import { combineInteractions } from './codegen/combine-interactions';
 import { convertInteractionsToCode } from './codegen/interactions-to-code';
 import { EVENTS } from './constants';
-import { type Interaction, useIsRecording, useRecorderState } from './state';
+import { type Interaction, useInteractions, useIsRecording } from './state';
 import {
 	CodeBlocksWrapper,
 	Container,
@@ -21,39 +21,40 @@ import {
 } from './styles';
 
 export const InteractionRecorder = () => {
-	const [{ interactions }, setState] = useRecorderState();
+	const [interactions, setInteractions] = useInteractions();
 	const [isRecording, setIsRecording] = useIsRecording();
 
 	useChannel({
 		[EVENTS.INTERACTION]: (interaction: Interaction) => {
-			setState((state) => ({
-				...state,
-				interactions: combineInteractions(interaction, state.interactions),
-			}));
+			setInteractions((prevInteractions) =>
+				JSON.stringify(
+					combineInteractions(interaction, JSON.parse(prevInteractions)),
+				),
+			);
 		},
 	});
 
 	const toggleRecording = () => setIsRecording(!isRecording);
 
-	const resetEvents = () =>
-		setState((state) => ({
-			...state,
-			interactions: [],
-		}));
+	const resetInteractions = () => setInteractions(() => JSON.stringify([]));
 
 	const api = useStorybookApi();
 
+	const storyData = api.getCurrentStoryData();
+
 	// biome-ignore lint/correctness/useExhaustiveDependencies: reset events & recording when story changes
 	useEffect(() => {
-		resetEvents();
-	}, [api.getCurrentStoryData()?.id]);
+		resetInteractions();
+	}, [storyData?.id]);
 
-	const { importPath } = api.getCurrentStoryData();
-	const hasTypescript = ['.ts', '.tsx'].some((ext) => importPath.endsWith(ext));
+	const hasTypescript = ['.ts', '.tsx'].some((ext) =>
+		storyData?.importPath.endsWith(ext),
+	);
 
 	const [debouncedInteractions] = useDebounce(interactions, 100);
 	const code = useMemo(
-		() => convertInteractionsToCode(debouncedInteractions, hasTypescript),
+		() =>
+			convertInteractionsToCode(JSON.parse(debouncedInteractions), hasTypescript),
 		[debouncedInteractions, hasTypescript],
 	);
 
@@ -98,7 +99,7 @@ export const InteractionRecorder = () => {
 								{isRecording ? 'Stop' : 'Start'} recording
 							</StyledButton>
 
-							<StyledButton onClick={resetEvents} disabled={!code.play.length}>
+							<StyledButton onClick={resetInteractions} disabled={!code.play.length}>
 								<DeleteIcon />
 								Reset
 							</StyledButton>
