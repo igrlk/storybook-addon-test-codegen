@@ -1,3 +1,15 @@
+# v1.0.3 (Sat Feb 15 2025)
+
+#### 🐛 Bug Fix
+
+- stringify interactions state [#16](https://github.com/igrlk/storybook-addon-test-codegen/pull/16) ([@igrlk](https://github.com/igrlk))
+
+#### Authors: 1
+
+- Igor Luchenkov ([@igrlk](https://github.com/igrlk))
+
+---
+
 # v1.0.2 (Wed Feb 12 2025)
 
 #### 🐛 Bug Fix

@@ -30,12 +30,11 @@ export type Interaction = {
 	event: InteractionEvent;
 };
 
-export const useRecorderState = () =>
-	useAddonState<{
-		interactions: Interaction[];
-	}>(ADDON_ID, {
-		interactions: [],
-	});
+// Interactions are stored as stringified Interaction[],
+// because latest storybook has some issues with storing objects in addon state,
+// where whenever you update the array, if number of elements are same, it doesn't trigger re-render
+export const useInteractions = () =>
+	useAddonState<string>(ADDON_ID, JSON.stringify([]));
 
 export const useIsRecording = () => {
 	const [globals, setGlobals] = useGlobals();

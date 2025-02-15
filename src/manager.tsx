@@ -5,10 +5,10 @@ import type { ResponseData } from 'storybook/internal/core-events';
 import { InteractionRecorder } from './InteractionRecorder';
 import { ADDON_ID, EVENTS, PANEL_ID } from './constants';
 import type { SaveNewStoryResponsePayload } from './data';
-import { useIsRecording, useRecorderState } from './state';
+import { useInteractions, useIsRecording } from './state';
 
 function Title() {
-	const [{ interactions }] = useRecorderState();
+	const [interactions] = useInteractions();
 	const [isRecording] = useIsRecording();
 
 	return (
@@ -17,7 +17,9 @@ function Title() {
 				<span style={{ display: 'inline-block', verticalAlign: 'middle' }}>
 					Interaction Recorder
 				</span>
-				{isRecording && <Badge status="neutral">{interactions.length}</Badge>}
+				{isRecording && (
+					<Badge status="neutral">{JSON.parse(interactions).length}</Badge>
+				)}
 			</Spaced>
 		</div>
 	);
