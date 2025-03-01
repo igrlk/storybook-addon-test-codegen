@@ -1,6 +1,6 @@
 # Storybook Addon Test Codegen
 
-[![NPM version](https://badge.fury.io/js/storybook-addon-test-codegen.svg)](https://www.npmjs.com/package/storybook-addon-test-codegen)
+[![NPM version](https://img.shields.io/npm/v/storybook-addon-test-codegen)](https://www.npmjs.com/package/storybook-addon-test-codegen)
 [![NPM downloads](https://img.shields.io/npm/dt/storybook-addon-test-codegen)](https://www.npmjs.com/package/storybook-addon-test-codegen)
 [![GitHub license](https://img.shields.io/github/license/igrlk/storybook-addon-test-codegen)](https://github.com/igrlk/storybook-addon-test-codegen/blob/main/LICENSE)
 
@@ -29,6 +29,8 @@ npm install --save-dev storybook@latest
 If you’re not using Storybook already, you can refer to
 the [Storybook Getting Started Guide](https://storybook.js.org/docs) for installation instructions.
 
+For `storybook@8.2.*`, use version `1.0.3` of this addon.
+
 ### Register the Addon
 
 Once installed, register it as an addon in `.storybook/main.js`.
@@ -55,7 +57,9 @@ export default config;
 Enable recording in the Interaction Recorder tab in the Storybook UI. Interact with your components as you normally
 would, and the addon will generate test code for you.
 
-Copy both imports and the generated code to your test file.
+Click on "Save to story" to save the generated code to the story file. Done 🎉
+
+Alternatively, copy both imports and the generated code to your test file like so:
 
 ```jsx
 // MyComponent.stories.tsx
@@ -63,7 +67,7 @@ Copy both imports and the generated code to your test file.
 // 👇 Add the generated imports here
 import {userEvent, waitFor, within, expect} from "@storybook/test";
 
-export const MyComponent: Story = {
+export const MyComponent = {
   // ...rest of the story
 
   // 👇 Add the generated test code here
