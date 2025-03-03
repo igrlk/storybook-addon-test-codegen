@@ -7,7 +7,9 @@
 Interact with your Storybook and get test code generated for
 you. To see this live, check out the [demo](https://igrlk.github.io/storybook-addon-test-codegen/).
 
-![Alt Text](/assets/addon.gif)
+<video autoplay loop muted playsinline>
+  <source src="assets/addon.mp4" type="video/mp4">
+</video>
 
 ## Installation
 
