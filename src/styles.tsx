@@ -1,4 +1,5 @@
-import { Button } from 'storybook/internal/components';
+import { CheckIcon, CrossIcon, SyncIcon } from '@storybook/icons';
+import { Button, Form } from 'storybook/internal/components';
 import { styled } from 'storybook/internal/theming';
 
 export const Container = styled.div(({ theme }) => ({
@@ -26,12 +27,12 @@ export const StyledSubnav = styled.nav(({ theme }) => ({
 	display: 'flex',
 	alignItems: 'center',
 	justifyContent: 'space-between',
-	paddingLeft: 15,
+	padding: '0 15px',
 }));
 
 export const StyledButton = styled(Button)(({ theme }) => ({
 	borderRadius: 4,
-	padding: 6,
+	padding: '6px 8px',
 	color: theme.textMutedColor,
 	'&:not(:disabled)': {
 		'&:hover,&:focus-visible': {
@@ -41,6 +42,14 @@ export const StyledButton = styled(Button)(({ theme }) => ({
 	marginBottom: 1,
 	lineHeight: '12px',
 }));
+
+export const DisabledButton = styled(StyledButton)({
+	cursor: 'not-allowed',
+});
+
+export const SavedButton = styled(Button)({
+	color: 'white',
+});
 
 export const Group = styled.div({
 	display: 'flex',
@@ -70,3 +79,53 @@ export const CodeBlocksWrapper = styled.div({
 	flexDirection: 'column',
 	gap: '12px',
 });
+
+export const SaveContainer = styled.form({
+	display: 'flex',
+	alignItems: 'center',
+	gap: 8,
+});
+
+export const SaveIconColorful = styled(CheckIcon)(({ theme }) => ({
+	width: 12,
+	color: theme.color.secondary,
+}));
+
+export const SaveInput = styled(Form.Input)(({ theme }) => ({
+	paddingLeft: 10,
+	paddingRight: 10,
+	fontSize: theme.typography.size.s1,
+	height: 28,
+	minHeight: 'unset',
+
+	...(theme.base === 'light' && {
+		color: theme.color.darkest,
+	}),
+
+	'::placeholder': {
+		color: theme.color.mediumdark,
+	},
+	'&:invalid:not(:placeholder-shown)': {
+		boxShadow: `${theme.color.negative} 0 0 0 1px inset`,
+	},
+	'&::-webkit-search-decoration, &::-webkit-search-cancel-button, &::-webkit-search-results-button, &::-webkit-search-results-decoration':
+		{
+			display: 'none',
+		},
+}));
+
+export const RotatingIcon = styled(SyncIcon)(({ theme }) => ({
+	animation: `${theme.animation.rotate360} 1s linear infinite;`,
+}));
+
+export const StyledCheckIcon = styled(CheckIcon)({
+	width: 12,
+});
+
+export const ErrorButton = styled(Button)(({ theme }) => ({
+	color: theme.color.negative,
+}));
+
+export const ErrorIcon = styled(CrossIcon)(({ theme }) => ({
+	color: theme.color.negative,
+}));

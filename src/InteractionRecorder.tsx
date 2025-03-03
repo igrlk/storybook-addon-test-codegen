@@ -4,6 +4,7 @@ import { Bar, EmptyTabContent } from 'storybook/internal/components';
 import { useChannel, useStorybookApi } from 'storybook/internal/manager-api';
 import { useDebounce } from 'use-debounce';
 import { CodeBlock } from './CodeBlock';
+import { SaveStoryButton } from './SaveStory';
 import { combineInteractions } from './codegen/combine-interactions';
 import { convertInteractionsToCode } from './codegen/interactions-to-code';
 import { EVENTS } from './constants';
@@ -104,6 +105,8 @@ export const InteractionRecorder = () => {
 								Reset
 							</StyledButton>
 						</Group>
+
+						{code.play.length > 0 && <SaveStoryButton code={code} />}
 					</StyledSubnav>
 				</Bar>
 			</SubnavWrapper>

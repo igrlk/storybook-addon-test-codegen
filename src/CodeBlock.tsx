@@ -11,7 +11,6 @@ import { styled } from 'storybook/internal/theming';
 const Container = styled.div(({ theme }) => ({
 	display: 'flex',
 	flexDirection: 'column',
-	borderRadius: theme.appBorderRadius,
 	border: `1px solid ${theme.appBorderColor}`,
 }));
 

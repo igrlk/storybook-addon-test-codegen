@@ -8,7 +8,7 @@
 		"isolatedModules": true,
 		"strict": true,
 		"jsx": "react-jsx",
-		"lib": ["es2020", "dom", "dom.iterable"],
+		"lib": ["esnext", "dom", "dom.iterable"],
 		"module": "commonjs",
 		"noImplicitAny": true,
 		"rootDir": "./src",

@@ -1,8 +1,10 @@
 import { addons, types } from 'storybook/internal/manager-api';
 
 import { AddonPanel, Badge, Spaced } from 'storybook/internal/components';
+import type { ResponseData } from 'storybook/internal/core-events';
 import { InteractionRecorder } from './InteractionRecorder';
-import { ADDON_ID, PANEL_ID } from './constants';
+import { ADDON_ID, EVENTS, PANEL_ID } from './constants';
+import type { SaveNewStoryResponsePayload } from './data';
 import { useInteractions, useIsRecording } from './state';
 
 function Title() {
@@ -23,7 +25,28 @@ function Title() {
 	);
 }
 
-addons.register(ADDON_ID, () => {
+addons.register(ADDON_ID, (api) => {
+	const channel = api.getChannel();
+
+	channel?.on(
+		EVENTS.SAVE_NEW_STORY_RESPONSE,
+		(data: ResponseData<SaveNewStoryResponsePayload>) => {
+			if (!data.success) {
+				return;
+			}
+			const story = api.getCurrentStoryData();
+
+			if (story.type !== 'story') {
+				return;
+			}
+
+			api.resetStoryArgs(story);
+			if (data.payload.newStoryId) {
+				api.selectStory(data.payload.newStoryId);
+			}
+		},
+	);
+
 	addons.add(PANEL_ID, {
 		type: types.PANEL,
 		title: Title,
