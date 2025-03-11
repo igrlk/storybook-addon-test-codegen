@@ -7,7 +7,7 @@
 		"incremental": false,
 		"isolatedModules": true,
 		"strict": true,
-		"jsx": "react-jsx",
+		"jsx": "react",
 		"lib": ["esnext", "dom", "dom.iterable"],
 		"module": "commonjs",
 		"noImplicitAny": true,

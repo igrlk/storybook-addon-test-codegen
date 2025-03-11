@@ -1,3 +1,5 @@
+// biome-ignore lint/correctness/noUnusedImports: Must be here for react@19 and non-react projects support
+import React from 'react';
 import { addons, types } from 'storybook/internal/manager-api';
 
 import { AddonPanel, Badge, Spaced } from 'storybook/internal/components';

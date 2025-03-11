@@ -1,4 +1,6 @@
 import { DeleteIcon } from '@storybook/icons';
+// biome-ignore lint/correctness/noUnusedImports: Must be here for react@19 and non-react projects support
+import React from 'react';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Bar, EmptyTabContent } from 'storybook/internal/components';
 import { useChannel, useStorybookApi } from 'storybook/internal/manager-api';
