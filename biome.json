@@ -29,7 +29,11 @@
 			"correctness": {
 				"noUnusedImports": {
 					"level": "error"
-				}
+				},
+				"useExhaustiveDependencies": "error"
+			},
+			"nursery": {
+				"recommended": true
 			}
 		}
 	},

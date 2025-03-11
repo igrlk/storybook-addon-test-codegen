@@ -1,4 +1,6 @@
 import { CheckIcon, CopyIcon } from '@storybook/icons';
+// biome-ignore lint/correctness/noUnusedImports: Must be here for react@19 and non-react projects support
+import React from 'react';
 import { useState } from 'react';
 import {
 	IconButton,
