@@ -1,5 +1,7 @@
 import { CheckIcon } from '@storybook/icons';
 import { dequal as deepEqual } from 'dequal';
+// biome-ignore lint/correctness/noUnusedImports: Must be here for react@19 and non-react projects support
+import React from 'react';
 import { type ChangeEvent, useEffect, useState } from 'react';
 import { TooltipNote, WithTooltip } from 'storybook/internal/components';
 import {
