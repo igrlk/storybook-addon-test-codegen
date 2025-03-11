@@ -1,3 +1,15 @@
+# v1.1.1 (Tue Mar 11 2025)
+
+#### 🐛 Bug Fix
+
+- support for react@19 & non-react packages [#20](https://github.com/igrlk/storybook-addon-test-codegen/pull/20) ([@igrlk](https://github.com/igrlk))
+
+#### Authors: 1
+
+- Igor Luchenkov ([@igrlk](https://github.com/igrlk))
+
+---
+
 # v1.1.0 (Mon Mar 03 2025)
 
 #### 🚀 Enhancement
