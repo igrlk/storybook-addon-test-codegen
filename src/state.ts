@@ -1,7 +1,7 @@
 import { useAddonState } from 'storybook/internal/manager-api';
 import { useGlobals } from 'storybook/internal/manager-api';
 import type { ElementQuery } from './codegen/generate-query';
-import { ADDON_ID, IS_RECORDING_KEY } from './constants';
+import { ADDON_ID, IS_ASSERTING_KEY, IS_RECORDING_KEY } from './constants';
 
 export type ClickEvent = { type: 'click' | 'dblclick' };
 export type TypeEvent = { type: 'type'; value: string };
@@ -16,6 +16,20 @@ export type KeyupEvent = {
 export type SelectEvent = { type: 'select'; options: string[] };
 export type UploadEvent = { type: 'upload'; files: string[] };
 export type FocusEvent = { type: 'focus'; shift: boolean };
+export type AssertionEvent = {
+	type: 'assertion';
+	assertionType:
+		| 'toBeVisible'
+		| 'toBeInTheDocument'
+		| 'toBeChecked'
+		| 'not.toBeChecked'
+		| 'toBeDisabled'
+		| 'toBeEnabled'
+		| 'toHaveFocus'
+		| 'toHaveValue'
+		| 'toHaveTextContent';
+	args: unknown[];
+};
 export type InteractionEvent =
 	| ClickEvent
 	| TypeEvent
@@ -23,7 +37,8 @@ export type InteractionEvent =
 	| KeyupEvent
 	| SelectEvent
 	| UploadEvent
-	| FocusEvent;
+	| FocusEvent
+	| AssertionEvent;
 
 export type Interaction = {
 	elementQuery: ElementQuery;
@@ -44,6 +59,19 @@ export const useIsRecording = () => {
 		(isRecording: boolean) => {
 			setGlobals({
 				[IS_RECORDING_KEY]: isRecording,
+			});
+		},
+	] as const;
+};
+
+export const useIsAsserting = () => {
+	const [globals, setGlobals] = useGlobals();
+
+	return [
+		globals[IS_ASSERTING_KEY] === true,
+		(isAssertionMode: boolean) => {
+			setGlobals({
+				[IS_ASSERTING_KEY]: isAssertionMode,
 			});
 		},
 	] as const;

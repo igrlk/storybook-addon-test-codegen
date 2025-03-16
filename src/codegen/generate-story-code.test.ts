@@ -1,5 +1,5 @@
 import { loadCsf } from 'storybook/internal/csf-tools';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { generateStoryCode } from './generate-story-code';
 import type { GeneratedCode } from './interactions-to-code';
 
@@ -365,8 +365,8 @@ export const Default: Story = {
 	},
 ][];
 
-describe('generate-story-code', () => {
-	it.each(TEST_CASES)('%s', async (_, params) => {
+describe('generateStoryCode', () => {
+	test.each(TEST_CASES)('%s', async (_, params) => {
 		const { storyCode, newStoryId } = await generateStoryCode({
 			code: params.code,
 			name: 'storyName' in params ? params.storyName : 'NewStory',

@@ -1,4 +1,4 @@
-import { CheckIcon, CrossIcon, SyncIcon } from '@storybook/icons';
+import { AddIcon, CheckIcon, CrossIcon, SyncIcon } from '@storybook/icons';
 import { Button, Form } from 'storybook/internal/components';
 import { styled } from 'storybook/internal/theming';
 
@@ -31,6 +31,7 @@ export const StyledSubnav = styled.nav(({ theme }) => ({
 }));
 
 export const StyledButton = styled(Button)(({ theme }) => ({
+	position: 'relative',
 	borderRadius: 4,
 	padding: '6px 8px',
 	color: theme.textMutedColor,
@@ -42,6 +43,37 @@ export const StyledButton = styled(Button)(({ theme }) => ({
 	marginBottom: 1,
 	lineHeight: '12px',
 }));
+
+export const StyledButtonBigContent = styled.div(
+	({
+		isHidden,
+	}: {
+		isHidden: boolean;
+	}) => ({
+		display: 'flex',
+		alignItems: 'center',
+		gap: 6,
+		opacity: isHidden ? 0 : 1,
+	}),
+);
+
+export const StyledButtonSmallContent = styled(StyledButtonBigContent)({
+	left: 8,
+	top: '50%',
+	transform: 'translateY(-50%)',
+	position: 'absolute',
+});
+
+export const AssertionButton = styled(StyledButton)(
+	({
+		isAsserting,
+	}: {
+		isAsserting: boolean;
+	}) => ({
+		backgroundColor: isAsserting ? 'rgba(0, 128, 0, 0.1)' : undefined,
+		color: isAsserting ? 'rgb(0, 128, 0)' : undefined,
+	}),
+);
 
 export const DisabledButton = styled(StyledButton)({
 	cursor: 'not-allowed',
@@ -129,3 +161,7 @@ export const ErrorButton = styled(Button)(({ theme }) => ({
 export const ErrorIcon = styled(CrossIcon)(({ theme }) => ({
 	color: theme.color.negative,
 }));
+
+export const AssertIcon = styled(AddIcon)({
+	width: 14,
+});

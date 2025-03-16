@@ -10,8 +10,15 @@ import { SaveStoryButton } from './SaveStory';
 import { combineInteractions } from './codegen/combine-interactions';
 import { convertInteractionsToCode } from './codegen/interactions-to-code';
 import { EVENTS } from './constants';
-import { type Interaction, useInteractions, useIsRecording } from './state';
 import {
+	type Interaction,
+	useInteractions,
+	useIsAsserting,
+	useIsRecording,
+} from './state';
+import {
+	AssertIcon,
+	AssertionButton,
 	CodeBlocksWrapper,
 	Container,
 	ContentWrapper,
@@ -19,6 +26,8 @@ import {
 	Group,
 	RecordIcon,
 	StyledButton,
+	StyledButtonBigContent,
+	StyledButtonSmallContent,
 	StyledSubnav,
 	SubnavWrapper,
 } from './styles';
@@ -26,6 +35,7 @@ import {
 export const InteractionRecorder = () => {
 	const [interactions, setInteractions] = useInteractions();
 	const [isRecording, setIsRecording] = useIsRecording();
+	const [isAsserting, setIsAsserting] = useIsAsserting();
 
 	useChannel({
 		[EVENTS.INTERACTION]: (interaction: Interaction) => {
@@ -37,7 +47,15 @@ export const InteractionRecorder = () => {
 		},
 	});
 
-	const toggleRecording = () => setIsRecording(!isRecording);
+	const toggleRecording = () => {
+		// Turn off assertion mode when stopping recording
+		if (isRecording && isAsserting) {
+			setIsAsserting(false);
+		}
+		setIsRecording(!isRecording);
+	};
+
+	const toggleAsserting = () => setIsAsserting(!isAsserting);
 
 	const resetInteractions = () => setInteractions(() => JSON.stringify([]));
 
@@ -98,9 +116,24 @@ export const InteractionRecorder = () => {
 					<StyledSubnav>
 						<Group>
 							<StyledButton onClick={toggleRecording}>
-								<RecordIcon isRecording={isRecording} />
-								{isRecording ? 'Stop' : 'Start'} recording
+								<StyledButtonBigContent isHidden={isRecording}>
+									<RecordIcon isRecording={false} />
+									Start recording
+								</StyledButtonBigContent>
+								<StyledButtonSmallContent isHidden={!isRecording}>
+									<RecordIcon isRecording={true} />
+									Stop recording
+								</StyledButtonSmallContent>
 							</StyledButton>
+
+							<AssertionButton
+								disabled={!isRecording}
+								onClick={toggleAsserting}
+								isAsserting={isAsserting}
+							>
+								<AssertIcon />
+								{isAsserting ? 'Choose element' : 'Add assertion'}
+							</AssertionButton>
 
 							<StyledButton onClick={resetInteractions} disabled={!code.play.length}>
 								<DeleteIcon />
@@ -144,7 +177,11 @@ export const InteractionRecorder = () => {
 				{code.play.length === 0 && isRecording && (
 					<EmptyTabContent
 						title="Recording is in progress..."
-						description="Interact with the story to record events."
+						description={
+							isAsserting
+								? 'Click on elements to record assertions.'
+								: 'Interact with the story to record events.'
+						}
 					/>
 				)}
 
