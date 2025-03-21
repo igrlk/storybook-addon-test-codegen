@@ -1,3 +1,4 @@
+import type { ChangeEvent, FormEvent } from 'react';
 import { useState } from 'react';
 
 interface FormValues {
@@ -39,15 +40,13 @@ export const ManyElements = () => {
 	const [submitted, setSubmitted] = useState(false);
 	const [fieldsetDisabled, setFieldsetDisabled] = useState(false);
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
 		setSubmitted(true);
 	};
 
 	const handleChange = (
-		e: React.ChangeEvent<
-			HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-		>,
+		e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
 	) => {
 		const target = e.target;
 		const value =
@@ -62,7 +61,7 @@ export const ManyElements = () => {
 		}));
 	};
 
-	const handleMultiSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+	const handleMultiSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
 		const options = Array.from(e.target.selectedOptions);
 		const values = options.map((option) => option.value);
 
@@ -136,6 +135,7 @@ export const ManyElements = () => {
 					</div>
 				</div>
 				<button
+					type="button"
 					className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
 					onClick={() => setSubmitted(false)}
 				>
@@ -337,7 +337,9 @@ export const ManyElements = () => {
 
 				{/* ARIA elements */}
 				<div className="space-y-4">
+					{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
 					<div
+						// biome-ignore lint/a11y/useSemanticElements: <explanation>
 						role="checkbox"
 						aria-checked={values.ariaCheckbox}
 						onClick={() => handleAriaCheckboxChange('ariaCheckbox')}
@@ -346,12 +348,14 @@ export const ManyElements = () => {
 					>
 						<div
 							className={`w-5 h-5 mr-2 border rounded ${values.ariaCheckbox ? 'bg-blue-500' : 'bg-white'}`}
-						></div>
+						/>
 						<span>ARIA Checkbox</span>
 					</div>
 
 					<div className="space-y-1">
+						{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
 						<div
+							// biome-ignore lint/a11y/useSemanticElements: <explanation>
 							role="radio"
 							aria-checked={values.ariaRadio === 'option1'}
 							onClick={() => handleAriaRadioChange('option1')}
@@ -360,10 +364,12 @@ export const ManyElements = () => {
 						>
 							<div
 								className={`w-4 h-4 mr-2 rounded-full border ${values.ariaRadio === 'option1' ? 'bg-blue-500' : 'bg-white'}`}
-							></div>
+							/>
 							<span>ARIA Radio Option 1</span>
 						</div>
+						{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
 						<div
+							// biome-ignore lint/a11y/useSemanticElements: <explanation>
 							role="radio"
 							aria-checked={values.ariaRadio === 'option2'}
 							onClick={() => handleAriaRadioChange('option2')}
@@ -372,11 +378,13 @@ export const ManyElements = () => {
 						>
 							<div
 								className={`w-4 h-4 mr-2 rounded-full border ${values.ariaRadio === 'option2' ? 'bg-blue-500' : 'bg-white'}`}
-							></div>
+							/>
 							<span>ARIA Radio Option 2</span>
 						</div>
 					</div>
 
+					{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+					{/* biome-ignore lint/nursery/useAriaPropsSupportedByRole: <explanation> */}
 					<div
 						role="switch"
 						aria-checked={values.ariaSwitch}
@@ -389,7 +397,7 @@ export const ManyElements = () => {
 						>
 							<div
 								className={`absolute w-4 h-4 rounded-full bg-white top-0.5 transition-transform ${values.ariaSwitch ? 'translate-x-5' : 'translate-x-0.5'}`}
-							></div>
+							/>
 						</div>
 						<span>ARIA Switch</span>
 					</div>
@@ -473,11 +481,13 @@ export const ManyElements = () => {
 
 				{/* Links */}
 				<div className="space-x-2">
-					<a href="#" className="text-blue-500 hover:underline">
+					<a href="/" className="text-blue-500 hover:underline">
 						Link with href
 					</a>
 					<span className="text-gray-500">|</span>
-					<a className="text-gray-400 cursor-not-allowed">Link without href</a>
+					<a className="text-gray-400 cursor-not-allowed" href="/">
+						Link without href
+					</a>
 				</div>
 
 				{/* Div with text */}

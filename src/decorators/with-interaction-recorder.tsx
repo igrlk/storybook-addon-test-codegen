@@ -7,6 +7,7 @@ import {
 } from 'storybook/internal/preview-api';
 import type { DecoratorFunction } from 'storybook/internal/types';
 import {
+	type ElementQuery,
 	argsToString,
 	generateQuery,
 	getClosestInteractiveElement,
@@ -70,18 +71,12 @@ export const withInteractionRecorder: DecoratorFunction = (
 			return;
 		}
 
-		// For standard interactions (clicks, inputs, etc.)
-		for (const domEvent of DOM_EVENTS) {
-			document.body.addEventListener(domEvent, interactionListener, true);
-		}
-
 		// Hover outline and assertion menu state
 		let element: HTMLElement | null = null;
 		let observer: MutationObserver | null = null;
 		let menuElement: HTMLElement | null = null;
 		let activeElement: HTMLElement | null = null;
-		// biome-ignore lint/suspicious/noExplicitAny: Needed for query
-		let activeQuery: any = null;
+		let activeQuery: ElementQuery | null = null;
 		// Track if menu is open
 		let isMenuOpen = false;
 
@@ -348,36 +343,35 @@ export const withInteractionRecorder: DecoratorFunction = (
 			}, 10);
 		};
 
-		// Global event handlers for different phases
-		const handleGlobalCapture = (event: Event) => {
-			// Only prevent default behavior (like opening select dropdown)
-			// but don't stop propagation so our click handler can still work
-			if (isAssertionMode) {
-				// For form elements like select, checkbox, etc.
-				// Prevent the default action but allow the event to continue
-				event.preventDefault();
-			}
-		};
-
-		// Our main click handler for showing the menu
-		const handleClick = (event: MouseEvent) => {
-			// Skip if not in assertion mode
+		const handleGlobalCapture = (event: MouseEvent) => {
+			// If not assertion mode, do nothing
 			if (!isAssertionMode) {
 				return;
 			}
 
-			// Stop if clicking on menu
+			// If the click is inside the menu, do nothing (let the menu handle it)
 			if (menuElement?.contains(event.target as Node)) {
 				return;
 			}
+
+			if (isMenuOpen) {
+				// this always happens after opening the menu (pointerdown opens it, then click fires this function)
+				// so we just need to not do anything and prevent the event
+				if (event.type === 'click') {
+					event.preventDefault();
+					event.stopPropagation();
+				}
+
+				return;
+			}
+
+			event.preventDefault();
+			event.stopPropagation();
 
 			// Check if we have an active element and query
 			if (!activeElement || !activeQuery) {
 				return;
 			}
-
-			// Prevent the event from continuing to the element
-			event.preventDefault();
 
 			// Create the menu
 			createAssertionMenu(activeElement, activeQuery, {
@@ -392,35 +386,31 @@ export const withInteractionRecorder: DecoratorFunction = (
 			}
 		};
 
+		// Highlight listeners
 		document.body.addEventListener('mouseover', drawOutline);
 		document.body.addEventListener('mouseout', handleMouseout);
 
-		// Use capture phase for prevention (true parameter)
-		document.addEventListener('click', handleGlobalCapture, true);
-		document.addEventListener('mousedown', handleGlobalCapture, true);
-		document.addEventListener('change', handleGlobalCapture, true);
-		document.addEventListener('input', handleGlobalCapture, true);
+		// Assertion listener
+		document.body.addEventListener('pointerdown', handleGlobalCapture, true);
+		document.body.addEventListener('click', handleGlobalCapture, true);
 
-		// Handle click in bubbling phase after capture phase
-		document.body.addEventListener('click', handleClick);
+		// Interaction listeners
+		for (const domEvent of DOM_EVENTS) {
+			document.body.addEventListener(domEvent, interactionListener, true);
+		}
 
 		return () => {
 			removeAll();
 
-			// Remove interaction listeners
+			document.body.removeEventListener('mouseover', drawOutline);
+			document.body.removeEventListener('mouseout', handleMouseout);
+
+			document.body.removeEventListener('pointerdown', handleGlobalCapture, true);
+			document.body.removeEventListener('click', handleGlobalCapture, true);
+
 			for (const domEvent of DOM_EVENTS) {
 				document.body.removeEventListener(domEvent, interactionListener, true);
 			}
-
-			// Remove outline and menu listeners
-			document.body.removeEventListener('mouseover', drawOutline);
-			document.body.removeEventListener('mouseout', handleMouseout);
-			document.body.removeEventListener('click', handleClick);
-
-			document.removeEventListener('click', handleGlobalCapture, true);
-			document.removeEventListener('mousedown', handleGlobalCapture, true);
-			document.removeEventListener('change', handleGlobalCapture, true);
-			document.removeEventListener('input', handleGlobalCapture, true);
 		};
 	}, [isRecording, isAssertionMode, interactionListener, testIdAttribute]);
 

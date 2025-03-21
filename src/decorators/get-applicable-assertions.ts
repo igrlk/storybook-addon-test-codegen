@@ -7,7 +7,6 @@ export type ApplicableAssertion = Omit<AssertionEvent, 'type'> & {
 	label: string;
 };
 
-// Check if an element is in a disabled fieldset
 const isInDisabledFieldset = (el: HTMLElement): boolean => {
 	let parent = el.parentElement;
 	while (parent) {
@@ -22,7 +21,6 @@ const isInDisabledFieldset = (el: HTMLElement): boolean => {
 	return false;
 };
 
-// Function to determine if an element is an input-like element that can have a value
 const isInputLikeElement = (el: HTMLElement): boolean => {
 	if (
 		[HTMLSelectElement, HTMLTextAreaElement].some((type) => el instanceof type)
@@ -35,20 +33,17 @@ const isInputLikeElement = (el: HTMLElement): boolean => {
 	);
 };
 
-// Check if it has an ARIA role that is checkable
 const hasCheckableAriaRole = (el: HTMLElement): boolean => {
 	const role = el.getAttribute('role');
 	return role !== null && ['checkbox', 'radio', 'switch'].includes(role);
 };
 
-// Check if an element is a checkbox or radio input
 const isCheckboxOrRadio = (el: HTMLElement): boolean => {
 	return (
 		el instanceof HTMLInputElement && ['checkbox', 'radio'].includes(el.type)
 	);
 };
 
-// Check if an element is one that can be disabled (following jest-dom's approach)
 const isDisableableElement = (el: HTMLElement): boolean => {
 	const disableableElements = [
 		'BUTTON',
@@ -82,39 +77,29 @@ const configs: {
 		assertionType: 'toBeEnabled',
 		label: 'to be enabled',
 		predicate: (el) => {
-			// Only apply to elements that can be disabled
 			if (!isDisableableElement(el)) {
 				return false;
 			}
 
-			// Check for native disabled attribute
 			if ('disabled' in el && !!el.disabled) {
 				return false;
 			}
 
-			// Check if within a disabled fieldset
-			if (isInDisabledFieldset(el)) {
-				return false;
-			}
-
-			return true;
+			return !isInDisabledFieldset(el);
 		},
 	},
 	{
 		assertionType: 'toBeDisabled',
 		label: 'to be disabled',
 		predicate: (el) => {
-			// Only apply to elements that can be disabled
 			if (!isDisableableElement(el)) {
 				return false;
 			}
 
-			// Check for native disabled attribute
 			if ('disabled' in el && !!el.disabled) {
 				return true;
 			}
 
-			// Check if within a disabled fieldset
 			return isInDisabledFieldset(el);
 		},
 	},
@@ -122,16 +107,10 @@ const configs: {
 		assertionType: 'toBeChecked',
 		label: 'to be checked',
 		predicate: (el) => {
-			// Native checkbox/radio
-			if (
-				el instanceof HTMLInputElement &&
-				['checkbox', 'radio'].some((type) => el.type === type) &&
-				el.checked
-			) {
+			if (el instanceof HTMLInputElement && isCheckboxOrRadio(el) && el.checked) {
 				return true;
 			}
 
-			// ARIA roles with checked state
 			const role = el.getAttribute('role');
 			const ariaChecked = el.getAttribute('aria-checked');
 
@@ -150,16 +129,10 @@ const configs: {
 		assertionType: 'not.toBeChecked',
 		label: 'to not be checked',
 		predicate: (el) => {
-			// Native checkbox/radio
-			if (
-				el instanceof HTMLInputElement &&
-				['checkbox', 'radio'].some((type) => el.type === type) &&
-				!el.checked
-			) {
+			if (el instanceof HTMLInputElement && isCheckboxOrRadio(el) && !el.checked) {
 				return true;
 			}
 
-			// ARIA roles with unchecked state
 			const role = el.getAttribute('role');
 			const ariaChecked = el.getAttribute('aria-checked');
 
@@ -178,17 +151,19 @@ const configs: {
 		assertionType: 'toHaveValue',
 		label: 'to have value',
 		predicate: (el) => {
-			// Always include for elements in fieldset
-			if (isInDisabledFieldset(el) && el.tagName === 'INPUT') {
+			if (
+				el instanceof HTMLInputElement &&
+				el.type === 'number' &&
+				Number.isNaN(el.valueAsNumber)
+			) {
+				return false;
+			}
+
+			if (isInDisabledFieldset(el) && el instanceof HTMLInputElement) {
 				return true;
 			}
 
-			// Check if it's an input with value capability
-			if (isInputLikeElement(el)) {
-				return true;
-			}
-
-			return false;
+			return isInputLikeElement(el);
 		},
 		getArgs: (el) => {
 			if (el instanceof HTMLInputElement) {
@@ -211,8 +186,22 @@ const configs: {
 				return [el.value];
 			}
 
-			// Default empty value for other elements
 			return [''];
+		},
+	},
+	{
+		assertionType: 'not.toHaveValue',
+		label: 'to not have value',
+		predicate: (el) => {
+			if (
+				el instanceof HTMLInputElement &&
+				el.type === 'number' &&
+				Number.isNaN(el.valueAsNumber)
+			) {
+				return true;
+			}
+
+			return false;
 		},
 	},
 	{
@@ -223,7 +212,6 @@ const configs: {
 	},
 ];
 
-// Hard-coded test case ordering to match expectations
 const getOrderedAssertions = (
 	element: HTMLElement,
 	assertionTypes: AssertionEvent['assertionType'][],
@@ -262,47 +250,16 @@ const getOrderedAssertions = (
 export const getApplicableAssertions = (
 	element: HTMLElement,
 ): ApplicableAssertion[] => {
-	// For checkbox or radio inputs
 	if (isCheckboxOrRadio(element)) {
 		const inputEl = element as HTMLInputElement;
 		const isDisabled =
 			('disabled' in element && element.disabled) || isInDisabledFieldset(element);
 
-		if (isDisabled) {
-			// Disabled checkbox/radio
-			if (inputEl.checked) {
-				// Checked
-				return getOrderedAssertions(element, [
-					'toBeVisible',
-					'toBeInTheDocument',
-					'toBeChecked',
-					'toBeDisabled',
-				]);
-			}
-			// Unchecked
-			return getOrderedAssertions(element, [
-				'toBeVisible',
-				'toBeInTheDocument',
-				'not.toBeChecked',
-				'toBeDisabled',
-			]);
-		}
-		// Enabled checkbox/radio
-		if (inputEl.checked) {
-			// Checked
-			return getOrderedAssertions(element, [
-				'toBeVisible',
-				'toBeInTheDocument',
-				'toBeChecked',
-				'toBeEnabled',
-			]);
-		}
-		// Unchecked
 		return getOrderedAssertions(element, [
 			'toBeVisible',
 			'toBeInTheDocument',
-			'not.toBeChecked',
-			'toBeEnabled',
+			inputEl.checked ? 'toBeChecked' : 'not.toBeChecked',
+			isDisabled ? 'toBeDisabled' : 'toBeEnabled',
 		]);
 	}
 

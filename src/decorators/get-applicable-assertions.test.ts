@@ -99,6 +99,11 @@ describe('getApplicableAssertions', () => {
 			['toBeVisible', 'toBeInTheDocument', 'toBeEnabled', ['toHaveValue', 42]],
 		],
 		[
+			'Number input without value',
+			'<input type="number">',
+			['toBeVisible', 'toBeInTheDocument', 'toBeEnabled', 'not.toHaveValue'],
+		],
+		[
 			'Textarea with content',
 			'<textarea>Hello world</textarea>',
 			[

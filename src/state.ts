@@ -27,6 +27,7 @@ export type AssertionEvent = {
 		| 'toBeEnabled'
 		| 'toHaveFocus'
 		| 'toHaveValue'
+		| 'not.toHaveValue'
 		| 'toHaveTextContent';
 	args: unknown[];
 };
