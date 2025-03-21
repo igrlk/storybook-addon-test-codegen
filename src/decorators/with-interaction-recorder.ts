@@ -1,28 +1,81 @@
 // biome-ignore lint/correctness/noUnusedImports: Must be here for react@19 and non-react projects support
 import React from 'react';
-import { useChannel, useEffect } from 'storybook/internal/preview-api';
+import {
+	useCallback,
+	useChannel,
+	useEffect,
+} from 'storybook/internal/preview-api';
 import type { DecoratorFunction } from 'storybook/internal/types';
 import {
 	argsToString,
 	generateQuery,
 	getClosestInteractiveElement,
 } from '../codegen/generate-query';
-import { EVENTS, IS_ASSERTING_KEY, IS_RECORDING_KEY } from '../constants';
+import { getInteractionEvent } from '../codegen/get-interaction-event';
+import {
+	DOM_EVENTS,
+	EVENTS,
+	IS_ASSERTING_KEY,
+	IS_RECORDING_KEY,
+} from '../constants';
 import type { Interaction, InteractionEvent } from '../state';
 import { getApplicableAssertions } from './get-applicable-assertions';
 import { useAddonParameters } from './state';
 
-export const withHoverOutline: DecoratorFunction = (storyFn, context) => {
+export const withInteractionRecorder: DecoratorFunction = (
+	storyFn,
+	context,
+) => {
 	const isRecording = context.globals[IS_RECORDING_KEY];
 	const isAssertionMode = context.globals[IS_ASSERTING_KEY];
 	const { testIdAttribute } = useAddonParameters();
 	const emit = useChannel({});
 
+	// Standard interaction listener for clicks, inputs, etc.
+	const interactionListener = useCallback<EventListener>(
+		async (event) => {
+			// Skip events when in assertion mode (they're handled separately)
+			if (isAssertionMode) {
+				return;
+			}
+
+			const interactionEvent = getInteractionEvent(event);
+			if (!interactionEvent) {
+				return;
+			}
+
+			const elementQuery = await generateQuery(
+				document.body,
+				event.target as HTMLElement,
+				testIdAttribute,
+			);
+
+			if (!elementQuery) {
+				return;
+			}
+
+			const listenerEvent: Interaction = {
+				elementQuery,
+				event: interactionEvent,
+			};
+
+			emit(EVENTS.INTERACTION, listenerEvent);
+		},
+		[isAssertionMode, testIdAttribute],
+	);
+
+	// Hover outline and assertion menu functionality
 	useEffect(() => {
 		if (!isRecording) {
 			return;
 		}
 
+		// For standard interactions (clicks, inputs, etc.)
+		for (const domEvent of DOM_EVENTS) {
+			document.body.addEventListener(domEvent, interactionListener, true);
+		}
+
+		// Hover outline and assertion menu state
 		let element: HTMLElement | null = null;
 		let observer: MutationObserver | null = null;
 		let menuElement: HTMLElement | null = null;
@@ -258,7 +311,6 @@ export const withHoverOutline: DecoratorFunction = (storyFn, context) => {
 					menuItem.textContent = displayText;
 				}
 
-				// TODO: Clean up this event handler
 				// Handle menu item click
 				menuItem.onclick = (e) => {
 					// Stop propagation to prevent closing the menu
@@ -355,6 +407,12 @@ export const withHoverOutline: DecoratorFunction = (storyFn, context) => {
 		return () => {
 			removeAll();
 
+			// Remove interaction listeners
+			for (const domEvent of DOM_EVENTS) {
+				document.body.removeEventListener(domEvent, interactionListener, true);
+			}
+
+			// Remove outline and menu listeners
 			document.body.removeEventListener('mouseover', drawOutline);
 			document.body.removeEventListener('mouseout', handleMouseout);
 			document.body.removeEventListener('click', handleClick);
@@ -364,7 +422,7 @@ export const withHoverOutline: DecoratorFunction = (storyFn, context) => {
 			document.removeEventListener('change', handleGlobalCapture, true);
 			document.removeEventListener('input', handleGlobalCapture, true);
 		};
-	}, [isRecording, isAssertionMode]);
+	}, [isRecording, isAssertionMode, interactionListener, testIdAttribute]);
 
 	return storyFn();
 };
