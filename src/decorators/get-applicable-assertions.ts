@@ -33,12 +33,7 @@ const isInputLikeElement = (el: HTMLElement): boolean => {
 	);
 };
 
-const hasCheckableAriaRole = (el: HTMLElement): boolean => {
-	const role = el.getAttribute('role');
-	return role !== null && ['checkbox', 'radio', 'switch'].includes(role);
-};
-
-const isCheckboxOrRadio = (el: HTMLElement): boolean => {
+const isCheckboxOrRadio = (el: HTMLElement): el is HTMLInputElement => {
 	return (
 		el instanceof HTMLInputElement && ['checkbox', 'radio'].includes(el.type)
 	);
@@ -57,52 +52,12 @@ const isDisableableElement = (el: HTMLElement): boolean => {
 	return disableableElements.includes(el.tagName);
 };
 
-const configs: {
+const availableAssertions: {
 	assertionType: AssertionEvent['assertionType'];
 	label: string;
 	predicate: (element: HTMLElement) => boolean;
 	getArgs?: (element: HTMLElement) => unknown[];
 }[] = [
-	{
-		assertionType: 'toBeVisible',
-		label: 'to be visible',
-		predicate: () => true,
-	},
-	{
-		assertionType: 'toBeInTheDocument',
-		label: 'to be in the document',
-		predicate: () => true,
-	},
-	{
-		assertionType: 'toBeEnabled',
-		label: 'to be enabled',
-		predicate: (el) => {
-			if (!isDisableableElement(el)) {
-				return false;
-			}
-
-			if ('disabled' in el && !!el.disabled) {
-				return false;
-			}
-
-			return !isInDisabledFieldset(el);
-		},
-	},
-	{
-		assertionType: 'toBeDisabled',
-		label: 'to be disabled',
-		predicate: (el) => {
-			if (!isDisableableElement(el)) {
-				return false;
-			}
-
-			if ('disabled' in el && !!el.disabled) {
-				return true;
-			}
-
-			return isInDisabledFieldset(el);
-		},
-	},
 	{
 		assertionType: 'toBeChecked',
 		label: 'to be checked',
@@ -210,95 +165,56 @@ const configs: {
 		predicate: (el) => el.textContent !== null && el.textContent !== '',
 		getArgs: (el) => [el.textContent || ''],
 	},
+	{
+		assertionType: 'toBeEnabled',
+		label: 'to be enabled',
+		predicate: (el) => {
+			if (!isDisableableElement(el)) {
+				return false;
+			}
+
+			if ('disabled' in el && !!el.disabled) {
+				return false;
+			}
+
+			return !isInDisabledFieldset(el);
+		},
+	},
+	{
+		assertionType: 'toBeDisabled',
+		label: 'to be disabled',
+		predicate: (el) => {
+			if (!isDisableableElement(el)) {
+				return false;
+			}
+
+			if ('disabled' in el && !!el.disabled) {
+				return true;
+			}
+
+			return isInDisabledFieldset(el);
+		},
+	},
 ];
-
-const getOrderedAssertions = (
-	element: HTMLElement,
-	assertionTypes: AssertionEvent['assertionType'][],
-): ApplicableAssertion[] => {
-	// Get all available assertions
-	const allAssertions = configs
-		.filter((config) => config.predicate(element))
-		.map<ApplicableAssertion>((config) => ({
-			assertionType: config.assertionType,
-			args: config.getArgs?.(element) ?? [],
-			label: config.label,
-		}));
-
-	// Return them in the order specified
-	return assertionTypes.map((assertionType) => {
-		const foundAssertion = allAssertions.find(
-			(a) => a.assertionType === assertionType,
-		);
-		if (!foundAssertion && assertionType === 'toHaveValue') {
-			// Special case for toHaveValue which might not be in the original array
-			return {
-				assertionType: 'toHaveValue',
-				args: [''],
-				label: 'to have value',
-			};
-		}
-		if (!foundAssertion) {
-			throw new Error(
-				`Assertion ${assertionType} not found for element ${element.tagName}`,
-			);
-		}
-		return foundAssertion;
-	});
-};
 
 export const getApplicableAssertions = (
 	element: HTMLElement,
-): ApplicableAssertion[] => {
-	if (isCheckboxOrRadio(element)) {
-		const inputEl = element as HTMLInputElement;
-		const isDisabled =
-			('disabled' in element && element.disabled) || isInDisabledFieldset(element);
-
-		return getOrderedAssertions(element, [
-			'toBeVisible',
-			'toBeInTheDocument',
-			inputEl.checked ? 'toBeChecked' : 'not.toBeChecked',
-			isDisabled ? 'toBeDisabled' : 'toBeEnabled',
-		]);
-	}
-
-	// Special handling for ARIA role elements
-	if (hasCheckableAriaRole(element)) {
-		const ariaChecked = element.getAttribute('aria-checked');
-
-		// Reorder assertions for ARIA role elements to match test expectations
-		const reordered: AssertionEvent['assertionType'][] = [
-			'toBeVisible',
-			'toBeInTheDocument',
-		];
-
-		// Only add toBeEnabled for elements that can be disabled
-		if (isDisableableElement(element)) {
-			reordered.push('toBeEnabled');
-		}
-
-		// Add checked assertion in the correct position
-		if (ariaChecked === 'true') {
-			reordered.push('toBeChecked');
-		} else if (ariaChecked === 'false') {
-			reordered.push('not.toBeChecked');
-		}
-
-		// Add text content if applicable
-		if (element.textContent !== null && element.textContent !== '') {
-			reordered.push('toHaveTextContent');
-		}
-
-		return getOrderedAssertions(element, reordered);
-	}
-
-	// Default case - return all applicable assertions
-	return configs
+): ApplicableAssertion[] => [
+	{
+		assertionType: 'toBeVisible',
+		label: 'to be visible',
+		args: [],
+	},
+	{
+		assertionType: 'toBeInTheDocument',
+		label: 'to be in the document',
+		args: [],
+	},
+	...availableAssertions
 		.filter((config) => config.predicate(element))
-		.map<ApplicableAssertion>((config) => ({
+		.map((config) => ({
 			assertionType: config.assertionType,
 			args: config.getArgs?.(element) ?? [],
 			label: config.label,
-		}));
-};
+		})),
+];

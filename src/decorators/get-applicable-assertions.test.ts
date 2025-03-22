@@ -9,8 +9,8 @@ describe('getApplicableAssertions', () => {
 			[
 				'toBeVisible',
 				'toBeInTheDocument',
-				'toBeEnabled',
 				['toHaveTextContent', 'Click me'],
+				'toBeEnabled',
 			],
 		],
 		[
@@ -19,8 +19,8 @@ describe('getApplicableAssertions', () => {
 			[
 				'toBeVisible',
 				'toBeInTheDocument',
-				'toBeDisabled',
 				['toHaveTextContent', 'Click me'],
+				'toBeDisabled',
 			],
 		],
 		[
@@ -49,14 +49,14 @@ describe('getApplicableAssertions', () => {
 			[
 				'toBeVisible',
 				'toBeInTheDocument',
-				'toBeEnabled',
 				['toHaveValue', 'Hello'],
+				'toBeEnabled',
 			],
 		],
 		[
 			'Input without value',
 			'<input>',
-			['toBeVisible', 'toBeInTheDocument', 'toBeEnabled', ['toHaveValue', '']],
+			['toBeVisible', 'toBeInTheDocument', ['toHaveValue', ''], 'toBeEnabled'],
 		],
 		[
 			'Disabled input with value',
@@ -64,8 +64,8 @@ describe('getApplicableAssertions', () => {
 			[
 				'toBeVisible',
 				'toBeInTheDocument',
-				'toBeDisabled',
 				['toHaveValue', 'Hello'],
+				'toBeDisabled',
 			],
 		],
 		[
@@ -96,12 +96,12 @@ describe('getApplicableAssertions', () => {
 		[
 			'Number input',
 			'<input type="number" value="42">',
-			['toBeVisible', 'toBeInTheDocument', 'toBeEnabled', ['toHaveValue', 42]],
+			['toBeVisible', 'toBeInTheDocument', ['toHaveValue', 42], 'toBeEnabled'],
 		],
 		[
 			'Number input without value',
 			'<input type="number">',
-			['toBeVisible', 'toBeInTheDocument', 'toBeEnabled', 'not.toHaveValue'],
+			['toBeVisible', 'toBeInTheDocument', 'not.toHaveValue', 'toBeEnabled'],
 		],
 		[
 			'Textarea with content',
@@ -109,15 +109,15 @@ describe('getApplicableAssertions', () => {
 			[
 				'toBeVisible',
 				'toBeInTheDocument',
-				'toBeEnabled',
 				['toHaveValue', 'Hello world'],
 				['toHaveTextContent', 'Hello world'],
+				'toBeEnabled',
 			],
 		],
 		[
 			'Textarea without content',
 			'<textarea />',
-			['toBeVisible', 'toBeInTheDocument', 'toBeEnabled', ['toHaveValue', '']],
+			['toBeVisible', 'toBeInTheDocument', ['toHaveValue', ''], 'toBeEnabled'],
 		],
 		[
 			'Disabled textarea',
@@ -125,9 +125,9 @@ describe('getApplicableAssertions', () => {
 			[
 				'toBeVisible',
 				'toBeInTheDocument',
-				'toBeDisabled',
 				['toHaveValue', 'Hello world'],
 				['toHaveTextContent', 'Hello world'],
+				'toBeDisabled',
 			],
 		],
 		[
@@ -136,9 +136,9 @@ describe('getApplicableAssertions', () => {
 			[
 				'toBeVisible',
 				'toBeInTheDocument',
-				'toBeEnabled',
 				['toHaveValue', '2'],
 				['toHaveTextContent', 'OneTwo'],
+				'toBeEnabled',
 			],
 		],
 		[
@@ -147,9 +147,9 @@ describe('getApplicableAssertions', () => {
 			[
 				'toBeVisible',
 				'toBeInTheDocument',
-				'toBeEnabled',
 				['toHaveValue', '1'],
 				['toHaveTextContent', 'OneTwo'],
+				'toBeEnabled',
 			],
 		],
 		[
@@ -158,9 +158,9 @@ describe('getApplicableAssertions', () => {
 			[
 				'toBeVisible',
 				'toBeInTheDocument',
-				'toBeDisabled',
 				['toHaveValue', '2'],
 				['toHaveTextContent', 'OneTwo'],
+				'toBeDisabled',
 			],
 		],
 		[
@@ -169,9 +169,9 @@ describe('getApplicableAssertions', () => {
 			[
 				'toBeVisible',
 				'toBeInTheDocument',
-				'toBeEnabled',
 				['toHaveValue', ['1', '2']],
 				['toHaveTextContent', 'OneTwo'],
+				'toBeEnabled',
 			],
 		],
 		[
@@ -180,9 +180,9 @@ describe('getApplicableAssertions', () => {
 			[
 				'toBeVisible',
 				'toBeInTheDocument',
-				'toBeDisabled',
 				['toHaveValue', ['1', '2']],
 				['toHaveTextContent', 'OneTwo'],
+				'toBeDisabled',
 			],
 		],
 		[
@@ -248,7 +248,7 @@ describe('getApplicableAssertions', () => {
 		[
 			'Element in disabled fieldset',
 			'<fieldset disabled><input></fieldset>',
-			['toBeVisible', 'toBeInTheDocument', 'toBeDisabled'], // Keep original
+			['toBeVisible', 'toBeInTheDocument', 'toBeDisabled'],
 		],
 		[
 			'Button in disabled fieldset',
@@ -256,8 +256,8 @@ describe('getApplicableAssertions', () => {
 			[
 				'toBeVisible',
 				'toBeInTheDocument',
-				'toBeDisabled',
 				['toHaveTextContent', 'Submit'],
+				'toBeDisabled',
 			],
 		],
 		[
@@ -266,8 +266,8 @@ describe('getApplicableAssertions', () => {
 			[
 				'toBeVisible',
 				'toBeInTheDocument',
-				'toBeEnabled',
 				['toHaveValue', 'secret'],
+				'toBeEnabled',
 			],
 		],
 		[
@@ -276,8 +276,8 @@ describe('getApplicableAssertions', () => {
 			[
 				'toBeVisible',
 				'toBeInTheDocument',
-				'toBeEnabled',
 				['toHaveValue', 'test@example.com'],
+				'toBeEnabled',
 			],
 		],
 		[
@@ -286,14 +286,14 @@ describe('getApplicableAssertions', () => {
 			[
 				'toBeVisible',
 				'toBeInTheDocument',
-				'toBeEnabled',
 				['toHaveValue', '2023-03-20'],
+				'toBeEnabled',
 			],
 		],
 		[
 			'Range input',
 			'<input type="range" min="0" max="100" value="50">',
-			['toBeVisible', 'toBeInTheDocument', 'toBeEnabled', ['toHaveValue', '50']],
+			['toBeVisible', 'toBeInTheDocument', ['toHaveValue', '50'], 'toBeEnabled'],
 		],
 		[
 			'Button with no text',
@@ -306,8 +306,8 @@ describe('getApplicableAssertions', () => {
 			[
 				'toBeVisible',
 				'toBeInTheDocument',
-				'toBeEnabled',
 				['toHaveTextContent', ' '],
+				'toBeEnabled',
 			],
 		],
 		[
@@ -316,8 +316,8 @@ describe('getApplicableAssertions', () => {
 			[
 				'toBeVisible',
 				'toBeInTheDocument',
-				'toBeEnabled',
 				['toHaveValue', 'Submit'],
+				'toBeEnabled',
 			],
 		],
 		[
@@ -326,8 +326,8 @@ describe('getApplicableAssertions', () => {
 			[
 				'toBeVisible',
 				'toBeInTheDocument',
-				'toBeEnabled',
 				['toHaveValue', 'Click me'],
+				'toBeEnabled',
 			],
 		],
 		[
@@ -343,7 +343,7 @@ describe('getApplicableAssertions', () => {
 		[
 			'Complex assertion with multiple args',
 			'<input data-testid="complex" value="Test">',
-			['toBeVisible', 'toBeInTheDocument', 'toBeEnabled', ['toHaveValue', 'Test']],
+			['toBeVisible', 'toBeInTheDocument', ['toHaveValue', 'Test'], 'toBeEnabled'],
 		],
 	])('%s %s', (_, html, expectedAssertions) => {
 		document.body.innerHTML = html;
