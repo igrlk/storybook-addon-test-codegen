@@ -354,8 +354,8 @@ export const ManyElements = () => {
 
 					<div className="space-y-1">
 						{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+						{/* biome-ignore lint/a11y/useSemanticElements: <explanation> */}
 						<div
-							// biome-ignore lint/a11y/useSemanticElements: <explanation>
 							role="radio"
 							aria-checked={values.ariaRadio === 'option1'}
 							onClick={() => handleAriaRadioChange('option1')}
@@ -368,8 +368,8 @@ export const ManyElements = () => {
 							<span>ARIA Radio Option 1</span>
 						</div>
 						{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+						{/* biome-ignore lint/a11y/useSemanticElements: <explanation> */}
 						<div
-							// biome-ignore lint/a11y/useSemanticElements: <explanation>
 							role="radio"
 							aria-checked={values.ariaRadio === 'option2'}
 							onClick={() => handleAriaRadioChange('option2')}
