@@ -231,6 +231,13 @@ export const withInteractionRecorder: DecoratorFunction = (
 
 		const removeMenu = () => {
 			if (menuElement) {
+				// clean up event handlers
+				for (const item of menuElement.querySelectorAll('div')) {
+					item.onmouseover = null;
+					item.onmouseout = null;
+					item.onclick = null;
+				}
+
 				document.body.removeChild(menuElement);
 				menuElement = null;
 			}
