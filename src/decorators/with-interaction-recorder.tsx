@@ -271,8 +271,6 @@ export const withInteractionRecorder: DecoratorFunction = (
 			// Create the menu container
 			menuElement = document.createElement('div');
 			menuElement.style.position = 'absolute';
-			menuElement.style.top = `${position.y}px`;
-			menuElement.style.left = `${position.x}px`;
 			menuElement.style.zIndex = '2147483647';
 			menuElement.style.backgroundColor = 'white';
 			menuElement.style.borderRadius = '4px';
@@ -335,7 +333,31 @@ export const withInteractionRecorder: DecoratorFunction = (
 				menuElement.appendChild(menuItem);
 			}
 
+			// Append to DOM
 			document.body.appendChild(menuElement);
+
+			// Position menu within viewport
+			const menuRect = menuElement.getBoundingClientRect();
+			const viewportWidth = document.documentElement.clientWidth;
+			const viewportHeight = document.documentElement.clientHeight;
+
+			// Calculate optimal position to keep menu in viewport
+			let menuX = position.x;
+			let menuY = position.y;
+
+			// Adjust horizontal position if needed
+			if (menuX + menuRect.width > viewportWidth) {
+				menuX = Math.max(0, viewportWidth - menuRect.width);
+			}
+
+			// Adjust vertical position if needed
+			if (menuY + menuRect.height > viewportHeight) {
+				menuY = Math.max(0, viewportHeight - menuRect.height);
+			}
+
+			// Apply calculated position
+			menuElement.style.top = `${menuY}px`;
+			menuElement.style.left = `${menuX}px`;
 
 			const handleClickOutside = (event: MouseEvent) => {
 				if (menuElement && !menuElement.contains(event.target as Node)) {
