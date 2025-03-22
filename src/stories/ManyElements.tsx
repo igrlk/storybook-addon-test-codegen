@@ -106,9 +106,6 @@ export const ManyElements = () => {
 						<strong>Date Input:</strong> {values.dateInput}
 					</div>
 					<div>
-						<strong>Range Input:</strong> {values.rangeInput}
-					</div>
-					<div>
 						<strong>Textarea:</strong> {values.textarea}
 					</div>
 					<div>
@@ -219,23 +216,6 @@ export const ManyElements = () => {
 							onChange={handleChange}
 							className="w-full p-2 border rounded"
 						/>
-					</div>
-
-					<div>
-						<label className="block mb-1" htmlFor="rangeInput">
-							Range Input
-						</label>
-						<input
-							id="rangeInput"
-							name="rangeInput"
-							type="range"
-							min="0"
-							max="100"
-							value={values.rangeInput}
-							onChange={handleChange}
-							className="w-full"
-						/>
-						<span>{values.rangeInput}</span>
 					</div>
 				</div>
 

@@ -44,7 +44,7 @@ export const convertInteractionsToCode = (
 
 			let assertCode = `expect(${queryString.replace(asElementPostfix, '')})`
 				.replace('await ', '')
-				.replace('canvas.findBy', 'canvas.queryBy');
+				.replace('canvas.find', 'canvas.query');
 
 			if (event.args && event.args.length > 0) {
 				// Handle args for all assertion types
