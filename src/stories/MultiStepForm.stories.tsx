@@ -9,3 +9,7 @@ export default meta;
 type Story = StoryObj<typeof MultiStepForm>;
 
 export const Default: Story = {};
+
+export const SubmitForm: Story = {
+	},
+};
