@@ -339,6 +339,268 @@ world\`);`,
 			]),
 		],
 	],
+	[
+		'Assertion with toBeInTheDocument',
+		[
+			{
+				elementQuery: {
+					object: 'canvas',
+					method: 'findByRole',
+					args: ['button'],
+				},
+				event: { type: 'assertion', assertionType: 'toBeInTheDocument', args: [] },
+			},
+		],
+		[
+			withImports(['userEvent', 'within', 'waitFor', 'expect']),
+			withCanvas([
+				`await waitFor(() => expect(canvas.queryByRole('button')).toBeInTheDocument())`,
+			]),
+		],
+	],
+	[
+		'Assertion with toHaveValue',
+		[
+			{
+				elementQuery: {
+					object: 'canvas',
+					method: 'findByTestId',
+					args: ['email-input'],
+				},
+				event: {
+					type: 'assertion',
+					assertionType: 'toHaveValue',
+					args: ['test@example.com'],
+				},
+			},
+		],
+		[
+			withImports(['userEvent', 'within', 'waitFor', 'expect']),
+			withCanvas([
+				`await waitFor(() => expect(canvas.queryByTestId('email-input')).toHaveValue('test@example.com'))`,
+			]),
+		],
+	],
+	[
+		'Assertion with toHaveText',
+		[
+			{
+				elementQuery: {
+					object: 'body',
+					method: 'querySelector',
+					args: ['.error-message'],
+				},
+				event: {
+					type: 'assertion',
+					assertionType: 'toHaveTextContent',
+					args: ['Invalid email'],
+				},
+			},
+		],
+		[
+			withImports(['userEvent', 'waitFor', 'expect']),
+			withBody([
+				`await waitFor(() => expect(body.querySelector('.error-message')).toHaveTextContent('Invalid email'))`,
+			]),
+		],
+	],
+	[
+		'Assertion without arguments',
+		[
+			{
+				elementQuery: {
+					object: 'canvas',
+					method: 'findByRole',
+					args: ['button', { name: 'Submit' }],
+					nth: null,
+				},
+				event: {
+					type: 'assertion',
+					assertionType: 'toBeEnabled',
+					args: [],
+				},
+			},
+		],
+		[
+			withImports(['userEvent', 'within', 'waitFor', 'expect']),
+			withCanvas([
+				`await waitFor(() => expect(canvas.queryByRole('button', { name: 'Submit' })).toBeEnabled())`,
+			]),
+		],
+	],
+	[
+		'Assertion with string argument',
+		[
+			{
+				elementQuery: {
+					object: 'canvas',
+					method: 'findByLabelText',
+					args: ['Name'],
+					nth: null,
+				},
+				event: {
+					type: 'assertion',
+					assertionType: 'toHaveValue',
+					args: ['John Doe'],
+				},
+			},
+		],
+		[
+			withImports(['userEvent', 'within', 'waitFor', 'expect']),
+			withCanvas([
+				`await waitFor(() => expect(canvas.queryByLabelText('Name')).toHaveValue('John Doe'))`,
+			]),
+		],
+	],
+	[
+		'Assertion with numeric argument',
+		[
+			{
+				elementQuery: {
+					object: 'canvas',
+					method: 'findByLabelText',
+					args: ['Age'],
+					nth: null,
+				},
+				event: {
+					type: 'assertion',
+					assertionType: 'toHaveValue',
+					args: [25],
+				},
+			},
+		],
+		[
+			withImports(['userEvent', 'within', 'waitFor', 'expect']),
+			withCanvas([
+				`await waitFor(() => expect(canvas.queryByLabelText('Age')).toHaveValue(25))`,
+			]),
+		],
+	],
+	[
+		'Multiple assertion arguments',
+		[
+			{
+				elementQuery: {
+					object: 'canvas',
+					method: 'findByTestId',
+					args: ['price-display'],
+					nth: null,
+				},
+				event: {
+					type: 'assertion',
+					assertionType: 'toHaveTextContent',
+					args: ['$99.99', { exact: false }],
+				},
+			},
+		],
+		[
+			withImports(['userEvent', 'within', 'waitFor', 'expect']),
+			withCanvas([
+				`await waitFor(() => expect(canvas.queryByTestId('price-display')).toHaveTextContent('$99.99', { exact: false }))`,
+			]),
+		],
+	],
+	[
+		'Multiple assertions in one test',
+		[
+			{
+				elementQuery: {
+					object: 'canvas',
+					method: 'findByRole',
+					args: ['checkbox', { name: 'Accept terms' }],
+					nth: null,
+				},
+				event: {
+					type: 'assertion',
+					assertionType: 'toBeVisible',
+					args: [],
+				},
+			},
+			{
+				elementQuery: {
+					object: 'canvas',
+					method: 'findByRole',
+					args: ['checkbox', { name: 'Accept terms' }],
+					nth: null,
+				},
+				event: {
+					type: 'assertion',
+					assertionType: 'not.toBeChecked',
+					args: [],
+				},
+			},
+			{
+				elementQuery: {
+					object: 'canvas',
+					method: 'findByRole',
+					args: ['button', { name: 'Submit' }],
+					nth: null,
+				},
+				event: {
+					type: 'assertion',
+					assertionType: 'toBeDisabled',
+					args: [],
+				},
+			},
+		],
+		[
+			withImports(['userEvent', 'within', 'waitFor', 'expect']),
+			withCanvas([
+				`await waitFor(() => expect(canvas.queryByRole('checkbox', { name: 'Accept terms' })).toBeVisible())`,
+				`await waitFor(() => expect(canvas.queryByRole('checkbox', { name: 'Accept terms' })).not.toBeChecked())`,
+				`await waitFor(() => expect(canvas.queryByRole('button', { name: 'Submit' })).toBeDisabled())`,
+			]),
+		],
+	],
+	[
+		'Combining interactions and assertions',
+		[
+			{
+				elementQuery: {
+					object: 'canvas',
+					method: 'findByLabelText',
+					args: ['Name'],
+					nth: null,
+				},
+				event: {
+					type: 'type',
+					value: 'John Doe',
+				},
+			},
+			{
+				elementQuery: {
+					object: 'canvas',
+					method: 'findByLabelText',
+					args: ['Name'],
+					nth: null,
+				},
+				event: {
+					type: 'assertion',
+					assertionType: 'toHaveValue',
+					args: ['John Doe'],
+				},
+			},
+			{
+				elementQuery: {
+					object: 'canvas',
+					method: 'findByRole',
+					args: ['button', { name: 'Submit' }],
+					nth: null,
+				},
+				event: {
+					type: 'click',
+				},
+			},
+		],
+		[
+			withImports(['userEvent', 'within', 'waitFor', 'expect']),
+			withCanvas([
+				`await userEvent.type(await canvas.findByLabelText('Name'), 'John Doe');`,
+				`await waitFor(() => expect(canvas.queryByLabelText('Name')).toHaveValue('John Doe'))`,
+				`await userEvent.click(await canvas.findByRole('button', { name: 'Submit' }));`,
+			]),
+		],
+	],
 ] satisfies [
 	string,
 	{

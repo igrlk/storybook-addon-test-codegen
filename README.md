@@ -55,7 +55,7 @@ export default config;
 ## Usage
 
 Enable recording in the Interaction Recorder tab in the Storybook UI. Interact with your components as you normally
-would, and the addon will generate test code for you.
+would, and the addon will generate test code for you. Click "Add assertion" to add assertions like `expect().toBeVisible()` to the generated code.
 
 Click on "Save to story" to save the generated code to the story file. Done 🎉
 

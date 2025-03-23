@@ -23,6 +23,7 @@ export const convertInteractionsToCode = (
 	const codeLines: string[] = [];
 	let usesBody = false;
 	let usesCanvas = false;
+	let needsExpect = false;
 
 	for (const interaction of interactions) {
 		const { event } = interaction;
@@ -30,6 +31,39 @@ export const convertInteractionsToCode = (
 			event.type === 'keyup' ||
 			(event.type === 'keydown' && ['shift', 'tab'].includes(event.key))
 		) {
+			continue;
+		}
+
+		if (event.type === 'assertion') {
+			needsExpect = true;
+
+			const { queryString, asElementPostfix } = getQueryString(
+				interaction.elementQuery,
+				hasTypescript,
+			);
+
+			let assertCode = `expect(${queryString.replace(asElementPostfix, '')})`
+				.replace('await ', '')
+				.replace('canvas.find', 'canvas.query');
+
+			if (event.args && event.args.length > 0) {
+				// Handle args for all assertion types
+				assertCode += `.${event.assertionType}(${argsToString(event.args)})`;
+			} else {
+				// No args provided
+				assertCode += `.${event.assertionType}()`;
+			}
+
+			if (interaction.elementQuery.object === 'body') {
+				usesBody = true;
+			}
+
+			if (interaction.elementQuery.object === 'canvas') {
+				usesCanvas = true;
+			}
+
+			codeLines.push(`await waitFor(() => ${assertCode})`);
+
 			continue;
 		}
 
@@ -74,6 +108,7 @@ export const convertInteractionsToCode = (
 
 		if (assertion) {
 			codeLines.push(assertion);
+			needsExpect = true;
 		}
 		codeLines.push(`${beginning}(${queryString}${valueStr});`);
 	}
@@ -91,7 +126,8 @@ export const convertInteractionsToCode = (
 		importNames.push('within');
 	}
 
-	if (usesBody) {
+	// Always include waitFor and expect when we have assertions
+	if (needsExpect || usesBody) {
 		importNames.push('waitFor', 'expect');
 	}
 
@@ -123,23 +159,28 @@ const getQueryString = (
 	query: Interaction['elementQuery'],
 	hasTypescript: boolean,
 ) => {
+	const asElementPostfix = ' as HTMLElement';
+
 	const beginning = `${query.object === 'canvas' ? 'await ' : ''}${query.object}.${query.method}`;
 	const args = argsToString(query.args);
 
 	const asElement =
-		query.object === 'body' && hasTypescript ? ' as HTMLElement' : '';
+		query.object === 'body' && hasTypescript ? asElementPostfix : '';
 	const queryString = `${beginning}(${args})${asElement}`;
 
 	const result =
 		query.nth === null ? queryString : `(${queryString})[${query.nth}]`;
 
+	const queryStringWithoutAsElement = result.replace(asElement, '');
+
 	const assertion =
 		query.object === 'body'
-			? `await waitFor(() => expect(${result.replace(asElement, '')}).toBeInTheDocument());`
+			? `await waitFor(() => expect(${queryStringWithoutAsElement}).toBeInTheDocument());`
 			: null;
 
 	return {
 		assertion,
 		queryString: result,
+		asElementPostfix,
 	};
 };

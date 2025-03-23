@@ -3,6 +3,7 @@ export const PANEL_ID = `${ADDON_ID}/panel`;
 export const PARAMETER = 'testCodegen';
 
 export const IS_RECORDING_KEY = `${ADDON_ID}/is-recording`;
+export const IS_ASSERTING_KEY = `${ADDON_ID}/is-asserting`;
 
 export const EVENTS = {
 	INTERACTION: `${ADDON_ID}/interaction`,
