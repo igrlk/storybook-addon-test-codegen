@@ -17,5 +17,13 @@ jobs:
       - name: Install Playwright
         run: pnpm playwright install
 
-      - name: Run PR check
+      - name: Run PR checks
         run: pnpm pr:check
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: packages/platform-e2e/playwright-report/
+          retention-days: 7
