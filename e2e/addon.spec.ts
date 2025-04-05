@@ -107,5 +107,5 @@ test('Submit multi-step form', async ({ page }) => {
 
 	await page.waitForTimeout(1000);
 	const element = page.getByText('Play Functionplay: async ({');
-	expect(await element.textContent()).toMatchSnapshot();
+	expect(await element.textContent()).toMatchSnapshot('addon.txt');
 });
