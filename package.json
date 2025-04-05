@@ -7,12 +7,7 @@
 		"url": "git+https://github.com/igrlk/storybook-addon-test-codegen.git"
 	},
 	"packageManager": "pnpm@9.15.3",
-	"keywords": [
-		"storybook-addons",
-		"interactions",
-		"test",
-		"codegen"
-	],
+	"keywords": ["storybook-addons", "interactions", "test", "codegen"],
 	"main": "dist/index.cjs",
 	"module": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -34,12 +29,7 @@
 		"./manager": "./dist/manager.js",
 		"./package.json": "./package.json"
 	},
-	"files": [
-		"dist/**/*",
-		"README.md",
-		"*.js",
-		"*.d.ts"
-	],
+	"files": ["dist/**/*", "README.md", "*.js", "*.d.ts"],
 	"scripts": {
 		"build": "tsup",
 		"build:watch": "tsup --watch",
@@ -47,6 +37,9 @@
 		"check": "biome check --write",
 		"test": "vitest run",
 		"test:watch": "vitest",
+		"test:e2e": "npx playwright test",
+		"test:e2e:ui": "npx playwright test --ui",
+		"test:e2e:codegen": "npx playwright codegen",
 		"prerelease": "zx scripts/prepublish-checks.js",
 		"release": "npm run build && auto shipit",
 		"eject-ts": "zx scripts/eject-typescript.js",
@@ -55,13 +48,14 @@
 		"prepare": "husky",
 		"tailwind": "tailwindcss -i ./src/tailwind.css -o ./.storybook/tailwind.css",
 		"tailwind:watch": "pnpm tailwind -- --watch",
-		"pr:check": "concurrently \"npm run check\" \"npm run test\" \"npm run build\""
+		"pr:check": "npx concurrently \"pnpm check\" \"pnpm test\" \"pnpm build\" && pnpm build-storybook && pnpm pr:check:e2e",
+		"pr:check:e2e": "npx concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"http-server storybook-static --port 6006 --silent\" \"npx wait-on tcp:127.0.0.1:6006 && pnpm test:e2e\""
 	},
 	"devDependencies": {
 		"@babel/parser": "^7.26.7",
 		"@biomejs/biome": "^1.9.4",
 		"@medv/finder": "^4.0.2",
-		"@playwright/test": "^1.49.1",
+		"@playwright/test": "^1.51.1",
 		"@storybook/addon-essentials": "^8.6.4",
 		"@storybook/addon-interactions": "^8.6.4",
 		"@storybook/addon-links": "^8.6.4",
@@ -86,6 +80,7 @@
 		"dom-accessibility-api": "^0.7.0",
 		"globals": "^15.14.0",
 		"happy-dom": "^15.11.7",
+		"http-server": "^14.1.1",
 		"husky": "^9.1.7",
 		"jsdom": "^25.0.1",
 		"lint-staged": "^15.2.11",
@@ -99,6 +94,7 @@
 		"use-debounce": "^10.0.4",
 		"vite": "^5.4.11",
 		"vitest": "^2.1.8",
+		"wait-on": "^8.0.3",
 		"zx": "^7.2.3"
 	},
 	"peerDependencies": {
@@ -108,18 +104,10 @@
 		"access": "public"
 	},
 	"bundler": {
-		"exportEntries": [
-			"src/index.ts"
-		],
-		"managerEntries": [
-			"src/manager.tsx"
-		],
-		"previewEntries": [
-			"src/preview.ts"
-		],
-		"nodeEntries": [
-			"src/preset.ts"
-		]
+		"exportEntries": ["src/index.ts"],
+		"managerEntries": ["src/manager.tsx"],
+		"previewEntries": ["src/preview.ts"],
+		"nodeEntries": ["src/preset.ts"]
 	},
 	"storybook": {
 		"displayName": "Test Codegen",
@@ -137,8 +125,6 @@
 		"icon": "https://user-images.githubusercontent.com/321738/63501763-88dbf600-c4cc-11e9-96cd-94adadc2fd72.png"
 	},
 	"lint-staged": {
-		"*": [
-			"pnpm check"
-		]
+		"*": ["pnpm check"]
 	}
 }

@@ -1,6 +1,8 @@
 dist/
 node_modules/
 storybook-static/
+test-results/
+playwright-report/
 build-storybook.log
 .DS_Store
 .env
