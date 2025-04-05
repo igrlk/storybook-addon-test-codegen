@@ -5,7 +5,7 @@ export default defineConfig({
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
 	retries: 0,
-	reporter: 'line',
+	reporter: [['html', { outputFolder: './playwright-report' }]],
 	use: {
 		baseURL: 'http://localhost:6006',
 		trace: 'on-first-retry',
