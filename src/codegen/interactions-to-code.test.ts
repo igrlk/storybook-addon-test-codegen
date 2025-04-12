@@ -1,27 +1,45 @@
 import { describe, expect, test } from 'vitest';
 import type { Interaction } from '../state';
-import { convertInteractionsToCode, tab } from './interactions-to-code';
+import {
+	type GeneratedCodeLine,
+	type Warning,
+	convertInteractionsToCode,
+	tab,
+} from './interactions-to-code';
 
 const withImports = (imports: string[]) => [
-	`import { ${imports.join(', ')} } from '@storybook/test';`,
+	{
+		text: `import { ${imports.join(', ')} } from '@storybook/test';`,
+	},
 ];
 
-const withPlay = (codeLines: string[]) => [
-	'play: async ({ canvasElement }) => {',
-	...codeLines.map(tab),
-	'}',
+const withPlay = (
+	codeLines: (string | { text: string; warning?: Warning })[],
+) => [
+	{ text: 'play: async ({ canvasElement }) => {' },
+	...codeLines.map((line) =>
+		typeof line === 'string'
+			? { text: tab(line) }
+			: { text: tab(line.text), warning: line.warning },
+	),
+	{ text: '}' },
 ];
 
-const withBody = (codeLines: string[]) =>
-	withPlay(['const body = canvasElement.ownerDocument.body;', ...codeLines]);
+const withBody = (
+	codeLines: (string | { text: string; warning?: Warning })[],
+) => withPlay(['const body = canvasElement.ownerDocument.body;', ...codeLines]);
 
-const withCanvas = (codeLines: string[]) =>
+const withCanvas = (
+	codeLines: (string | { text: string; warning?: Warning })[],
+) =>
 	withPlay([
 		'const canvas = within(canvasElement.ownerDocument.body);',
 		...codeLines,
 	]);
 
-const withBodyCanvas = (codeLines: string[]) =>
+const withBodyCanvas = (
+	codeLines: (string | { text: string; warning?: Warning })[],
+) =>
 	withPlay([
 		'const body = canvasElement.ownerDocument.body;',
 		'const canvas = within(body);',
@@ -43,7 +61,12 @@ const TEST_CASES = [
 		],
 		[
 			withImports(['userEvent', 'within']),
-			withCanvas([`await userEvent.click(await canvas.findByRole('button'));`]),
+			withCanvas([
+				{
+					text: `await userEvent.click(await canvas.findByRole('button'));`,
+					warning: 'ROLE_WITHOUT_NAME',
+				},
+			]),
 		],
 	],
 	[
@@ -172,7 +195,10 @@ world\`);`,
 		[
 			withImports(['userEvent', 'within']),
 			withCanvas([
-				`await userEvent.upload(await canvas.findByTestId('file-upload'), [new File(['file1.txt'], 'file1.txt'), new File(['file2.png'], 'file2.png')]);`,
+				{
+					text: `await userEvent.upload(await canvas.findByTestId('file-upload'), [new File(['file1.txt'], 'file1.txt'), new File(['file2.png'], 'file2.png')]);`,
+					warning: 'TEST_ID',
+				},
 			]),
 		],
 	],
@@ -199,9 +225,18 @@ world\`);`,
 		[
 			withImports(['userEvent', 'within', 'waitFor', 'expect']),
 			withBodyCanvas([
-				`await userEvent.click(await canvas.findByRole('button'));`,
-				`await waitFor(() => expect(body.querySelector('#input-field')).toBeInTheDocument());`,
-				`await userEvent.type(body.querySelector('#input-field') as HTMLElement, 'Sample Text with quotes \\'"\`');`,
+				{
+					text: `await userEvent.click(await canvas.findByRole('button'));`,
+					warning: 'ROLE_WITHOUT_NAME',
+				},
+				{
+					text: `await waitFor(() => expect(body.querySelector('#input-field')).toBeInTheDocument());`,
+					warning: 'QUERY_SELECTOR',
+				},
+				{
+					text: `await userEvent.type(body.querySelector('#input-field') as HTMLElement, 'Sample Text with quotes \\'"\`');`,
+					warning: 'QUERY_SELECTOR',
+				},
 			]),
 		],
 	],
@@ -284,8 +319,14 @@ world\`);`,
 		[
 			withImports(['userEvent', 'within']),
 			withCanvas([
-				`await userEvent.click((await canvas.findAllByRole('button'))[0]);`,
-				`await userEvent.type((await canvas.findAllByRole('textarea'))[1], 'test');`,
+				{
+					text: `await userEvent.click((await canvas.findAllByRole('button'))[0]);`,
+					warning: 'ROLE_WITHOUT_NAME',
+				},
+				{
+					text: `await userEvent.type((await canvas.findAllByRole('textarea'))[1], 'test');`,
+					warning: 'ROLE_WITHOUT_NAME',
+				},
 				`await userEvent.click((await canvas.findAllByText('hello world', { exact: false, collapseWhitespace: false }))[1]);`,
 			]),
 		],
@@ -313,9 +354,18 @@ world\`);`,
 		[
 			withImports(['userEvent', 'within', 'waitFor', 'expect']),
 			withBodyCanvas([
-				`await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());`,
-				`await userEvent.click(body.querySelector('input') as HTMLElement);`,
-				`await userEvent.click(await canvas.findByRole('button'));`,
+				{
+					text: `await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());`,
+					warning: 'QUERY_SELECTOR',
+				},
+				{
+					text: `await userEvent.click(body.querySelector('input') as HTMLElement);`,
+					warning: 'QUERY_SELECTOR',
+				},
+				{
+					text: `await userEvent.click(await canvas.findByRole('button'));`,
+					warning: 'ROLE_WITHOUT_NAME',
+				},
 			]),
 		],
 	],
@@ -334,8 +384,14 @@ world\`);`,
 		[
 			withImports(['userEvent', 'waitFor', 'expect']),
 			withBody([
-				`await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());`,
-				`await userEvent.click(body.querySelector('input') as HTMLElement);`,
+				{
+					text: `await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());`,
+					warning: 'QUERY_SELECTOR',
+				},
+				{
+					text: `await userEvent.click(body.querySelector('input') as HTMLElement);`,
+					warning: 'QUERY_SELECTOR',
+				},
 			]),
 		],
 	],
@@ -354,7 +410,10 @@ world\`);`,
 		[
 			withImports(['userEvent', 'within', 'waitFor', 'expect']),
 			withCanvas([
-				`await waitFor(() => expect(canvas.queryByRole('button')).toBeInTheDocument())`,
+				{
+					text: `await waitFor(() => expect(canvas.queryByRole('button')).toBeInTheDocument())`,
+					warning: 'ROLE_WITHOUT_NAME',
+				},
 			]),
 		],
 	],
@@ -377,7 +436,10 @@ world\`);`,
 		[
 			withImports(['userEvent', 'within', 'waitFor', 'expect']),
 			withCanvas([
-				`await waitFor(() => expect(canvas.queryByTestId('email-input')).toHaveValue('test@example.com'))`,
+				{
+					text: `await waitFor(() => expect(canvas.queryByTestId('email-input')).toHaveValue('test@example.com'))`,
+					warning: 'TEST_ID',
+				},
 			]),
 		],
 	],
@@ -400,7 +462,10 @@ world\`);`,
 		[
 			withImports(['userEvent', 'waitFor', 'expect']),
 			withBody([
-				`await waitFor(() => expect(body.querySelector('.error-message')).toHaveTextContent('Invalid email'))`,
+				{
+					text: `await waitFor(() => expect(body.querySelector('.error-message')).toHaveTextContent('Invalid email'))`,
+					warning: 'QUERY_SELECTOR',
+				},
 			]),
 		],
 	],
@@ -496,7 +561,10 @@ world\`);`,
 		[
 			withImports(['userEvent', 'within', 'waitFor', 'expect']),
 			withCanvas([
-				`await waitFor(() => expect(canvas.queryByTestId('price-display')).toHaveTextContent('$99.99', { exact: false }))`,
+				{
+					text: `await waitFor(() => expect(canvas.queryByTestId('price-display')).toHaveTextContent('$99.99', { exact: false }))`,
+					warning: 'TEST_ID',
+				},
 			]),
 		],
 	],
@@ -612,7 +680,7 @@ world\`);`,
 		};
 		event: Interaction['event'];
 	}[],
-	[string[], string[]],
+	[GeneratedCodeLine[], GeneratedCodeLine[]],
 ][];
 
 describe('convertInteractionsToCode', () => {
@@ -634,25 +702,26 @@ describe('convertInteractionsToCode', () => {
 	});
 
 	test("doesn't generate 'as HTMLElement' without typescript", () => {
-		expect(
-			convertInteractionsToCode(
-				[
-					{
-						elementQuery: {
-							object: 'body',
-							method: 'querySelector',
-							args: ['input'],
-							nth: null,
-						},
-						event: { type: 'click' },
+		const result = convertInteractionsToCode(
+			[
+				{
+					elementQuery: {
+						object: 'body',
+						method: 'querySelector',
+						args: ['input'],
+						nth: null,
 					},
-				],
-				false,
+					event: { type: 'click' },
+				},
+			],
+			false,
+		);
+		// Check that one of the lines contains the expected text (without as HTMLElement)
+		expect(
+			result.play.some(
+				(line) =>
+					line.text === tab(`await userEvent.click(body.querySelector('input'));`),
 			),
-		).toMatchObject({
-			play: expect.arrayContaining([
-				tab(`await userEvent.click(body.querySelector('input'));`),
-			]),
-		});
+		).toBe(true);
 	});
 });

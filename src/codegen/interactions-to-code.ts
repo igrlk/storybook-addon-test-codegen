@@ -11,16 +11,23 @@ const EVENT_TO_USER_EVENT = {
 	focus: 'focus',
 };
 
+export type Warning = 'ROLE_WITHOUT_NAME' | 'QUERY_SELECTOR' | 'TEST_ID';
+
+export type GeneratedCodeLine = {
+	text: string;
+	warning?: Warning;
+};
+
 export type GeneratedCode = {
-	imports: string[];
-	play: string[];
+	imports: GeneratedCodeLine[];
+	play: GeneratedCodeLine[];
 };
 
 export const convertInteractionsToCode = (
 	interactions: Interaction[],
 	hasTypescript: boolean,
 ): GeneratedCode => {
-	const codeLines: string[] = [];
+	const codeLines: GeneratedCodeLine[] = [];
 	let usesBody = false;
 	let usesCanvas = false;
 	let needsExpect = false;
@@ -37,7 +44,7 @@ export const convertInteractionsToCode = (
 		if (event.type === 'assertion') {
 			needsExpect = true;
 
-			const { queryString, asElementPostfix } = getQueryString(
+			const { queryString, asElementPostfix, warning } = getQueryString(
 				interaction.elementQuery,
 				hasTypescript,
 			);
@@ -62,13 +69,16 @@ export const convertInteractionsToCode = (
 				usesCanvas = true;
 			}
 
-			codeLines.push(`await waitFor(() => ${assertCode})`);
+			codeLines.push({
+				text: `await waitFor(() => ${assertCode})`,
+				warning,
+			});
 
 			continue;
 		}
 
 		let beginning = `await userEvent.${EVENT_TO_USER_EVENT[event.type]}`;
-		let { queryString, assertion } = getQueryString(
+		let { queryString, assertion, warning } = getQueryString(
 			interaction.elementQuery,
 			hasTypescript,
 		);
@@ -85,6 +95,7 @@ export const convertInteractionsToCode = (
 		} else if (event.type === 'keydown') {
 			queryString = '';
 			assertion = null;
+			warning = undefined;
 
 			valueStr = `'${event.key}'`;
 		} else if (event.type === 'select') {
@@ -95,6 +106,7 @@ export const convertInteractionsToCode = (
 			beginning = beginning.replace('focus', 'tab');
 			queryString = '';
 			assertion = null;
+			warning = undefined;
 			valueStr = event.shift ? '{ shift: true }' : '';
 		}
 
@@ -107,10 +119,16 @@ export const convertInteractionsToCode = (
 		}
 
 		if (assertion) {
-			codeLines.push(assertion);
+			codeLines.push({
+				text: assertion,
+				warning,
+			});
 			needsExpect = true;
 		}
-		codeLines.push(`${beginning}(${queryString}${valueStr});`);
+		codeLines.push({
+			text: `${beginning}(${queryString}${valueStr});`,
+			warning,
+		});
 	}
 
 	if (!codeLines.length) {
@@ -131,24 +149,44 @@ export const convertInteractionsToCode = (
 		importNames.push('waitFor', 'expect');
 	}
 
-	const play = ['play: async ({ canvasElement }) => {'];
+	const play: GeneratedCodeLine[] = [
+		{
+			text: 'play: async ({ canvasElement }) => {',
+		},
+	];
 
 	if (usesBody) {
-		play.push(tab('const body = canvasElement.ownerDocument.body;'));
+		play.push({
+			text: tab('const body = canvasElement.ownerDocument.body;'),
+		});
 	}
 
 	if (usesCanvas) {
 		if (usesBody) {
-			play.push(tab('const canvas = within(body);'));
+			play.push({
+				text: tab('const canvas = within(body);'),
+			});
 		} else {
-			play.push(tab('const canvas = within(canvasElement.ownerDocument.body);'));
+			play.push({
+				text: tab('const canvas = within(canvasElement.ownerDocument.body);'),
+			});
 		}
 	}
 
-	play.push(...codeLines.map(tab), '}');
+	play.push(
+		...codeLines.map((codeLine) => ({
+			text: tab(codeLine.text),
+			warning: codeLine.warning,
+		})),
+		{ text: '}' },
+	);
 
 	return {
-		imports: [`import { ${importNames.join(', ')} } from '@storybook/test';`],
+		imports: [
+			{
+				text: `import { ${importNames.join(', ')} } from '@storybook/test';`,
+			},
+		],
 		play,
 	};
 };
@@ -163,6 +201,19 @@ const getQueryString = (
 
 	const beginning = `${query.object === 'canvas' ? 'await ' : ''}${query.object}.${query.method}`;
 	const args = argsToString(query.args);
+
+	let warning: Warning | undefined;
+
+	if (query.method === 'querySelector') {
+		warning = 'QUERY_SELECTOR';
+	} else if (
+		query.method.includes('ByRole') &&
+		(!query.args[1] || !('name' in (query.args[1] as { name?: string })))
+	) {
+		warning = 'ROLE_WITHOUT_NAME';
+	} else if (query.method.includes('ByTestId')) {
+		warning = 'TEST_ID';
+	}
 
 	const asElement =
 		query.object === 'body' && hasTypescript ? asElementPostfix : '';
@@ -182,5 +233,6 @@ const getQueryString = (
 		assertion,
 		queryString: result,
 		asElementPostfix,
+		warning,
 	};
 };

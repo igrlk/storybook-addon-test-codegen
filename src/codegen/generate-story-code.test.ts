@@ -18,12 +18,12 @@ type Story = StoryObj<typeof Component>;
 
 export const Default: Story = {};`,
 			code: {
-				imports: ["import { userEvent, within } from '@storybook/test';"],
+				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
 				play: [
-					'play: async ({ canvasElement }) => {',
-					'\tconst canvas = within(canvasElement.ownerDocument.body);',
-					"\tawait userEvent.click(await canvas.findByRole('button'));",
-					'}',
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
 				],
 			},
 			result: `import { userEvent, within } from '@storybook/test';
@@ -63,12 +63,12 @@ type Story = StoryObj<typeof Component>;
 
 export const Default: Story = {};`,
 			code: {
-				imports: ["import { userEvent, within } from '@storybook/test';"],
+				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
 				play: [
-					'play: async ({ canvasElement }) => {',
-					'\tconst canvas = within(canvasElement.ownerDocument.body);',
-					"\tawait userEvent.click(await canvas.findByRole('button'));",
-					'}',
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
 				],
 			},
 			result: `import { userEvent, within } from '@storybook/test';
@@ -108,12 +108,12 @@ type Story = StoryObj<typeof Component>;
 
 export const Default: Story = {};`,
 			code: {
-				imports: ["import { userEvent, within } from '@storybook/test';"],
+				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
 				play: [
-					'play: async ({ canvasElement }) => {',
-					'\tconst canvas = within(canvasElement.ownerDocument.body);',
-					"\tawait userEvent.click(await canvas.findByRole('button'));",
-					'}',
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
 				],
 			},
 			result: `import { userEvent, within } from '@storybook/test';
@@ -153,12 +153,12 @@ type Story = StoryObj<typeof Component>;
 
 export const Default: Story = {};`,
 			code: {
-				imports: ["import { userEvent, within } from '@storybook/test';"],
+				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
 				play: [
-					'play: async ({ canvasElement }) => {',
-					'\tconst canvas = within(canvasElement.ownerDocument.body);',
-					"\tawait userEvent.click(await canvas.findByRole('button'));",
-					'}',
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
 				],
 			},
 			result: `import { userEvent, within } from '@storybook/test';
@@ -193,12 +193,12 @@ export default {
 
 export const Default = {};`,
 			code: {
-				imports: ["import { userEvent, within } from '@storybook/test';"],
+				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
 				play: [
-					'play: async ({ canvasElement }) => {',
-					'\tconst canvas = within(canvasElement.ownerDocument.body);',
-					"\tawait userEvent.click(await canvas.findByRole('button'));",
-					'}',
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
 				],
 			},
 			result: `import { userEvent, within } from '@storybook/test';
@@ -243,12 +243,12 @@ type Story = StoryObj<typeof Component>;
 
 export const Default: Story = {};`,
 			code: {
-				imports: ["import { userEvent, within } from '@storybook/test';"],
+				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
 				play: [
-					'play: async ({ canvasElement }) => {',
-					'\tconst canvas = within(canvasElement.ownerDocument.body);',
-					"\tawait userEvent.click(await canvas.findByRole('button'));",
-					'}',
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
 				],
 			},
 			result: `import { userEvent, within } from '@storybook/test';
@@ -312,12 +312,12 @@ export const Default: Story = {
     }
 };`,
 			code: {
-				imports: ["import { userEvent, within } from '@storybook/test';"],
+				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
 				play: [
-					'play: async ({ canvasElement }) => {',
-					'\tconst canvas = within(canvasElement.ownerDocument.body);',
-					"\tawait userEvent.click(await canvas.findByRole('button'));",
-					'}',
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
 				],
 			},
 			result: `import { userEvent, within } from '@storybook/test';

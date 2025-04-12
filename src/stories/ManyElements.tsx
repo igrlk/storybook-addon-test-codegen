@@ -474,6 +474,12 @@ export const ManyElements = () => {
 				<div className="p-2 bg-gray-100 rounded">
 					This is a div with text content
 				</div>
+
+				{/* Test ID */}
+				<div
+					data-testid="test-id"
+					style={{ width: '100px', height: '100px', backgroundColor: 'red' }}
+				/>
 			</form>
 		</div>
 	);
