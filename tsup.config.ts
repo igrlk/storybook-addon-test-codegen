@@ -1,3 +1,4 @@
+import { exec } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { globalPackages as globalManagerPackages } from 'storybook/internal/manager/globals';
 import { globalPackages as globalPreviewPackages } from 'storybook/internal/preview/globals';
@@ -101,6 +102,25 @@ export default defineConfig(async (options) => {
 			format: ['cjs'],
 			target: NODE_TARGET,
 			platform: 'node',
+		});
+	}
+
+	if (options.watch && process.env.RUN_STORYBOOK) {
+		configs.push({
+			entry: [
+				...exportEntries,
+				...managerEntries,
+				...previewEntries,
+				...nodeEntries,
+			],
+			external: [...globalManagerPackages, ...globalPreviewPackages],
+			async onSuccess() {
+				const process = exec('pnpm storybook --no-open');
+
+				return () => {
+					process.kill();
+				};
+			},
 		});
 	}
 
