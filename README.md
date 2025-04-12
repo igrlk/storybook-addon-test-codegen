@@ -26,7 +26,7 @@ by running:
 npm install --save-dev storybook@latest
 ````
 
-If you’re not using Storybook already, you can refer to
+If you're not using Storybook already, you can refer to
 the [Storybook Getting Started Guide](https://storybook.js.org/docs) for installation instructions.
 
 For `storybook@8.2.*`, use version `1.0.3` of this addon.
@@ -55,7 +55,8 @@ export default config;
 ## Usage
 
 Enable recording in the Interaction Recorder tab in the Storybook UI. Interact with your components as you normally
-would, and the addon will generate test code for you. Click "Add assertion" to add assertions like `expect().toBeVisible()` to the generated code.
+would, and the addon will generate test code for you. Click "Add assertion" to add assertions like
+`expect().toBeVisible()` to the generated code.
 
 Click on "Save to story" to save the generated code to the story file. Done 🎉
 
@@ -79,25 +80,23 @@ export const MyComponent = {
 }
 ```
 
-## API
+## Parameters
 
-### Parameters
+This addon accepts the following parameters under the `testCodegen` namespace:
 
-This addon contributes the following parameters to Storybook, under the `testCodegen` namespace:
+| Parameter           | Type      | Default       | Description                                                             |
+|---------------------|-----------|---------------|-------------------------------------------------------------------------|
+| `testIdAttribute`   | `string`  | `data-testid` | The attribute to use for generating `findByTestId` queries.             |
+| `disableSaveFromUI` | `boolean` | `false`       | When set to `true`, disables the ability to save test code from the UI. |
 
-#### testIdAttribute
-
-Type: `string`
-
-The attribute to use for generating `findByTestId` queries. Defaults to `'data-testid'`.
-
-Example:
+**Example:**
 
 ```jsx
 {
   parameters: {
     testCodegen: {
-      testIdAttribute: 'data-test-id'
+      testIdAttribute: 'data-testid'
+      disableSaveFromUI: false
     }
   }
 }

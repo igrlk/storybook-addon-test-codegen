@@ -15,6 +15,7 @@ import type {
 	SaveNewStoryRequestPayload,
 	SaveNewStoryResponsePayload,
 } from './data';
+import { useAddonParameters } from './decorators/state';
 import {
 	DisabledButton,
 	ErrorButton,
@@ -42,6 +43,7 @@ export const SaveStoryButton = ({
 	code: GeneratedCode;
 }) => {
 	const api = useStorybookApi();
+	const { disableSaveFromUI } = useAddonParameters();
 
 	const [name, setName] = useState('');
 	const [state, setState] = useState<
@@ -142,18 +144,26 @@ export const SaveStoryButton = ({
 
 	return (
 		<SaveContainer>
-			{state === 'button' && isDevelopment && (
+			{state === 'button' && isDevelopment && !disableSaveFromUI && (
 				<StyledButton onClick={() => setState('input')} variant="outline">
 					<SaveIconColorful size={16} /> Save to story
 				</StyledButton>
 			)}
 
-			{state === 'button' && !isDevelopment && (
+			{(!isDevelopment || disableSaveFromUI) && (
 				<WithTooltip
 					as="div"
 					hasChrome={false}
 					trigger="hover"
-					tooltip={<TooltipNote note="Only available in development mode" />}
+					tooltip={
+						<TooltipNote
+							note={
+								disableSaveFromUI
+									? 'Saving from UI is disabled in parameters'
+									: 'Only available in development mode'
+							}
+						/>
+					}
 				>
 					<DisabledButton variant="outline" type="button">
 						<SaveIconColorful size={16} /> Save to story
