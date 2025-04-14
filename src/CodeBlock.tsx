@@ -184,7 +184,7 @@ const Message = styled.div(({ theme }) => ({
 
 const warningToRender = {
 	ROLE_WITHOUT_NAME: {
-		title: 'Missing name parameter',
+		title: 'Role without name',
 		description: (
 			<div>
 				<div>
@@ -210,7 +210,7 @@ const warningToRender = {
 		),
 	},
 	QUERY_SELECTOR: {
-		title: 'Bad selector',
+		title: 'Query selector usage',
 		description: (
 			<div>
 				<div>
@@ -240,11 +240,12 @@ const warningToRender = {
 		description: (
 			<div>
 				<div>
-					<strong>data-testid</strong> attributes aren't visible to users and don't
-					verify accessibility.
+					<strong>data-testid</strong> elements are not accessible and do not
+					resemble how your software is used.
 				</div>
 				<div style={{ margin: '8px 0' }}>
-					To improve, use semantic HTML elements with proper labels:
+					To improve, use <strong>semantic HTML</strong> or{' '}
+					<strong>aria-label</strong> to make the element accessible:
 				</div>
 				<div style={{ margin: '8px 0' }}>
 					<div>
