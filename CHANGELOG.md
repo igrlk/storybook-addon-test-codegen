@@ -1,3 +1,19 @@
+# v1.3.0 (Mon Apr 14 2025)
+
+#### 🚀 Enhancement
+
+- Display element selector warnings [#24](https://github.com/igrlk/storybook-addon-test-codegen/pull/24) ([@igrlk](https://github.com/igrlk))
+
+#### 🧪 Tests
+
+- e2e using playwright [#23](https://github.com/igrlk/storybook-addon-test-codegen/pull/23) ([@igrlk](https://github.com/igrlk))
+
+#### Authors: 1
+
+- Igor Luchenkov ([@igrlk](https://github.com/igrlk))
+
+---
+
 # v1.2.0 (Sun Mar 23 2025)
 
 #### 🚀 Enhancement
