@@ -25,7 +25,7 @@ by running:
 
 ```sh
 npm install --save-dev storybook@latest
-````
+```
 
 If you’re not using Storybook already, you can refer to
 the [Storybook Getting Started Guide](https://storybook.js.org/docs) for installation instructions.
@@ -80,6 +80,19 @@ export const MyComponent = {
   }
 }
 ```
+
+### Warnings
+
+The addon helps you write better tests by showing warnings when it detects potential improvements in your selectors. It
+highlights cases where:
+
+- Roles are used without names (which can make tests fragile)
+- Query selectors are used (which can break when HTML structure changes)
+- Test IDs are used (which don't reflect how users interact with your app)
+
+For each warning, you'll get suggestions on how to improve your selectors to make tests more reliable and maintainable.
+
+![Warnings in action](/assets/warnings.png)
 
 ## API
 
