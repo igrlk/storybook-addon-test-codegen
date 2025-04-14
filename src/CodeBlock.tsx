@@ -1,7 +1,8 @@
-import { CheckIcon, CopyIcon } from '@storybook/icons';
+import { AlertIcon, CheckIcon, CopyIcon } from '@storybook/icons';
 // biome-ignore lint/correctness/noUnusedImports: Must be here for react@19 and non-react projects support
 import React from 'react';
 import { useState } from 'react';
+import { createElement } from 'react-syntax-highlighter';
 import {
 	IconButton,
 	SyntaxHighlighter,
@@ -9,6 +10,10 @@ import {
 	WithTooltip,
 } from 'storybook/internal/components';
 import { styled } from 'storybook/internal/theming';
+import type {
+	GeneratedCodeLine,
+	Warning,
+} from './codegen/interactions-to-code';
 
 const Container = styled.div(({ theme }) => ({
 	display: 'flex',
@@ -54,13 +59,26 @@ const CopyIconContainer = styled.div({
 	zIndex: 1,
 });
 
+const WarningButton = styled(IconButton)(({ theme }) => ({
+	padding: 0,
+	width: 20,
+	height: 20,
+	marginRight: 4,
+}));
+
+const WarningIcon = styled(AlertIcon)(({ theme }) => ({
+	color: theme.color.warning,
+	width: 12,
+	height: 12,
+}));
+
 export function CodeBlock({
 	name,
 	codeLines,
 	isSticky,
 }: {
 	name: string;
-	codeLines: string[];
+	codeLines: GeneratedCodeLine[];
 	isSticky?: boolean;
 }) {
 	const [isCopied, setIsCopied] = useState(false);
@@ -68,7 +86,7 @@ export function CodeBlock({
 		typeof setTimeout
 	> | null>(null);
 
-	const code = codeLines.join('\n');
+	const code = codeLines.map((line) => line.text).join('\n');
 
 	return (
 		<Container>
@@ -107,8 +125,157 @@ export function CodeBlock({
 			</Label>
 
 			<Code>
-				<SyntaxHighlighter language={'typescript'}>{code}</SyntaxHighlighter>
+				<SyntaxHighlighter
+					language={'typescript'}
+					renderer={({ rows, useInlineStyles }) =>
+						rows.map((row, i) => {
+							const { warning } = codeLines[i];
+
+							if (warning) {
+								const warningIcon: rendererNode = {
+									type: 'element',
+									tagName: WarningIndicator,
+									properties: {
+										className: [],
+										warning,
+									},
+									children: [],
+								};
+
+								// replace the empty space with the warning icon
+								row.children.splice(0, 1, warningIcon);
+							} else if (i > 0 && i < rows.length - 1) {
+								// push each line to the right so that the code is aligned (warnings are displayed on the left)
+								row.children[0].properties.style = { marginRight: '16px' };
+							}
+
+							return createElement({
+								node: row,
+								stylesheet: {},
+								useInlineStyles,
+								key: `code-segement${i}`,
+							});
+						})
+					}
+				>
+					{code}
+				</SyntaxHighlighter>
 			</Code>
 		</Container>
+	);
+}
+
+const Title = styled.div(({ theme }) => ({
+	fontWeight: theme.typography.weight.bold,
+	fontSize: theme.typography.size.s2,
+	marginBottom: 12,
+}));
+
+const Desc = styled.div(({ theme }) => ({
+	color: theme.color.defaultText,
+}));
+
+const Message = styled.div(({ theme }) => ({
+	color: theme.color.defaultText,
+	lineHeight: '18px',
+	padding: 15,
+	width: 350,
+}));
+
+const warningToRender = {
+	ROLE_WITHOUT_NAME: {
+		title: 'Role without name',
+		description: (
+			<div>
+				<div>
+					<strong>getByRole</strong> without name can match any button, making tests
+					unreliable.
+				</div>
+				<div style={{ margin: '8px 0' }}>
+					To fix, add <strong>visible text</strong> or <strong>aria-label</strong> to
+					your element:
+				</div>
+				<div style={{ margin: '8px 0' }}>
+					<div>
+						❌ <code>&lt;button /&gt;</code>
+					</div>
+					<div>
+						✅ <code>&lt;button&gt;Submit&lt;/button&gt;</code>
+					</div>
+					<div>
+						✅ <code>&lt;button aria-label="Submit"&gt;Icon&lt;/button&gt;</code>
+					</div>
+				</div>
+			</div>
+		),
+	},
+	QUERY_SELECTOR: {
+		title: 'Query selector usage',
+		description: (
+			<div>
+				<div>
+					<strong>querySelector</strong> is fragile and breaks when HTML structure
+					changes.
+				</div>
+				<div style={{ margin: '8px 0' }}>
+					To fix, use <strong>semantic HTML</strong> or <strong>aria-label</strong>{' '}
+					to make the element accessible:
+				</div>
+				<div style={{ margin: '8px 0' }}>
+					<div>
+						❌ <code>&lt;div class="submit-18372"&gt;Submit&lt;/div&gt;</code>
+					</div>
+					<div>
+						✅ <code>&lt;button&gt;Submit&lt;/button&gt;</code>
+					</div>
+					<div>
+						✅ <code>&lt;div aria-label="Submit"&gt;Icon&lt;/div&gt;</code>
+					</div>
+				</div>
+			</div>
+		),
+	},
+	TEST_ID: {
+		title: 'Test ID usage',
+		description: (
+			<div>
+				<div>
+					<strong>data-testid</strong> elements are not accessible and do not
+					resemble how your software is used.
+				</div>
+				<div style={{ margin: '8px 0' }}>
+					To improve, use <strong>semantic HTML</strong> or{' '}
+					<strong>aria-label</strong> to make the element accessible:
+				</div>
+				<div style={{ margin: '8px 0' }}>
+					<div>
+						❌ <code>&lt;div data-testid="submit"&gt;Submit&lt;/div&gt;</code>
+					</div>
+					<div>
+						✅ <code>&lt;button&gt;Submit&lt;/button&gt;</code>
+					</div>
+				</div>
+			</div>
+		),
+	},
+};
+
+function WarningIndicator({ warning }: { warning: Warning }) {
+	const { title, description } = warningToRender[warning];
+
+	return (
+		<WithTooltip
+			trigger="hover"
+			tooltip={
+				<Message>
+					<Title>{title}</Title>
+					<Desc>{description}</Desc>
+				</Message>
+			}
+		>
+			<WarningButton>
+				<WarningIcon />
+			</WarningButton>
+		</WithTooltip>
 	);
 }

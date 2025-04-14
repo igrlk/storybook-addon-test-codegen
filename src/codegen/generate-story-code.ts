@@ -54,9 +54,15 @@ export const generateStoryCode = async ({
 		await updateArgsInCsfFile(node, args ? parseArgs(args) : {});
 	}
 
-	await updatePlayInCsfFile(node, code.play);
+	await updatePlayInCsfFile(
+		node,
+		code.play.map((line) => line.text),
+	);
 
-	await updateImportsInCsfFile(csf._ast, code.imports);
+	await updateImportsInCsfFile(
+		csf._ast,
+		code.imports.map((line) => line.text),
+	);
 
 	return {
 		storyCode: await formatFileContent(

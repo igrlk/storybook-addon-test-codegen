@@ -2,6 +2,7 @@
 
 [![NPM version](https://img.shields.io/npm/v/storybook-addon-test-codegen)](https://www.npmjs.com/package/storybook-addon-test-codegen)
 [![NPM downloads](https://img.shields.io/npm/dt/storybook-addon-test-codegen)](https://www.npmjs.com/package/storybook-addon-test-codegen)
+[![NPM downloads](https://img.shields.io/npm/dw/storybook-addon-test-codegen)](https://www.npmjs.com/package/storybook-addon-test-codegen)
 [![GitHub license](https://img.shields.io/github/license/igrlk/storybook-addon-test-codegen)](https://github.com/igrlk/storybook-addon-test-codegen/blob/main/LICENSE)
 
 Interact with your Storybook and get test code generated for
@@ -24,7 +25,7 @@ by running:
 
 ```sh
 npm install --save-dev storybook@latest
-````
+```
 
 If you’re not using Storybook already, you can refer to
 the [Storybook Getting Started Guide](https://storybook.js.org/docs) for installation instructions.
@@ -55,7 +56,8 @@ export default config;
 ## Usage
 
 Enable recording in the Interaction Recorder tab in the Storybook UI. Interact with your components as you normally
-would, and the addon will generate test code for you. Click "Add assertion" to add assertions like `expect().toBeVisible()` to the generated code.
+would, and the addon will generate test code for you. Click "Add assertion" to add assertions like
+`expect().toBeVisible()` to the generated code.
 
 Click on "Save to story" to save the generated code to the story file. Done 🎉
 
@@ -78,6 +80,19 @@ export const MyComponent = {
   }
 }
 ```
+
+### Warnings
+
+The addon helps you write better tests by showing warnings when it detects potential improvements in your selectors. It
+highlights cases where:
+
+- Roles are used without names (which can make tests fragile)
+- Query selectors are used (which can break when HTML structure changes)
+- Test IDs are used (which don't reflect how users interact with your app)
+
+For each warning, you'll get suggestions on how to improve your selectors to make tests more reliable and maintainable.
+
+![Warnings in action](/assets/warnings.png)
 
 ## API
 
