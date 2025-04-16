@@ -1,3 +1,15 @@
+# v1.3.1 (Wed Apr 16 2025)
+
+#### 🐛 Bug Fix
+
+- turn off recording when saving story / navigating to other story [#26](https://github.com/igrlk/storybook-addon-test-codegen/pull/26) ([@igrlk](https://github.com/igrlk))
+
+#### Authors: 1
+
+- Igor Luchenkov ([@igrlk](https://github.com/igrlk))
+
+---
+
 # v1.3.0 (Mon Apr 14 2025)
 
 #### 🚀 Enhancement
