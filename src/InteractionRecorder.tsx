@@ -63,9 +63,15 @@ export const InteractionRecorder = () => {
 
 	const storyData = api.getCurrentStoryData();
 
+	const turnOffRecording = () => {
+		setIsRecording(false);
+		setIsAsserting(false);
+	};
+
 	// biome-ignore lint/correctness/useExhaustiveDependencies: reset events & recording when story changes
 	useEffect(() => {
 		resetInteractions();
+		turnOffRecording();
 	}, [storyData?.id]);
 
 	const hasTypescript = ['.ts', '.tsx'].some((ext) =>
@@ -141,7 +147,9 @@ export const InteractionRecorder = () => {
 							</StyledButton>
 						</Group>
 
-						{code.play.length > 0 && <SaveStoryButton code={code} />}
+						{code.play.length > 0 && (
+							<SaveStoryButton code={code} turnOffRecording={turnOffRecording} />
+						)}
 					</StyledSubnav>
 				</Bar>
 			</SubnavWrapper>

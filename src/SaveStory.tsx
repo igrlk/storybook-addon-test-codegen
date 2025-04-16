@@ -38,8 +38,10 @@ const stringifyArgs = (args: Record<string, unknown>) =>
 
 export const SaveStoryButton = ({
 	code,
+	turnOffRecording,
 }: {
 	code: GeneratedCode;
+	turnOffRecording: () => void;
 }) => {
 	const api = useStorybookApi();
 
@@ -133,6 +135,8 @@ export const SaveStoryButton = ({
 			setTimeout(() => {
 				setState('button');
 			}, 2000);
+		} finally {
+			turnOffRecording();
 		}
 	};
 
