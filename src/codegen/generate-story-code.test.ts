@@ -353,6 +353,100 @@ export const Default: Story = {
 			newStoryId: 'form--default',
 		},
 	],
+	[
+		'New story without copying name',
+		{
+			storyName: 'NewStory',
+			story: `import type { Meta, StoryObj } from '@storybook/react';
+import { Component } from './Component';
+
+const meta: Meta<typeof Component> = {
+    component: Component
+};
+export default meta;
+type Story = StoryObj<typeof Component>;
+
+export const Default: Story = {
+    name: "Default"
+};`,
+			code: {
+				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
+				play: [
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
+				],
+			},
+			result: `import { userEvent, within } from '@storybook/test';
+import type { Meta, StoryObj } from '@storybook/react';
+import { Component } from './Component';
+
+const meta: Meta<typeof Component> = {
+    component: Component
+};
+export default meta;
+type Story = StoryObj<typeof Component>;
+
+export const Default: Story = {
+    name: "Default"
+};
+
+export const NewStory: Story = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    }
+};`,
+			newStoryId: 'form--new-story',
+		},
+	],
+	[
+		'Existing story with custom name',
+		{
+			storyName: 'CustomName',
+			story: `import type { Meta, StoryObj } from '@storybook/react';
+import { Component } from './Component';
+
+const meta: Meta<typeof Component> = {
+    component: Component
+};
+export default meta;
+type Story = StoryObj<typeof Component>;
+
+export const Default: Story = {
+    name: "CustomName"
+};`,
+			code: {
+				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
+				play: [
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
+				],
+			},
+			result: `import { userEvent, within } from '@storybook/test';
+import type { Meta, StoryObj } from '@storybook/react';
+import { Component } from './Component';
+
+const meta: Meta<typeof Component> = {
+    component: Component
+};
+export default meta;
+type Story = StoryObj<typeof Component>;
+
+export const Default: Story = {
+    name: "CustomName",
+
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    }
+};`,
+			newStoryId: 'form--customname',
+		},
+	],
 ] satisfies [
 	string,
 	{

@@ -200,7 +200,11 @@ export const duplicateStoryWithNewName = (
 		},
 		ObjectProperty(path) {
 			const key = path.get('key');
-			if (key.isIdentifier() && key.node.name === 'args') {
+			// Remove args and name properties when duplicating a story
+			if (
+				key.isIdentifier() &&
+				(key.node.name === 'args' || key.node.name === 'name')
+			) {
 				path.remove();
 			}
 		},
