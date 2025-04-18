@@ -97,16 +97,18 @@ export const updateArgsInCsfFile = async (
 				}
 			}
 		} else {
-			properties.unshift(
-				t.objectProperty(
-					t.identifier('args'),
-					t.objectExpression(
-						Object.entries(args).map(([key, value]) =>
-							t.objectProperty(t.identifier(key), value),
+			if (Object.keys(args).length) {
+				properties.unshift(
+					t.objectProperty(
+						t.identifier('args'),
+						t.objectExpression(
+							Object.entries(args).map(([key, value]) =>
+								t.objectProperty(t.identifier(key), value),
+							),
 						),
 					),
-				),
-			);
+				);
+			}
 		}
 		return;
 	}
@@ -154,17 +156,19 @@ export const updateArgsInCsfFile = async (
 					}
 				}
 			} else {
-				path.unshiftContainer(
-					'properties',
-					t.objectProperty(
-						t.identifier('args'),
-						t.objectExpression(
-							Object.entries(args).map(([key, value]) =>
-								t.objectProperty(t.identifier(key), value),
+				if (Object.keys(args).length) {
+					path.unshiftContainer(
+						'properties',
+						t.objectProperty(
+							t.identifier('args'),
+							t.objectExpression(
+								Object.entries(args).map(([key, value]) =>
+									t.objectProperty(t.identifier(key), value),
+								),
 							),
 						),
-					),
-				);
+					);
+				}
 			}
 		},
 

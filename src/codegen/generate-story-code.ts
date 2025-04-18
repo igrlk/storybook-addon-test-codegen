@@ -86,10 +86,7 @@ export const generateStoryCode = async ({
 			duplicateStoryWithNewName(parsed, originalStoryName, newStoryName);
 	}
 
-	const parsedArgs = args ? parseArgs(args) : {};
-	if (Object.keys(parsedArgs).length) {
-		await updateArgsInCsfFile(node, parsedArgs);
-	}
+	await updateArgsInCsfFile(node, args ? parseArgs(args) : {});
 
 	await updatePlayInCsfFile(
 		node,

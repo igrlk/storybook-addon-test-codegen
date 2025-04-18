@@ -308,7 +308,8 @@ type Story = StoryObj<typeof Component>;
 
 export const Default: Story = {
     args: {
-        existing: "existing value"
+        existing: "existing value",
+		someFunction: () => 42
     }
 };`,
 			code: {
@@ -333,6 +334,7 @@ type Story = StoryObj<typeof Component>;
 export const Default: Story = {
     args: {
         existing: "existing value",
+        someFunction: () => 42,
 
         hello: {
             "world": {
