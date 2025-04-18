@@ -1,5 +1,4 @@
 import { storyNameFromExport, toId } from '@storybook/csf';
-import type { types } from 'storybook/internal/babel';
 import { formatFileContent } from 'storybook/internal/common';
 import { type CsfFile, printCsf } from 'storybook/internal/csf-tools';
 import type { GeneratedCode } from './interactions-to-code';
@@ -59,32 +58,15 @@ export const generateStoryCode = async ({
 		// If no story with matching name property, look for a story by its export name
 		stories.find(([key]) => key === name || storyNameFromExport(key) === name);
 
-	// Generate the new story ID
-	let newStoryId: string;
-	if (existingStoryToUpdate) {
-		// For stories with custom names, handle the ID specially
-		const hasCustomName = parsed._stories[existingStoryToUpdate[0]].name === name;
-		if (hasCustomName) {
-			newStoryId = `${componentId}--${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
-		} else {
-			newStoryId = toId(
-				componentId,
-				storyNameFromExport(existingStoryToUpdate[0]),
-			);
-		}
-	} else {
-		newStoryId = toId(componentId, storyNameFromExport(newStoryName));
-	}
+	const newStoryId = existingStoryToUpdate
+		? toId(componentId, storyId)
+		: toId(componentId, storyNameFromExport(newStoryName));
 
 	// If we're updating an existing story, use that node, otherwise create a new one
-	let node: types.VariableDeclarator | types.FunctionDeclaration;
-	if (existingStoryToUpdate) {
-		node = csf._storyExports[existingStoryToUpdate[0]];
-	} else {
-		node =
-			csf._storyExports[newStoryName] ??
-			duplicateStoryWithNewName(parsed, originalStoryName, newStoryName);
-	}
+	const node = existingStoryToUpdate
+		? csf._storyExports[existingStoryToUpdate[0]]
+		: (csf._storyExports[newStoryName] ??
+			duplicateStoryWithNewName(parsed, originalStoryName, newStoryName));
 
 	await updateArgsInCsfFile(node, args ? parseArgs(args) : {});
 

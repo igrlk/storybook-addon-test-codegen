@@ -406,7 +406,8 @@ export const NewStory: Story = {
 	[
 		'Existing story with custom name',
 		{
-			storyName: 'CustomName',
+			storyName: 'My cool name',
+			csfId: 'form--custom-name',
 			story: `import type { Meta, StoryObj } from '@storybook/react';
 import { Component } from './Component';
 
@@ -416,8 +417,8 @@ const meta: Meta<typeof Component> = {
 export default meta;
 type Story = StoryObj<typeof Component>;
 
-export const Default: Story = {
-    name: "CustomName"
+export const CustomName: Story = {
+    name: "My cool name"
 };`,
 			code: {
 				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
@@ -438,15 +439,15 @@ const meta: Meta<typeof Component> = {
 export default meta;
 type Story = StoryObj<typeof Component>;
 
-export const Default: Story = {
-    name: "CustomName",
+export const CustomName: Story = {
+    name: "My cool name",
 
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
     }
 };`,
-			newStoryId: 'form--customname',
+			newStoryId: 'form--custom-name',
 		},
 	],
 ] satisfies [
@@ -458,6 +459,7 @@ export const Default: Story = {
 		code: GeneratedCode;
 		result: string;
 		newStoryId: string;
+		csfId?: string;
 	},
 ][];
 
@@ -467,7 +469,7 @@ describe('generateStoryCode', () => {
 			code: params.code,
 			name: 'storyName' in params ? params.storyName : 'NewStory',
 			args: 'args' in params ? params.args : '{}',
-			csfId: 'form--default',
+			csfId: 'csfId' in params ? params.csfId : 'form--default',
 			csf: loadCsf(params.story, { makeTitle: () => 'story' }),
 		});
 		expect(storyCode).toBe(params.result);
