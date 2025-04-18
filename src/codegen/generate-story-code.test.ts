@@ -308,7 +308,8 @@ type Story = StoryObj<typeof Component>;
 
 export const Default: Story = {
     args: {
-        existing: "existing value"
+        existing: "existing value",
+		someFunction: () => 42
     }
 };`,
 			code: {
@@ -333,6 +334,7 @@ type Story = StoryObj<typeof Component>;
 export const Default: Story = {
     args: {
         existing: "existing value",
+        someFunction: () => 42,
 
         hello: {
             "world": {
@@ -353,6 +355,101 @@ export const Default: Story = {
 			newStoryId: 'form--default',
 		},
 	],
+	[
+		'New story without copying name',
+		{
+			storyName: 'NewStory',
+			story: `import type { Meta, StoryObj } from '@storybook/react';
+import { Component } from './Component';
+
+const meta: Meta<typeof Component> = {
+    component: Component
+};
+export default meta;
+type Story = StoryObj<typeof Component>;
+
+export const Default: Story = {
+    name: "Default"
+};`,
+			code: {
+				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
+				play: [
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
+				],
+			},
+			result: `import { userEvent, within } from '@storybook/test';
+import type { Meta, StoryObj } from '@storybook/react';
+import { Component } from './Component';
+
+const meta: Meta<typeof Component> = {
+    component: Component
+};
+export default meta;
+type Story = StoryObj<typeof Component>;
+
+export const Default: Story = {
+    name: "Default"
+};
+
+export const NewStory: Story = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    }
+};`,
+			newStoryId: 'form--new-story',
+		},
+	],
+	[
+		'Existing story with custom name',
+		{
+			storyName: 'My cool name',
+			csfId: 'form--custom-name',
+			story: `import type { Meta, StoryObj } from '@storybook/react';
+import { Component } from './Component';
+
+const meta: Meta<typeof Component> = {
+    component: Component
+};
+export default meta;
+type Story = StoryObj<typeof Component>;
+
+export const CustomName: Story = {
+    name: "My cool name"
+};`,
+			code: {
+				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
+				play: [
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
+				],
+			},
+			result: `import { userEvent, within } from '@storybook/test';
+import type { Meta, StoryObj } from '@storybook/react';
+import { Component } from './Component';
+
+const meta: Meta<typeof Component> = {
+    component: Component
+};
+export default meta;
+type Story = StoryObj<typeof Component>;
+
+export const CustomName: Story = {
+    name: "My cool name",
+
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    }
+};`,
+			newStoryId: 'form--custom-name',
+		},
+	],
 ] satisfies [
 	string,
 	{
@@ -362,6 +459,7 @@ export const Default: Story = {
 		code: GeneratedCode;
 		result: string;
 		newStoryId: string;
+		csfId?: string;
 	},
 ][];
 
@@ -371,7 +469,7 @@ describe('generateStoryCode', () => {
 			code: params.code,
 			name: 'storyName' in params ? params.storyName : 'NewStory',
 			args: 'args' in params ? params.args : '{}',
-			csfId: 'form--default',
+			csfId: 'csfId' in params ? params.csfId : 'form--default',
 			csf: loadCsf(params.story, { makeTitle: () => 'story' }),
 		});
 		expect(storyCode).toBe(params.result);

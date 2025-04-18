@@ -29,12 +29,14 @@ export const generateStoryCode = async ({
 
 	const [componentId, storyId] = csfId.split('--');
 
-	const [originalStoryName] =
-		stories.find(([key, value]) => value.id.endsWith(`--${storyId}`)) || [];
+	const originalStoryName = stories.find(([key, value]) =>
+		value.id.endsWith(`--${storyId}`),
+	)?.[0];
 	if (!originalStoryName) {
 		throw new Error('Source story not found.');
 	}
 
+	// Format the new story name to follow Storybook naming conventions
 	const newStoryName = name
 		.replace(/^[^a-z]/i, '')
 		.replace(/^\d+/, '')
@@ -43,16 +45,30 @@ export const generateStoryCode = async ({
 			match.toUpperCase().replace(/[-_ ]/g, ''),
 		); // from https://github.com/storybookjs/storybook/blob/1fdd2d6c675b81269125af5027e45a357c09f1fa/code/addons/controls/src/SaveStory.tsx#L122
 
-	const newStoryId = toId(componentId, storyNameFromExport(newStoryName));
+	// Check if we're updating an existing story
+	const existingStoryToUpdate =
+		// Check for story.name property matching our target
+		stories.find(([key, story]) => {
+			if (story.name === name) {
+				return true;
+			}
 
-	const node =
-		csf._storyExports[newStoryName] ??
-		duplicateStoryWithNewName(parsed, originalStoryName, newStoryName);
+			return false;
+		}) ||
+		// If no story with matching name property, look for a story by its export name
+		stories.find(([key]) => key === name || storyNameFromExport(key) === name);
 
-	const parsedArgs = args ? parseArgs(args) : {};
-	if (Object.keys(parsedArgs).length) {
-		await updateArgsInCsfFile(node, args ? parseArgs(args) : {});
-	}
+	const newStoryId = existingStoryToUpdate
+		? toId(componentId, storyId)
+		: toId(componentId, storyNameFromExport(newStoryName));
+
+	// If we're updating an existing story, use that node, otherwise create a new one
+	const node = existingStoryToUpdate
+		? csf._storyExports[existingStoryToUpdate[0]]
+		: (csf._storyExports[newStoryName] ??
+			duplicateStoryWithNewName(parsed, originalStoryName, newStoryName));
+
+	await updateArgsInCsfFile(node, args ? parseArgs(args) : {});
 
 	await updatePlayInCsfFile(
 		node,
