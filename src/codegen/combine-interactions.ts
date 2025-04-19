@@ -1,5 +1,5 @@
 import type { Interaction } from '../state';
-import { argsToString } from './generate-query';
+import { argsToString } from './args-to-string';
 
 export const combineInteractions = (
 	interaction: Interaction,

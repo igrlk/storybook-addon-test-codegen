@@ -1,5 +1,6 @@
 // biome-ignore lint/correctness/noUnusedImports: Must be here for react@19 and non-react projects support
 import React from 'react';
+import { argsToString } from 'src/codegen/args-to-string';
 import {
 	useCallback,
 	useChannel,
@@ -8,7 +9,6 @@ import {
 import type { DecoratorFunction } from 'storybook/internal/types';
 import {
 	type ElementQuery,
-	argsToString,
 	generateQuery,
 	getClosestInteractiveElement,
 } from '../codegen/generate-query';

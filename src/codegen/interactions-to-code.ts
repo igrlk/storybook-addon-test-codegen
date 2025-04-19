@@ -1,5 +1,5 @@
 import type { Interaction } from '../state';
-import { argsToString, wrapInQuotes } from './generate-query';
+import { argsToString, wrapInQuotes } from './args-to-string';
 
 const EVENT_TO_USER_EVENT = {
 	click: 'click',
@@ -89,8 +89,7 @@ export const convertInteractionsToCode = (
 				beginning = beginning.replace(EVENT_TO_USER_EVENT[event.type], 'clear');
 				valueStr = '';
 			} else {
-				const isMultiLine = event.value.includes('\n');
-				valueStr = `, ${wrapInQuotes(isMultiLine ? event.value : event.value.replace("'", "\\'"))}`;
+				valueStr = `, ${wrapInQuotes(event.value)}`;
 			}
 		} else if (event.type === 'keydown') {
 			queryString = '';

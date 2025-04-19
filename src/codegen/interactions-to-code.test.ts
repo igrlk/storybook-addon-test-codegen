@@ -219,7 +219,23 @@ world\`);`,
 					method: 'querySelector',
 					args: ['#input-field'],
 				},
-				event: { type: 'type', value: 'Sample Text with quotes \'"`' },
+				event: { type: 'type', value: 'Sample Text with quotes \' " `' },
+			},
+			{
+				elementQuery: {
+					object: 'canvas',
+					method: 'findByRole',
+					args: ['input', { name: 'Description' }],
+				},
+				event: {
+					type: 'type',
+					value: `Multiline
+with quotes
+'single'
+"double"
+\`backticks\`
+`,
+				},
 			},
 		],
 		[
@@ -234,8 +250,17 @@ world\`);`,
 					warning: 'QUERY_SELECTOR',
 				},
 				{
-					text: `await userEvent.type(body.querySelector('#input-field') as HTMLElement, 'Sample Text with quotes \\'"\`');`,
+					text:
+						"await userEvent.type(body.querySelector('#input-field') as HTMLElement, 'Sample Text with quotes \\' \" `');",
 					warning: 'QUERY_SELECTOR',
+				},
+				{
+					text: `await userEvent.type(await canvas.findByRole('input', { name: 'Description' }), \`Multiline
+with quotes
+'single'
+"double"
+\\\`backticks\\\`
+\`);`,
 				},
 			]),
 		],
