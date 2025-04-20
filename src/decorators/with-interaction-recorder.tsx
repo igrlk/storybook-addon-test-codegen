@@ -1,5 +1,6 @@
 // biome-ignore lint/correctness/noUnusedImports: Must be here for react@19 and non-react projects support
 import React from 'react';
+import { argsToString } from 'src/codegen/args-to-string';
 import {
 	useCallback,
 	useChannel,
@@ -8,7 +9,6 @@ import {
 import type { DecoratorFunction } from 'storybook/internal/types';
 import {
 	type ElementQuery,
-	argsToString,
 	generateQuery,
 	getClosestInteractiveElement,
 } from '../codegen/generate-query';
@@ -344,15 +344,18 @@ export const withInteractionRecorder: DecoratorFunction = (
 			// Calculate optimal position to keep menu in viewport
 			let menuX = position.x;
 			let menuY = position.y;
+			const OFFSET = 5;
 
-			// Adjust horizontal position if needed
-			if (menuX + menuRect.width > viewportWidth) {
-				menuX = Math.max(0, viewportWidth - menuRect.width);
+			const hasEnoughBottomSpace =
+				menuY + menuRect.height <= viewportHeight + window.scrollY;
+			if (!hasEnoughBottomSpace) {
+				menuY = viewportHeight + window.scrollY - menuRect.height - OFFSET;
 			}
 
-			// Adjust vertical position if needed
-			if (menuY + menuRect.height > viewportHeight) {
-				menuY = Math.max(0, viewportHeight - menuRect.height);
+			const hasEnoughRightSpace =
+				menuX + menuRect.width <= viewportWidth + window.scrollX;
+			if (!hasEnoughRightSpace) {
+				menuX = viewportWidth + window.scrollX - menuRect.width - OFFSET;
 			}
 
 			// Apply calculated position

@@ -312,31 +312,6 @@ export const generateQuery = async (
 	return null;
 };
 
-export const argsToString = (args: unknown[]) =>
-	args
-		.map((arg) => {
-			if (typeof arg === 'string') {
-				return wrapInQuotes(arg);
-			}
-
-			if (typeof arg === 'object' && arg !== null) {
-				return `{ ${Object.entries(arg)
-					.reduce<string[]>((acc, [key, value]) => {
-						acc.push(
-							`${key}: ${typeof value === 'string' ? wrapInQuotes(value) : value}`,
-						);
-						return acc;
-					}, [])
-					.join(', ')} }`;
-			}
-
-			return arg;
-		})
-		.join(', ');
-
-export const wrapInQuotes = (str: string) =>
-	str.includes('\n') ? `\`${str}\`` : `'${str}'`;
-
 export const getElementLabels = (element: Element): string[] => {
 	const labels: string[] = [];
 
