@@ -1,14 +1,6 @@
 export const argsToString = (args: unknown[]): string =>
 	args
 		.map((arg) => {
-			if (arg === null) {
-				return 'null';
-			}
-
-			if (arg === undefined) {
-				return 'undefined';
-			}
-
 			if (typeof arg === 'string') {
 				return wrapInQuotes(arg);
 			}
