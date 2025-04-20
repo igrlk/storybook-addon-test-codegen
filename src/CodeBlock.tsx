@@ -86,7 +86,16 @@ export function CodeBlock({
 		typeof setTimeout
 	> | null>(null);
 
-	const code = codeLines.map((line) => line.text).join('\n');
+	// react-syntax-highlighter splits the multiline strings and it breaks the warning display
+	// so we need to split the code lines manually
+	const splitCodeLines = codeLines.flatMap((line) =>
+		line.text.split('\n').map((text, index) => ({
+			text,
+			warning: line.warning && index === 0 ? line.warning : undefined,
+		})),
+	);
+
+	const code = splitCodeLines.map(({ text }) => text).join('\n');
 
 	return (
 		<Container>
@@ -129,7 +138,7 @@ export function CodeBlock({
 					language={'typescript'}
 					renderer={({ rows, useInlineStyles }) =>
 						rows.map((row, i) => {
-							const { warning } = codeLines[i];
+							const warning = splitCodeLines[i]?.warning;
 
 							if (warning) {
 								const warningIcon: rendererNode = {
@@ -145,8 +154,10 @@ export function CodeBlock({
 								// replace the empty space with the warning icon
 								row.children.splice(0, 1, warningIcon);
 							} else if (i > 0 && i < rows.length - 1) {
-								// push each line to the right so that the code is aligned (warnings are displayed on the left)
-								row.children[0].properties.style = { marginRight: '16px' };
+								if (row.children[0].properties) {
+									// push each line to the right so that the code is aligned (warnings are displayed on the left)
+									row.children[0].properties.style = { marginRight: '16px' };
+								}
 							}
 
 							return createElement({

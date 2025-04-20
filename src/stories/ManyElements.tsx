@@ -232,6 +232,7 @@ export const ManyElements = () => {
 						className="w-full p-2 border rounded"
 						rows={3}
 					/>
+					<textarea id="textarea2" className="w-full p-2 border rounded" rows={3} />
 				</div>
 
 				{/* Selects */}
