@@ -219,7 +219,10 @@ world\`);`,
 					method: 'querySelector',
 					args: ['#input-field'],
 				},
-				event: { type: 'type', value: 'Sample Text with quotes \' " `' },
+				event: {
+					type: 'type',
+					value: 'Sample Text with quotes and backslash \' " ` \\',
+				},
 			},
 			{
 				elementQuery: {
@@ -230,7 +233,7 @@ world\`);`,
 				event: {
 					type: 'type',
 					value: `Multiline
-with quotes
+with quotes and backslash \\\\
 'single'
 "double"
 \`backticks\`
@@ -251,12 +254,12 @@ with quotes
 				},
 				{
 					text:
-						"await userEvent.type(body.querySelector('#input-field') as HTMLElement, 'Sample Text with quotes \\' \" `');",
+						"await userEvent.type(body.querySelector('#input-field') as HTMLElement, 'Sample Text with quotes and backslash \\' \" ` \\\\');",
 					warning: 'QUERY_SELECTOR',
 				},
 				{
 					text: `await userEvent.type(await canvas.findByRole('input', { name: 'Description' }), \`Multiline
-with quotes
+with quotes and backslash \\\\\\\\
 'single'
 "double"
 \\\`backticks\\\`

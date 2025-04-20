@@ -39,11 +39,14 @@ export const argsToString = (args: unknown[]): string =>
 		.join(', ');
 
 export const wrapInQuotes = (str: string): string => {
-	if (str.includes('\n')) {
+	// Escape backslashes first
+	const result = str.replace(/\\/g, '\\\\');
+
+	if (result.includes('\n')) {
 		// For multiline strings, use backticks and escape any backticks in the content
-		return `\`${str.replace(/`/g, '\\`')}\``;
+		return `\`${result.replace(/`/g, '\\`')}\``;
 	}
 
 	// For single line strings, use single quotes and escape any single quotes in the content
-	return `'${str.replace(/'/g, "\\'")}'`;
+	return `'${result.replace(/'/g, "\\'")}'`;
 };
