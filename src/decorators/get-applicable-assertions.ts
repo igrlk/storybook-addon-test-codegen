@@ -162,7 +162,10 @@ const availableAssertions: {
 	{
 		assertionType: 'toHaveTextContent',
 		label: 'to have text content',
-		predicate: (el) => el.textContent !== null && el.textContent !== '',
+		predicate: (el) =>
+			el.textContent !== null &&
+			el.textContent !== '' &&
+			el.tagName !== 'TEXTAREA',
 		getArgs: (el) => [el.textContent || ''],
 	},
 	{
