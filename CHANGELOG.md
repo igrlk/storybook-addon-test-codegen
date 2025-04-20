@@ -1,3 +1,15 @@
+# v1.3.3 (Sun Apr 20 2025)
+
+#### 🐛 Bug Fix
+
+- bug fixes [#28](https://github.com/igrlk/storybook-addon-test-codegen/pull/28) ([@igrlk](https://github.com/igrlk))
+
+#### Authors: 1
+
+- Igor Luchenkov ([@igrlk](https://github.com/igrlk))
+
+---
+
 # v1.3.2 (Fri Apr 18 2025)
 
 #### 🐛 Bug Fix
