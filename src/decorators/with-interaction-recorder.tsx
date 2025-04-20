@@ -344,15 +344,18 @@ export const withInteractionRecorder: DecoratorFunction = (
 			// Calculate optimal position to keep menu in viewport
 			let menuX = position.x;
 			let menuY = position.y;
+			const OFFSET = 5;
 
-			// Adjust horizontal position if needed
-			if (menuX + menuRect.width > viewportWidth) {
-				menuX = Math.max(0, viewportWidth - menuRect.width);
+			const hasEnoughBottomSpace =
+				menuY + menuRect.height <= viewportHeight + window.scrollY;
+			if (!hasEnoughBottomSpace) {
+				menuY = viewportHeight + window.scrollY - menuRect.height - OFFSET;
 			}
 
-			// Adjust vertical position if needed
-			if (menuY + menuRect.height > viewportHeight) {
-				menuY = Math.max(0, viewportHeight - menuRect.height);
+			const hasEnoughRightSpace =
+				menuX + menuRect.width <= viewportWidth + window.scrollX;
+			if (!hasEnoughRightSpace) {
+				menuX = viewportWidth + window.scrollX - menuRect.width - OFFSET;
 			}
 
 			// Apply calculated position
