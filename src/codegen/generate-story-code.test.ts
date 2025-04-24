@@ -7,7 +7,7 @@ const TEST_CASES = [
 	[
 		'New story and new imports',
 		{
-			story: `import type { Meta, StoryObj } from '@storybook/react';
+			story: `import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
 
 const meta: Meta<typeof Component> = {
@@ -18,7 +18,7 @@ type Story = StoryObj<typeof Component>;
 
 export const Default: Story = {};`,
 			code: {
-				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
+				imports: [{ text: "import { userEvent, within } from 'storybook/test';" }],
 				play: [
 					{ text: 'play: async ({ canvasElement }) => {' },
 					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
@@ -26,8 +26,8 @@ export const Default: Story = {};`,
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from '@storybook/test';
-import type { Meta, StoryObj } from '@storybook/react';
+			result: `import { userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
 
 const meta: Meta<typeof Component> = {
@@ -51,8 +51,8 @@ export const NewStory: Story = {
 	[
 		'New story with spaces in name and some existing imports',
 		{
-			story: `import { userEvent } from '@storybook/test';
-import type { Meta, StoryObj } from '@storybook/react';
+			story: `import { userEvent } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
 
 const meta: Meta<typeof Component> = {
@@ -63,7 +63,7 @@ type Story = StoryObj<typeof Component>;
 
 export const Default: Story = {};`,
 			code: {
-				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
+				imports: [{ text: "import { userEvent, within } from 'storybook/test';" }],
 				play: [
 					{ text: 'play: async ({ canvasElement }) => {' },
 					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
@@ -71,8 +71,8 @@ export const Default: Story = {};`,
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from '@storybook/test';
-import type { Meta, StoryObj } from '@storybook/react';
+			result: `import { userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
 
 const meta: Meta<typeof Component> = {
@@ -96,8 +96,8 @@ export const NewStory: Story = {
 	[
 		'New story and all existing imports',
 		{
-			story: `import { userEvent, within } from '@storybook/test';
-import type { Meta, StoryObj } from '@storybook/react';
+			story: `import { userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
 
 const meta: Meta<typeof Component> = {
@@ -108,7 +108,7 @@ type Story = StoryObj<typeof Component>;
 
 export const Default: Story = {};`,
 			code: {
-				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
+				imports: [{ text: "import { userEvent, within } from 'storybook/test';" }],
 				play: [
 					{ text: 'play: async ({ canvasElement }) => {' },
 					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
@@ -116,8 +116,8 @@ export const Default: Story = {};`,
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from '@storybook/test';
-import type { Meta, StoryObj } from '@storybook/react';
+			result: `import { userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
 
 const meta: Meta<typeof Component> = {
@@ -142,7 +142,7 @@ export const NewStory: Story = {
 		'Existing story',
 		{
 			storyName: 'Default',
-			story: `import type { Meta, StoryObj } from '@storybook/react';
+			story: `import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
 
 const meta: Meta<typeof Component> = {
@@ -153,7 +153,7 @@ type Story = StoryObj<typeof Component>;
 
 export const Default: Story = {};`,
 			code: {
-				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
+				imports: [{ text: "import { userEvent, within } from 'storybook/test';" }],
 				play: [
 					{ text: 'play: async ({ canvasElement }) => {' },
 					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
@@ -161,8 +161,8 @@ export const Default: Story = {};`,
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from '@storybook/test';
-import type { Meta, StoryObj } from '@storybook/react';
+			result: `import { userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
 
 const meta: Meta<typeof Component> = {
@@ -193,7 +193,7 @@ export default {
 
 export const Default = {};`,
 			code: {
-				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
+				imports: [{ text: "import { userEvent, within } from 'storybook/test';" }],
 				play: [
 					{ text: 'play: async ({ canvasElement }) => {' },
 					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
@@ -201,7 +201,7 @@ export const Default = {};`,
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from '@storybook/test';
+			result: `import { userEvent, within } from 'storybook/test';
 import { Component } from './Component';
 
 export default {
@@ -232,7 +232,7 @@ export const NewStory12 = {
 					},
 				},
 			}),
-			story: `import type { Meta, StoryObj } from '@storybook/react';
+			story: `import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
 
 const meta: Meta<typeof Component> = {
@@ -243,7 +243,7 @@ type Story = StoryObj<typeof Component>;
 
 export const Default: Story = {};`,
 			code: {
-				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
+				imports: [{ text: "import { userEvent, within } from 'storybook/test';" }],
 				play: [
 					{ text: 'play: async ({ canvasElement }) => {' },
 					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
@@ -251,8 +251,8 @@ export const Default: Story = {};`,
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from '@storybook/test';
-import type { Meta, StoryObj } from '@storybook/react';
+			result: `import { userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
 
 const meta: Meta<typeof Component> = {
@@ -297,7 +297,7 @@ export const NewStory: Story = {
 					},
 				},
 			}),
-			story: `import type { Meta, StoryObj } from '@storybook/react';
+			story: `import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
 
 const meta: Meta<typeof Component> = {
@@ -313,7 +313,7 @@ export const Default: Story = {
     }
 };`,
 			code: {
-				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
+				imports: [{ text: "import { userEvent, within } from 'storybook/test';" }],
 				play: [
 					{ text: 'play: async ({ canvasElement }) => {' },
 					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
@@ -321,8 +321,8 @@ export const Default: Story = {
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from '@storybook/test';
-import type { Meta, StoryObj } from '@storybook/react';
+			result: `import { userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
 
 const meta: Meta<typeof Component> = {
@@ -359,7 +359,7 @@ export const Default: Story = {
 		'New story without copying name',
 		{
 			storyName: 'NewStory',
-			story: `import type { Meta, StoryObj } from '@storybook/react';
+			story: `import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
 
 const meta: Meta<typeof Component> = {
@@ -372,7 +372,7 @@ export const Default: Story = {
     name: "Default"
 };`,
 			code: {
-				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
+				imports: [{ text: "import { userEvent, within } from 'storybook/test';" }],
 				play: [
 					{ text: 'play: async ({ canvasElement }) => {' },
 					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
@@ -380,8 +380,8 @@ export const Default: Story = {
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from '@storybook/test';
-import type { Meta, StoryObj } from '@storybook/react';
+			result: `import { userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
 
 const meta: Meta<typeof Component> = {
@@ -408,7 +408,7 @@ export const NewStory: Story = {
 		{
 			storyName: 'My cool name',
 			csfId: 'form--custom-name',
-			story: `import type { Meta, StoryObj } from '@storybook/react';
+			story: `import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
 
 const meta: Meta<typeof Component> = {
@@ -421,7 +421,7 @@ export const CustomName: Story = {
     name: "My cool name"
 };`,
 			code: {
-				imports: [{ text: "import { userEvent, within } from '@storybook/test';" }],
+				imports: [{ text: "import { userEvent, within } from 'storybook/test';" }],
 				play: [
 					{ text: 'play: async ({ canvasElement }) => {' },
 					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
@@ -429,8 +429,8 @@ export const CustomName: Story = {
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from '@storybook/test';
-import type { Meta, StoryObj } from '@storybook/react';
+			result: `import { userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
 
 const meta: Meta<typeof Component> = {

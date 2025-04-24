@@ -9,7 +9,7 @@ import {
 
 const withImports = (imports: string[]) => [
 	{
-		text: `import { ${imports.join(', ')} } from '@storybook/test';`,
+		text: `import { ${imports.join(', ')} } from 'storybook/test';`,
 	},
 ];
 
