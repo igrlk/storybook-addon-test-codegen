@@ -1,4 +1,4 @@
-import distPreset from '../dist/preset.cjs';
+import distPreset from '../dist/preset';
 
 /**
  * to load the built addon in this test Storybook

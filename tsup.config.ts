@@ -54,7 +54,7 @@ export default defineConfig(async (options) => {
 			dts: {
 				resolve: true,
 			},
-			format: ['esm', 'cjs'],
+			format: ['esm'],
 			target: [...BROWSER_TARGET, ...NODE_TARGET],
 			platform: 'neutral',
 			external: [...globalManagerPackages, ...globalPreviewPackages],
@@ -85,7 +85,7 @@ export default defineConfig(async (options) => {
 			dts: {
 				resolve: true,
 			},
-			format: ['esm', 'cjs'],
+			format: ['esm'],
 			target: BROWSER_TARGET,
 			platform: 'browser',
 			external: globalPreviewPackages,
@@ -99,7 +99,7 @@ export default defineConfig(async (options) => {
 		configs.push({
 			...commonConfig,
 			entry: nodeEntries,
-			format: ['cjs'],
+			format: ['esm'],
 			target: NODE_TARGET,
 			platform: 'node',
 		});
