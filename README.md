@@ -67,7 +67,7 @@ Alternatively, copy both imports and the generated code to your test file like s
 // MyComponent.stories.tsx
 
 // 👇 Add the generated imports here
-import {userEvent, waitFor, within, expect} from "@storybook/test";
+import {userEvent, waitFor, within, expect} from "storybook/test";
 
 export const MyComponent = {
   // ...rest of the story
