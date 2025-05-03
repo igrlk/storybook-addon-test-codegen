@@ -96,26 +96,16 @@ For each warning, you'll get suggestions on how to improve your selectors to mak
 
 ## API
 
-### Parameters
+### Custom test-id selector
 
-This addon contributes the following parameters to Storybook, under the `testCodegen` namespace:
+To set a custom data-test attribute to use for generating `findByTestId` queries, add the following to your `preview.ts`:
 
-#### testIdAttribute
+```ts
+import { configure } from 'storybook/test';
 
-Type: `string`
-
-The attribute to use for generating `findByTestId` queries. Defaults to `'data-testid'`.
-
-Example:
-
-```jsx
-{
-  parameters: {
-    testCodegen: {
-      testIdAttribute: 'data-test-id'
-    }
-  }
-}
+configure({
+	testIdAttribute: 'my-custom-attribute',
+});
 ```
 
 ## Contributing
