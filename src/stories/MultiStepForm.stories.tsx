@@ -4,6 +4,11 @@ import { MultiStepForm } from './MultiStepForm';
 
 const meta: Meta<typeof MultiStepForm> = {
 	component: MultiStepForm,
+	parameters: {
+		testCodegen: {
+			testIdAttribute: 'data-testid',
+		},
+	},
 };
 export default meta;
 
