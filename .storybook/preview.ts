@@ -1,5 +1,10 @@
-import type { Preview } from '@storybook/react';
-import './tailwind.css';
+import type { Preview } from '@storybook/react-vite';
+import '../src/tailwind.css';
+import { configure } from 'storybook/test';
+
+configure({
+	testIdAttribute: 'my-custom-attribute',
+});
 
 const preview: Preview = {
 	parameters: {
@@ -8,9 +13,6 @@ const preview: Preview = {
 				color: /(background|color)$/i,
 				date: /Date$/,
 			},
-		},
-		testCodegen: {
-			testIdAttribute: 'data-testid',
 		},
 	},
 };
