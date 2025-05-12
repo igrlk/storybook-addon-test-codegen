@@ -272,6 +272,7 @@ export const withInteractionRecorder: DecoratorFunction = (
 			menuElement = document.createElement('div');
 			menuElement.style.position = 'absolute';
 			menuElement.style.zIndex = '2147483647';
+			menuElement.style.pointerEvents = 'all';
 			menuElement.style.backgroundColor = 'white';
 			menuElement.style.borderRadius = '4px';
 			menuElement.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.15)';
