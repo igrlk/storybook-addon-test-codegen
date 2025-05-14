@@ -183,7 +183,7 @@ export const convertInteractionsToCode = (
 	return {
 		imports: [
 			{
-				text: `import { ${importNames.join(', ')} } from '@storybook/test';`,
+				text: `import { ${importNames.join(', ')} } from 'storybook/test';`,
 			},
 		],
 		play,
