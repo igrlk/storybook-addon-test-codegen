@@ -1,5 +1,5 @@
 import type { Preview } from '@storybook/react-vite';
-import '../src/tailwind.css';
+import './tailwind.css';
 import { configure } from 'storybook/test';
 
 configure({
