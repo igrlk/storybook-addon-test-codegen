@@ -1,5 +1,5 @@
-import { storyNameFromExport, toId } from '@storybook/csf';
 import { formatFileContent } from 'storybook/internal/common';
+import { storyNameFromExport, toId } from 'storybook/internal/csf';
 import { type CsfFile, printCsf } from 'storybook/internal/csf-tools';
 import type { GeneratedCode } from './interactions-to-code';
 import {
