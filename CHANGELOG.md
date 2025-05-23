@@ -1,3 +1,15 @@
+# v1.3.4 (Mon May 12 2025)
+
+#### 🐛 Bug Fix
+
+- always allow to click on assertion menu [#32](https://github.com/igrlk/storybook-addon-test-codegen/pull/32) ([@igrlk](https://github.com/igrlk))
+
+#### Authors: 1
+
+- Igor Luchenkov ([@igrlk](https://github.com/igrlk))
+
+---
+
 # v1.3.3 (Sun Apr 20 2025)
 
 #### 🐛 Bug Fix
