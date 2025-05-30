@@ -7,12 +7,7 @@
 		"url": "git+https://github.com/igrlk/storybook-addon-test-codegen.git"
 	},
 	"packageManager": "pnpm@9.15.3",
-	"keywords": [
-		"storybook-addons",
-		"interactions",
-		"test",
-		"codegen"
-	],
+	"keywords": ["storybook-addons", "interactions", "test", "codegen"],
 	"main": "dist/index.cjs",
 	"module": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -34,12 +29,7 @@
 		"./manager": "./dist/manager.js",
 		"./package.json": "./package.json"
 	},
-	"files": [
-		"dist/**/*",
-		"README.md",
-		"*.js",
-		"*.d.ts"
-	],
+	"files": ["dist/**/*", "README.md", "*.js", "*.d.ts"],
 	"scripts": {
 		"build": "tsup",
 		"build:watch": "tsup --watch",
@@ -67,16 +57,9 @@
 		"@biomejs/biome": "^1.9.4",
 		"@medv/finder": "^4.0.2",
 		"@playwright/test": "^1.51.1",
-		"@storybook/addon-essentials": "^8.6.4",
-		"@storybook/addon-interactions": "^8.6.4",
-		"@storybook/addon-links": "^8.6.4",
-		"@storybook/addon-themes": "^8.6.4",
-		"@storybook/blocks": "^8.6.4",
-		"@storybook/csf": "^0.1.13",
+		"@storybook/addon-docs": "9.0.0-rc.4",
 		"@storybook/icons": "^1.4.0",
-		"@storybook/react": "^8.6.4",
-		"@storybook/react-vite": "^8.6.4",
-		"@storybook/test": "^8.6.4",
+		"@storybook/react-vite": "9.0.0-rc.4",
 		"@testing-library/dom": "^10.4.0",
 		"@types/jsdom": "^21.1.7",
 		"@types/node": "^18.19.68",
@@ -100,7 +83,7 @@
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"react-syntax-highlighter": "^15.4.5",
-		"storybook": "^8.6.4",
+		"storybook": "9.0.0-rc.4",
 		"tailwindcss": "^3.4.17",
 		"tsup": "^8.2.4",
 		"typescript": "^5.5.4",
@@ -111,24 +94,16 @@
 		"zx": "^7.2.3"
 	},
 	"peerDependencies": {
-		"storybook": ">=8.3.0"
+		"storybook": "^9.0.0 || ^9.0.0-rc.4 || ^0.0.0-0"
 	},
 	"publishConfig": {
 		"access": "public"
 	},
 	"bundler": {
-		"exportEntries": [
-			"src/index.ts"
-		],
-		"managerEntries": [
-			"src/manager.tsx"
-		],
-		"previewEntries": [
-			"src/preview.ts"
-		],
-		"nodeEntries": [
-			"src/preset.ts"
-		]
+		"exportEntries": ["src/index.ts"],
+		"managerEntries": ["src/manager.tsx"],
+		"previewEntries": ["src/preview.ts"],
+		"nodeEntries": ["src/preset.ts"]
 	},
 	"storybook": {
 		"displayName": "Test Codegen",
@@ -146,8 +121,6 @@
 		"icon": "https://user-images.githubusercontent.com/321738/63501763-88dbf600-c4cc-11e9-96cd-94adadc2fd72.png"
 	},
 	"lint-staged": {
-		"*": [
-			"pnpm check"
-		]
+		"*": ["pnpm check"]
 	}
 }

@@ -38,7 +38,7 @@ export default defineConfig(async (options) => {
 		splitting: false,
 		minify: !options.watch,
 		treeshake: true,
-		sourcemap: false,
+		sourcemap: true,
 		clean: !options.watch,
 	};
 
