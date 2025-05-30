@@ -18,19 +18,16 @@ First, install the package.
 npm install --save-dev storybook-addon-test-codegen
 ```
 
-### Peer Dependency
+### Storybook version compatibility
 
-This addon requires `storybook` version `>=8.3.0` to be installed in your project. Ensure you have a compatible version
-by running:
+This addon requires Storybook version **9.0.0 or higher**.
 
-```sh
-npm install --save-dev storybook@latest
-```
+For older versions of Storybook, use the following addon versions:
 
-If you’re not using Storybook already, you can refer to
-the [Storybook Getting Started Guide](https://storybook.js.org/docs) for installation instructions.
-
-For `storybook@8.2.*`, use version `1.0.3` of this addon.
+| Storybook Version | Addon Version |
+|-------------------|---------------|
+| 8.3.*             | 1.3.4         |
+| 8.2.*             | 1.0.3         |
 
 ### Register the Addon
 
@@ -98,13 +95,14 @@ For each warning, you'll get suggestions on how to improve your selectors to mak
 
 ### Custom test-id selector
 
-To set a custom data-test attribute to use for generating `findByTestId` queries, add the following to your `preview.ts`:
+To set a custom data-test attribute to use for generating `findByTestId` queries, add the following to your
+`preview.ts`:
 
 ```ts
-import { configure } from 'storybook/test';
+import {configure} from 'storybook/test';
 
 configure({
-	testIdAttribute: 'my-custom-attribute',
+  testIdAttribute: 'my-custom-attribute',
 });
 ```
 
