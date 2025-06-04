@@ -1,3 +1,15 @@
+# v2.0.1 (Wed Jun 04 2025)
+
+#### 🐛 Bug Fix
+
+- fix: fixes an issue where using getAbsolutePath would make the addon not work [#35](https://github.com/igrlk/storybook-addon-test-codegen/pull/35) ([@Gawdfrey](https://github.com/Gawdfrey))
+
+#### Authors: 1
+
+- Rein Undheim ([@Gawdfrey](https://github.com/Gawdfrey))
+
+---
+
 # v2.0.0 (Fri May 30 2025)
 
 #### 💥 Breaking Change
