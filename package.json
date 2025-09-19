@@ -58,7 +58,7 @@
 		"@medv/finder": "^4.0.2",
 		"@playwright/test": "^1.51.1",
 		"@storybook/addon-docs": "^9.0.0",
-		"@storybook/icons": "^1.4.0",
+		"@storybook/icons": "^1.6.0",
 		"@storybook/react-vite": "^9.0.0",
 		"@testing-library/dom": "^10.4.0",
 		"@types/jsdom": "^21.1.7",
