@@ -1,11 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../.storybook/preview';
 import { Form } from './Form';
 
-const meta: Meta<typeof Form> = {
+const meta = preview.meta({
 	component: Form,
-};
-export default meta;
+	parameters: {
+		testCodegen: {
+			useNewTestSyntax: true,
+		},
+	},
+});
 
-type Story = StoryObj<typeof Form>;
-
-export const Default: Story = {};
+export const Default = meta.story({});

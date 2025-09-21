@@ -11,7 +11,7 @@
 		"lib": ["esnext", "dom", "dom.iterable"],
 		"module": "commonjs",
 		"noImplicitAny": true,
-		"rootDir": "./src",
+		"rootDir": "./",
 		"skipLibCheck": true,
 		"target": "ES2020"
 	},

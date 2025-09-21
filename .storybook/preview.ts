@@ -1,4 +1,5 @@
-import type { Preview } from '@storybook/react-vite';
+import addonDocs from '@storybook/addon-docs';
+import { definePreview } from '@storybook/react-vite';
 import './tailwind.css';
 import { configure } from 'storybook/test';
 
@@ -6,7 +7,7 @@ configure({
 	testIdAttribute: 'my-custom-attribute',
 });
 
-const preview: Preview = {
+export default definePreview({
 	parameters: {
 		controls: {
 			matchers: {
@@ -15,6 +16,6 @@ const preview: Preview = {
 			},
 		},
 	},
-};
 
-export default preview;
+	addons: [addonDocs()],
+});

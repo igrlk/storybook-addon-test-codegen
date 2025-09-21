@@ -3,13 +3,21 @@ import { DeleteIcon } from '@storybook/icons';
 import React from 'react';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Bar, EmptyTabContent } from 'storybook/internal/components';
-import { useChannel, useStorybookApi } from 'storybook/internal/manager-api';
+import {
+	useChannel,
+	useParameter,
+	useStorybookApi,
+} from 'storybook/internal/manager-api';
 import { useDebounce } from 'use-debounce';
 import { CodeBlock } from './CodeBlock';
 import { SaveStoryButton } from './SaveStory';
 import { combineInteractions } from './codegen/combine-interactions';
-import { convertInteractionsToCode } from './codegen/interactions-to-code';
+import {
+	convertInteractionsToCode,
+	isPlay,
+} from './codegen/interactions-to-code';
 import { EVENTS } from './constants';
+import { useAddonParameters } from './decorators/state';
 import {
 	type Interaction,
 	useInteractions,
@@ -77,13 +85,46 @@ export const InteractionRecorder = () => {
 	const hasTypescript = ['.ts', '.tsx'].some((ext) =>
 		storyData?.importPath.endsWith(ext),
 	);
+	const { useNewTestSyntax } = useAddonParameters(useParameter);
 
 	const [debouncedInteractions] = useDebounce(interactions, 100);
-	const code = useMemo(
-		() =>
-			convertInteractionsToCode(JSON.parse(debouncedInteractions), hasTypescript),
-		[debouncedInteractions, hasTypescript],
-	);
+	const { generatedCode, codeToDisplay } = useMemo(() => {
+		const generatedCode = convertInteractionsToCode({
+			interactions: JSON.parse(debouncedInteractions),
+			hasTypescript,
+			useNewTestSyntax,
+		});
+
+		// If using new test syntax and there are test lines, wrap them
+		if (
+			useNewTestSyntax &&
+			!isPlay(generatedCode) &&
+			generatedCode.tests.length > 0
+		) {
+			const storyName = storyData?.name || 'Story';
+			const parametersString =
+				generatedCode.parameters.length > 0
+					? `{ ${generatedCode.parameters.join(', ')} }`
+					: '{}';
+
+			return {
+				generatedCode,
+				codeToDisplay: {
+					...generatedCode,
+					tests: [
+						{ text: `${storyName}.test('test', async (${parametersString}) => {` },
+						...generatedCode.tests.map((testLine) => ({
+							text: `\t${testLine.text}`,
+							warning: testLine.warning,
+						})),
+						{ text: '});' },
+					],
+				},
+			};
+		}
+
+		return { generatedCode, codeToDisplay: generatedCode };
+	}, [debouncedInteractions, hasTypescript, useNewTestSyntax, storyData?.name]);
 
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	useEffect(() => {
@@ -113,7 +154,11 @@ export const InteractionRecorder = () => {
 		observer.observe(element, { childList: true, subtree: true });
 
 		return () => observer.disconnect();
-	}, [code, isScrolledToBottom]);
+	}, [codeToDisplay, isScrolledToBottom]);
+
+	const hasCodeLines = isPlay(codeToDisplay)
+		? codeToDisplay.play.length > 0
+		: codeToDisplay.tests.length > 0;
 
 	return (
 		<Container ref={containerRef}>
@@ -141,14 +186,17 @@ export const InteractionRecorder = () => {
 								{isAsserting ? 'Choose element' : 'Add assertion'}
 							</AssertionButton>
 
-							<StyledButton onClick={resetInteractions} disabled={!code.play.length}>
+							<StyledButton onClick={resetInteractions} disabled={!hasCodeLines}>
 								<DeleteIcon />
 								Reset
 							</StyledButton>
 						</Group>
 
-						{code.play.length > 0 && (
-							<SaveStoryButton code={code} turnOffRecording={turnOffRecording} />
+						{hasCodeLines && (
+							<SaveStoryButton
+								code={generatedCode}
+								turnOffRecording={turnOffRecording}
+							/>
 						)}
 					</StyledSubnav>
 				</Bar>
@@ -163,7 +211,7 @@ export const InteractionRecorder = () => {
 					setIsScrolledToBottom(scrollTop + clientHeight >= scrollHeight);
 				}}
 			>
-				{code.play.length === 0 && !isRecording && (
+				{!hasCodeLines && !isRecording && (
 					<EmptyTabContent
 						title="No interactions have been recorded."
 						description={
@@ -182,7 +230,7 @@ export const InteractionRecorder = () => {
 					/>
 				)}
 
-				{code.play.length === 0 && isRecording && (
+				{!hasCodeLines && isRecording && (
 					<EmptyTabContent
 						title="Recording is in progress..."
 						description={
@@ -193,11 +241,19 @@ export const InteractionRecorder = () => {
 					/>
 				)}
 
-				{code.play.length > 0 && (
+				{hasCodeLines && (
 					<CodeBlocksWrapper>
-						<CodeBlock name="Imports" codeLines={code.imports} />
+						{codeToDisplay.imports.length > 0 && (
+							<CodeBlock name="Imports" codeLines={codeToDisplay.imports} />
+						)}
 
-						<CodeBlock name="Play Function" codeLines={code.play} isSticky />
+						<CodeBlock
+							name={`${useNewTestSyntax ? 'Test' : 'Play'} Function`}
+							codeLines={
+								isPlay(codeToDisplay) ? codeToDisplay.play : codeToDisplay.tests
+							}
+							isSticky
+						/>
 					</CodeBlocksWrapper>
 				)}
 			</ContentWrapper>
