@@ -1,6 +1,6 @@
 import { AddIcon, CheckIcon, CrossIcon, SyncIcon } from '@storybook/icons';
 import { Button, Form } from 'storybook/internal/components';
-import { styled } from 'storybook/internal/theming';
+import { styled } from 'storybook/theming';
 
 export const Container = styled.div(({ theme }) => ({
 	height: '100%',
@@ -45,11 +45,7 @@ export const StyledButton = styled(Button)(({ theme }) => ({
 }));
 
 export const StyledButtonBigContent = styled.div(
-	({
-		isHidden,
-	}: {
-		isHidden: boolean;
-	}) => ({
+	({ isHidden }: { isHidden: boolean }) => ({
 		display: 'flex',
 		alignItems: 'center',
 		gap: 6,
@@ -65,11 +61,7 @@ export const StyledButtonSmallContent = styled(StyledButtonBigContent)({
 });
 
 export const AssertionButton = styled(StyledButton)(
-	({
-		isAsserting,
-	}: {
-		isAsserting: boolean;
-	}) => ({
+	({ isAsserting }: { isAsserting: boolean }) => ({
 		backgroundColor: isAsserting ? 'rgba(0, 128, 0, 0.1)' : undefined,
 		color: isAsserting ? 'rgb(0, 128, 0)' : undefined,
 	}),
