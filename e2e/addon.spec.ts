@@ -5,9 +5,20 @@ test('Submit multi-step form', async ({ page }) => {
 		'http://localhost:6006/?path=/story/stories-multistepform--default',
 	);
 	await page.getByRole('tab', { name: 'Interaction Recorder' }).click();
-	await page
-		.getByRole('button', { name: 'Start recording Stop recording' })
-		.click();
+
+	// Initial load doesn't allow to start the recording until the storybook is properly loaded
+	while (true) {
+		await page
+			.getByRole('button', { name: 'Start recording Stop recording' })
+			.click();
+
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+
+		if (await page.getByText('Recording is in progress...').isVisible()) {
+			break;
+		}
+	}
+
 	await page
 		.locator('iframe[title="storybook-preview-iframe"]')
 		.contentFrame()

@@ -7,7 +7,13 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": ["node_modules", "dist", "scripts", "storybook-static"]
+		"ignore": [
+			"node_modules",
+			"dist",
+			"scripts",
+			"storybook-static",
+			"playwright-report"
+		]
 	},
 	"formatter": {
 		"enabled": true,
