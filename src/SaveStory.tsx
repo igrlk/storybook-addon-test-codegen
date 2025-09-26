@@ -4,11 +4,11 @@ import { dequal as deepEqual } from 'dequal';
 import React from 'react';
 import { type ChangeEvent, useEffect, useState } from 'react';
 import { TooltipNote, WithTooltip } from 'storybook/internal/components';
+import type { Args } from 'storybook/internal/types';
 import {
 	experimental_requestResponse,
 	useStorybookApi,
-} from 'storybook/internal/manager-api';
-import type { Args } from 'storybook/internal/types';
+} from 'storybook/manager-api';
 import type { GeneratedCode } from './codegen/interactions-to-code';
 import { EVENTS } from './constants';
 import type {

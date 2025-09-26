@@ -1,5 +1,5 @@
-import { useAddonState } from 'storybook/internal/manager-api';
-import { useGlobals } from 'storybook/internal/manager-api';
+import { useAddonState } from 'storybook/manager-api';
+import { useGlobals } from 'storybook/manager-api';
 import type { ElementQuery } from './codegen/generate-query';
 import { ADDON_ID, IS_ASSERTING_KEY, IS_RECORDING_KEY } from './constants';
 
