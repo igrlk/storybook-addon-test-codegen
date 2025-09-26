@@ -17,20 +17,19 @@
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
-			"import": "./dist/index.js",
-			"require": "./dist/index.cjs"
+			"default": "./dist/index.js"
 		},
 		"./preview": {
 			"types": "./dist/index.d.ts",
-			"import": "./dist/preview.js",
-			"require": "./dist/preview.cjs"
+			"default": "./dist/preview.js"
 		},
-		"./preset": "./dist/preset.cjs",
+		"./preset": "./dist/preset.js",
 		"./manager": "./dist/manager.js",
 		"./package.json": "./package.json"
 	},
 	"files": ["dist/**/*", "README.md", "*.js", "*.d.ts"],
 	"scripts": {
+		"prebuild": "node -e \"fs.rmSync('./dist', { recursive: true, force: true })\"",
 		"build": "tsup",
 		"build:watch": "tsup --watch",
 		"build-storybook": "storybook build",
@@ -58,18 +57,18 @@
 		"@biomejs/biome": "^1.9.4",
 		"@medv/finder": "^4.0.2",
 		"@playwright/test": "^1.51.1",
-		"@storybook/addon-docs": "0.0.0-pr-32418-sha-6377e85a",
+		"@storybook/addon-docs": "^10.0.0-beta.7",
 		"@storybook/icons": "^1.6.0",
-		"@storybook/react-vite": "0.0.0-pr-32418-sha-6377e85a",
+		"@storybook/react-vite": "^10.0.0-beta.7",
 		"@testing-library/dom": "^10.4.0",
 		"@types/jsdom": "^21.1.7",
-		"@types/node": "^18.19.68",
+		"@types/node": "^20",
 		"@types/react": "^19.0.10",
 		"@types/react-dom": "^19.0.4",
 		"@types/react-syntax-highlighter": "^15.4.5",
-		"@vitejs/plugin-react": "^4.3.4",
+		"@vitejs/plugin-react": "^4.7.0",
 		"auto": "^11.3.0",
-		"boxen": "^7.1.1",
+		"boxen": "^8.0.1",
 		"concurrently": "^9.1.0",
 		"dedent": "^1.5.3",
 		"dequal": "^2.0.3",
@@ -84,18 +83,18 @@
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"react-syntax-highlighter": "^15.4.5",
-		"storybook": "0.0.0-pr-32418-sha-6377e85a",
+		"storybook": "^10.0.0-beta.7",
 		"tailwindcss": "^3.4.17",
-		"tsup": "^8.2.4",
-		"typescript": "^5.5.4",
+		"tsup": "^8.5.0",
+		"typescript": "^5.8.3",
 		"use-debounce": "^10.0.4",
-		"vite": "^5.4.11",
+		"vite": "^7.0.5",
 		"vitest": "^2.1.8",
 		"wait-on": "^8.0.3",
-		"zx": "^7.2.3"
+		"zx": "^8.7.1"
 	},
 	"peerDependencies": {
-		"storybook": "0.0.0-pr-32418-sha-6377e85a"
+		"storybook": "*"
 	},
 	"publishConfig": {
 		"access": "public"

@@ -7,7 +7,7 @@ import {
 	useChannel,
 	useParameter,
 	useStorybookApi,
-} from 'storybook/internal/manager-api';
+} from 'storybook/manager-api';
 import { useDebounce } from 'use-debounce';
 import { CodeBlock } from './CodeBlock';
 import { SaveStoryButton } from './SaveStory';

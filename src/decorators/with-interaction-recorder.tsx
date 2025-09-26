@@ -1,12 +1,12 @@
 // biome-ignore lint/correctness/noUnusedImports: Must be here for react@19 and non-react projects support
 import React from 'react';
+import type { DecoratorFunction } from 'storybook/internal/types';
 import {
 	useCallback,
 	useChannel,
 	useEffect,
 	useParameter,
-} from 'storybook/internal/preview-api';
-import type { DecoratorFunction } from 'storybook/internal/types';
+} from 'storybook/preview-api';
 import { argsToString } from '../codegen/args-to-string';
 import {
 	type ElementQuery,

@@ -1,6 +1,6 @@
 import { AddIcon, CheckIcon, CrossIcon, SyncIcon } from '@storybook/icons';
 import { Button, Form } from 'storybook/internal/components';
-import { styled } from 'storybook/internal/theming';
+import { styled } from 'storybook/theming';
 
 export const Container = styled.div(({ theme }) => ({
 	height: '100%',
