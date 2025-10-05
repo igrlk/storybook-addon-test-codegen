@@ -17,12 +17,7 @@ export default defineConfig(async (options) => {
 		await import('./package.json', { with: { type: 'json' } })
 	).default;
 	const {
-		bundler: {
-			exportEntries = [],
-			managerEntries = [],
-			previewEntries = [],
-			nodeEntries = [],
-		},
+		bundler: { managerEntries = [], previewEntries = [], nodeEntries = [] },
 	} = packageJson;
 
 	const commonConfig: Options = {
@@ -85,12 +80,7 @@ export default defineConfig(async (options) => {
 
 	if (options.watch && process.env.RUN_STORYBOOK) {
 		configs.push({
-			entry: [
-				...exportEntries,
-				...managerEntries,
-				...previewEntries,
-				...nodeEntries,
-			],
+			entry: [...managerEntries, ...previewEntries, ...nodeEntries],
 			external: [...globalManagerPackages, ...globalPreviewPackages],
 			async onSuccess() {
 				const process = exec('pnpm storybook --no-open');
