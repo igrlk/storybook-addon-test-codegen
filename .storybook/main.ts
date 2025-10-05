@@ -5,6 +5,7 @@ export default defineMain({
 	features: {
 		actions: false,
 		controls: false,
+		experimentalTestSyntax: true,
 	},
 	framework: {
 		name: '@storybook/react-vite',
