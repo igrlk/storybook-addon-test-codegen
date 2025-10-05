@@ -10,6 +10,7 @@
 		"jsx": "react",
 		"lib": ["esnext", "dom", "dom.iterable"],
 		"module": "esnext",
+		"moduleResolution": "bundler",
 		"noImplicitAny": true,
 		"rootDir": "./",
 		"skipLibCheck": true,

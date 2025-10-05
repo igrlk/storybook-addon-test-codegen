@@ -28,8 +28,8 @@ export default defineConfig(async (options) => {
 		clean: false,
 		format: ['esm'],
 		treeshake: true,
-		sourcemap: true,
-		splitting: true,
+		sourcemap: false,
+		splitting: false,
 		/*
      The following packages are provided by Storybook and should always be externalized
      Meaning they shouldn't be bundled with the addon, and they shouldn't be regular dependencies either
@@ -49,6 +49,7 @@ export default defineConfig(async (options) => {
 			format: ['esm'],
 			platform: 'browser',
 			target: 'esnext',
+			splitting: false, // Disable splitting to avoid hundreds of syntax highlighter chunks
 		});
 	}
 
