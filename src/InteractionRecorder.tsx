@@ -38,6 +38,10 @@ import {
 	StyledButtonSmallContent,
 	StyledSubnav,
 	SubnavWrapper,
+	ToggleContainer,
+	ToggleLabel,
+	ToggleSwitch,
+	ToggleThumb,
 } from './styles';
 
 export const InteractionRecorder = () => {
@@ -85,19 +89,28 @@ export const InteractionRecorder = () => {
 	const hasTypescript = ['.ts', '.tsx'].some((ext) =>
 		storyData?.importPath.endsWith(ext),
 	);
-	const { useNewTestSyntax } = useAddonParameters(useParameter);
+
+	// TODO: read it dynamically for each story as some can have old and some can have new syntax
+	const { useNewTestSyntax: canUseNewTestSyntax } =
+		useAddonParameters(useParameter);
+
+	const [generationMode, setGenerationMode] = useState<'Play' | 'Test'>('Play');
+
+	useEffect(() => {
+		setGenerationMode(canUseNewTestSyntax ? 'Test' : 'Play');
+	}, [canUseNewTestSyntax]);
 
 	const [debouncedInteractions] = useDebounce(interactions, 100);
 	const { generatedCode, codeToDisplay } = useMemo(() => {
 		const generatedCode = convertInteractionsToCode({
 			interactions: JSON.parse(debouncedInteractions),
 			hasTypescript,
-			useNewTestSyntax,
+			useNewTestSyntax: generationMode === 'Test',
 		});
 
 		// If using new test syntax and there are test lines, wrap them
 		if (
-			useNewTestSyntax &&
+			generationMode === 'Test' &&
 			!isPlay(generatedCode) &&
 			generatedCode.tests.length > 0
 		) {
@@ -124,7 +137,7 @@ export const InteractionRecorder = () => {
 		}
 
 		return { generatedCode, codeToDisplay: generatedCode };
-	}, [debouncedInteractions, hasTypescript, useNewTestSyntax, storyData?.name]);
+	}, [debouncedInteractions, hasTypescript, generationMode, storyData?.name]);
 
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	useEffect(() => {
@@ -192,12 +205,31 @@ export const InteractionRecorder = () => {
 							</StyledButton>
 						</Group>
 
-						{hasCodeLines && (
-							<SaveStoryButton
-								code={generatedCode}
-								turnOffRecording={turnOffRecording}
-							/>
-						)}
+						<Group>
+							{hasCodeLines && (
+								<>
+									{canUseNewTestSyntax && (
+										<ToggleContainer
+											onClick={() =>
+												setGenerationMode(generationMode === 'Play' ? 'Test' : 'Play')
+											}
+										>
+											<ToggleLabel isActive={generationMode === 'Play'}>Play</ToggleLabel>
+											<ToggleSwitch isActive={generationMode === 'Test'}>
+												<ToggleThumb isActive={generationMode === 'Test'} />
+											</ToggleSwitch>
+											<ToggleLabel isActive={generationMode === 'Test'}>Test</ToggleLabel>
+										</ToggleContainer>
+									)}
+
+									<SaveStoryButton
+										code={generatedCode}
+										turnOffRecording={turnOffRecording}
+										generationMode={generationMode}
+									/>
+								</>
+							)}
+						</Group>
 					</StyledSubnav>
 				</Bar>
 			</SubnavWrapper>
@@ -248,7 +280,7 @@ export const InteractionRecorder = () => {
 						)}
 
 						<CodeBlock
-							name={`${useNewTestSyntax ? 'Test' : 'Play'} Function`}
+							name={`${generationMode} Function`}
 							codeLines={
 								isPlay(codeToDisplay) ? codeToDisplay.play : codeToDisplay.tests
 							}

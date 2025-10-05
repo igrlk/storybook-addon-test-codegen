@@ -1,6 +1,9 @@
 import { exec } from 'node:child_process';
 import { type Options, defineConfig } from 'tsup';
 
+import { globalPackages as globalManagerPackages } from 'storybook/internal/manager/globals';
+import { globalPackages as globalPreviewPackages } from 'storybook/internal/preview/globals';
+
 // The current browsers supported by Storybook v7
 const BROWSER_TARGET: Options['target'] = [
 	'chrome100',
@@ -14,7 +17,12 @@ export default defineConfig(async (options) => {
 		await import('./package.json', { with: { type: 'json' } })
 	).default;
 	const {
-		bundler: { managerEntries = [], previewEntries = [], nodeEntries = [] },
+		bundler: {
+			exportEntries = [],
+			managerEntries = [],
+			previewEntries = [],
+			nodeEntries = [],
+		},
 	} = packageJson;
 
 	const commonConfig: Options = {

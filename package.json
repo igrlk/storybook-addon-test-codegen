@@ -43,7 +43,7 @@
 		"release": "npm run build && auto shipit",
 		"eject-ts": "zx scripts/eject-typescript.js",
 		"start": "concurrently \"pnpm build:watch\" \"pnpm tailwind:watch\"",
-		"start:storybook": "RUN_STORYBOOK=true concurrently \"pnpm build:watch\" \"pnpm tailwind:watch\"",
+		"start:storybook": "RUN_STORYBOOK=true pnpm start",
 		"storybook": "storybook dev -p 6006 --no-open",
 		"prepare": "husky",
 		"tailwind": "tailwindcss -i ./src/tailwind.css -o ./.storybook/tailwind.css",
