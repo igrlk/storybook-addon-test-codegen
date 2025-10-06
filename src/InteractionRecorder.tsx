@@ -18,6 +18,7 @@ import {
 } from './codegen/interactions-to-code';
 import { EVENTS } from './constants';
 import { useAddonParameters } from './decorators/state';
+
 import {
 	type Interaction,
 	useInteractions,
@@ -44,10 +45,15 @@ import {
 	ToggleThumb,
 } from './styles';
 
-export const InteractionRecorder = () => {
+export const InteractionRecorder = ({
+	getStoryName,
+}: { getStoryName: (storyId: string) => string }) => {
 	const [interactions, setInteractions] = useInteractions();
 	const [isRecording, setIsRecording] = useIsRecording();
 	const [isAsserting, setIsAsserting] = useIsAsserting();
+
+	const api = useStorybookApi();
+	const storyData = api.getCurrentStoryData();
 
 	useChannel({
 		[EVENTS.INTERACTION]: (interaction: Interaction) => {
@@ -71,9 +77,13 @@ export const InteractionRecorder = () => {
 
 	const resetInteractions = () => setInteractions(() => JSON.stringify([]));
 
-	const api = useStorybookApi();
-
-	const storyData = api.getCurrentStoryData();
+	// In test stories we should not allow to write play functions, only overwrite the test.
+	const { isTestStory, parentStoryName } = useMemo(() => {
+		const isTestStory =
+			storyData?.type === 'story' && storyData?.subtype === 'test';
+		const parentStoryName = getStoryName(storyData?.parent || '');
+		return { isTestStory, parentStoryName };
+	}, [storyData, getStoryName]);
 
 	const turnOffRecording = () => {
 		setIsRecording(false);
@@ -114,18 +124,27 @@ export const InteractionRecorder = () => {
 			!isPlay(generatedCode) &&
 			generatedCode.tests.length > 0
 		) {
-			const storyName = storyData?.name || 'Story';
+			let storyName = storyData?.name || 'Story';
 			const parametersString =
 				generatedCode.parameters.length > 0
 					? `{ ${generatedCode.parameters.join(', ')} }`
 					: '{}';
+
+			let testName = 'your test name';
+
+			if (isTestStory) {
+				testName = storyName;
+				storyName = parentStoryName;
+			}
 
 			return {
 				generatedCode,
 				codeToDisplay: {
 					...generatedCode,
 					tests: [
-						{ text: `${storyName}.test('test', async (${parametersString}) => {` },
+						{
+							text: `${storyName}.test('${testName}', async (${parametersString}) => {`,
+						},
 						...generatedCode.tests.map((testLine) => ({
 							text: `\t${testLine.text}`,
 							warning: testLine.warning,
@@ -137,7 +156,14 @@ export const InteractionRecorder = () => {
 		}
 
 		return { generatedCode, codeToDisplay: generatedCode };
-	}, [debouncedInteractions, hasTypescript, generationMode, storyData?.name]);
+	}, [
+		debouncedInteractions,
+		hasTypescript,
+		generationMode,
+		storyData?.name,
+		parentStoryName,
+		isTestStory,
+	]);
 
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	useEffect(() => {

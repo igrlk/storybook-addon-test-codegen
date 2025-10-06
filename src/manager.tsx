@@ -1,9 +1,10 @@
 // biome-ignore lint/correctness/noUnusedImports: Must be here for react@19 and non-react projects support
 import React from 'react';
-import { addons, types } from 'storybook/manager-api';
+import { type Combo, addons, types } from 'storybook/manager-api';
 
 import { AddonPanel, Badge, Spaced } from 'storybook/internal/components';
 import type { ResponseData } from 'storybook/internal/core-events';
+import { Consumer } from 'storybook/manager-api';
 import { InteractionRecorder } from './InteractionRecorder';
 import { ADDON_ID, EVENTS, PANEL_ID } from './constants';
 import type { SaveNewStoryResponsePayload } from './data';
@@ -53,10 +54,26 @@ addons.register(ADDON_ID, (api) => {
 		type: types.PANEL,
 		title: Title,
 		match: ({ viewMode }) => viewMode === 'story',
-		render: ({ active }) => (
-			<AddonPanel active={active ?? false}>
-				<InteractionRecorder />
-			</AddonPanel>
-		),
+		render: ({ active }) => {
+			const mapper = ({ state }: Combo) => {
+				return {
+					getStoryName: (storyId: string) => {
+						return state.internal_index?.entries[storyId]?.name ?? 'Story';
+					},
+				};
+			};
+
+			return (
+				<Consumer filter={mapper}>
+					{(fromState) => {
+						return (
+							<AddonPanel active={active ?? false}>
+								<InteractionRecorder getStoryName={fromState.getStoryName} />
+							</AddonPanel>
+						);
+					}}
+				</Consumer>
+			);
+		},
 	});
 });
