@@ -29,7 +29,7 @@
 		"./manager": "./dist/manager.js",
 		"./package.json": "./package.json"
 	},
-	"files": ["dist/**/*", "README.md", "*.js", "*.d.ts"],
+	"files": ["dist/**/*", "README.md", "*.js", "*.d.ts", "preview.cjs"],
 	"scripts": {
 		"build": "tsup",
 		"build:watch": "tsup --watch",
