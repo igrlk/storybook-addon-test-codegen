@@ -1,5 +1,13 @@
-import { getConfig } from 'storybook/test';
 import { PARAMETER } from '../constants';
+
+// TODO: We should use this instead:
+// import { getConfig } from 'storybook/test';
+// But because the code is instrumented, it affects the interactions addon panel negatively so we skip it for now.
+const getConfig = () => {
+	return {
+		testIdAttribute: 'data-testid',
+	};
+};
 
 export const useAddonParameters = (
 	// either from manager-api or preview-api
