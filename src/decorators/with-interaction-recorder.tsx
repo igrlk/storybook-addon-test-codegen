@@ -1,12 +1,13 @@
 // biome-ignore lint/correctness/noUnusedImports: Must be here for react@19 and non-react projects support
 import React from 'react';
-import { argsToString } from 'src/codegen/args-to-string';
+import type { DecoratorFunction } from 'storybook/internal/types';
 import {
 	useCallback,
 	useChannel,
 	useEffect,
-} from 'storybook/internal/preview-api';
-import type { DecoratorFunction } from 'storybook/internal/types';
+	useParameter,
+} from 'storybook/preview-api';
+import { argsToString } from '../codegen/args-to-string';
 import {
 	type ElementQuery,
 	generateQuery,
@@ -29,7 +30,7 @@ export const withInteractionRecorder: DecoratorFunction = (
 ) => {
 	const isRecording = context.globals[IS_RECORDING_KEY];
 	const isAssertionMode = context.globals[IS_ASSERTING_KEY];
-	const { testIdAttribute } = useAddonParameters();
+	const { testIdAttribute } = useAddonParameters(useParameter);
 	const emit = useChannel({});
 
 	// Standard interaction listener for clicks, inputs, etc.
