@@ -142,3 +142,26 @@ configure({
 ## Contributing
 
 Any contributions are welcome. Feel free to open an issue or a pull request.
+
+### Development Workflow
+
+When developing this addon locally, there are two different workflows you can use:
+
+#### Recommended: Separate watch and serve (saving to file works)
+
+Run these two commands in separate terminals:
+
+```sh
+pnpm start        # Watch addon files and rebuild on changes
+pnpm storybook    # Run Storybook (not in watch mode)
+```
+
+**Note:** With this setup, the "Save to story" feature works correctly. However, when you make changes to the addon itself, you'll need to manually restart `pnpm storybook` to pick up the new addon files.
+
+#### Alternative: Full watch mode (saving to file doesn't work)
+
+```sh
+pnpm start:storybook  # Runs both addon and Storybook in watch mode
+```
+
+This command runs both the addon build (tsup) and Storybook in watch mode, so changes to the addon are automatically picked up by Storybook without manual restarts. However, the "Save to story" feature has historically not worked with this setup and we haven't been able to resolve this issue yet.

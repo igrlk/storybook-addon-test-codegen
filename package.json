@@ -57,9 +57,9 @@
 		"@biomejs/biome": "^1.9.4",
 		"@medv/finder": "^4.0.2",
 		"@playwright/test": "^1.51.1",
-		"@storybook/addon-docs": "^10.0.0-beta.7",
+		"@storybook/addon-docs": "^10.0.2",
 		"@storybook/icons": "^1.6.0",
-		"@storybook/react-vite": "^10.0.0-beta.7",
+		"@storybook/react-vite": "^10.0.2",
 		"@testing-library/dom": "^10.4.0",
 		"@types/jsdom": "^21.1.7",
 		"@types/node": "^20",
@@ -83,7 +83,7 @@
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"react-syntax-highlighter": "^15.4.5",
-		"storybook": "^10.0.0-beta.7",
+		"storybook": "^10.0.2",
 		"tailwindcss": "^3.4.17",
 		"tsup": "^8.5.0",
 		"typescript": "^5.8.3",
@@ -94,7 +94,7 @@
 		"zx": "^8.7.1"
 	},
 	"peerDependencies": {
-		"storybook": "*"
+		"storybook": "10.0.2"
 	},
 	"publishConfig": {
 		"access": "public"
