@@ -46,23 +46,6 @@ const withBodyCanvas = (
 		...codeLines,
 	]);
 
-const withNewTestSyntax = (
-	parameters: string[],
-	codeLines: (string | { text: string; warning?: Warning })[],
-	imports: string[] = [],
-) => ({
-	imports:
-		imports.length > 0
-			? [{ text: `import { ${imports.join(', ')} } from 'storybook/test';` }]
-			: [],
-	parameters,
-	tests: codeLines.map((line) =>
-		typeof line === 'string'
-			? { text: line }
-			: { text: line.text, warning: line.warning },
-	),
-});
-
 const TEST_CASES = [
 	[
 		'Click',
@@ -85,15 +68,6 @@ const TEST_CASES = [
 				},
 			]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[
-				{
-					text: `await userEvent.click(await canvas.findByRole('button'));`,
-					warning: 'ROLE_WITHOUT_NAME',
-				},
-			],
-		),
 	],
 	[
 		'Double click',
@@ -111,10 +85,6 @@ const TEST_CASES = [
 			withImports(['userEvent', 'within']),
 			withCanvas([`await userEvent.dblClick(await canvas.getByText('Submit'));`]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[`await userEvent.dblClick(await canvas.getByText('Submit'));`],
-		),
 	],
 	[
 		'Type',
@@ -134,12 +104,6 @@ const TEST_CASES = [
 				`await userEvent.type(await canvas.findByPlaceholderText('Enter your name'), 'John Doe');`,
 			]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[
-				`await userEvent.type(await canvas.findByPlaceholderText('Enter your name'), 'John Doe');`,
-			],
-		),
 	],
 	[
 		'Type multiline',
@@ -160,13 +124,6 @@ const TEST_CASES = [
 world\`);`,
 			]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[
-				`await userEvent.type(await canvas.findByPlaceholderText('Enter your name'), \`hello
-world\`);`,
-			],
-		),
 	],
 	[
 		'Type empty string calls clear',
@@ -186,12 +143,6 @@ world\`);`,
 				`await userEvent.clear(await canvas.findByPlaceholderText('Enter your name'));`,
 			]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[
-				`await userEvent.clear(await canvas.findByPlaceholderText('Enter your name'));`,
-			],
-		),
 	],
 	[
 		'Keydown',
@@ -209,7 +160,6 @@ world\`);`,
 			withImports(['userEvent']),
 			withPlay([`await userEvent.keyboard('{enter}');`]),
 		],
-		withNewTestSyntax(['userEvent'], [`await userEvent.keyboard('{enter}');`]),
 	],
 	[
 		'Select',
@@ -229,12 +179,6 @@ world\`);`,
 				`await userEvent.selectOptions(await canvas.findByLabelText('Choose your options'), ['Option1', 'Option2']);`,
 			]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[
-				`await userEvent.selectOptions(await canvas.findByLabelText('Choose your options'), ['Option1', 'Option2']);`,
-			],
-		),
 	],
 	[
 		'Upload',
@@ -257,15 +201,6 @@ world\`);`,
 				},
 			]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[
-				{
-					text: `await userEvent.upload(await canvas.findByTestId('file-upload'), [new File(['file1.txt'], 'file1.txt'), new File(['file2.png'], 'file2.png')]);`,
-					warning: 'TEST_ID',
-				},
-			],
-		),
 	],
 	[
 		'Multiple interactions',
@@ -332,34 +267,6 @@ with quotes and backslash \\\\\\\\
 				},
 			]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[
-				'const body = canvas.ownerDocument.body;',
-				{
-					text: `await userEvent.click(await canvas.findByRole('button'));`,
-					warning: 'ROLE_WITHOUT_NAME',
-				},
-				{
-					text: `await waitFor(() => expect(body.querySelector('#input-field')).toBeInTheDocument());`,
-					warning: 'QUERY_SELECTOR',
-				},
-				{
-					text:
-						"await userEvent.type(body.querySelector('#input-field') as HTMLElement, 'Sample Text with quotes and backslash \\' \" ` \\\\');",
-					warning: 'QUERY_SELECTOR',
-				},
-				{
-					text: `await userEvent.type(await canvas.findByRole('input', { name: 'Description' }), \`Multiline
-with quotes and backslash \\\\\\\\
-'single'
-"double"
-\\\`backticks\\\`
-\`);`,
-				},
-			],
-			['waitFor', 'expect'],
-		),
 	],
 	[
 		'Tab',
@@ -374,7 +281,6 @@ with quotes and backslash \\\\\\\\
 			},
 		],
 		[withImports(['userEvent']), withPlay(['await userEvent.tab();'])],
-		withNewTestSyntax(['userEvent'], ['await userEvent.tab();']),
 	],
 	[
 		'Tab shift',
@@ -392,7 +298,6 @@ with quotes and backslash \\\\\\\\
 			withImports(['userEvent']),
 			withPlay(['await userEvent.tab({ shift: true });']),
 		],
-		withNewTestSyntax(['userEvent'], ['await userEvent.tab({ shift: true });']),
 	],
 	[
 		'Some events are ignored',
@@ -407,7 +312,6 @@ with quotes and backslash \\\\\\\\
 			},
 		],
 		[[], []],
-		withNewTestSyntax([], []),
 	],
 	[
 		'findAll*',
@@ -454,20 +358,6 @@ with quotes and backslash \\\\\\\\
 				`await userEvent.click((await canvas.findAllByText('hello world', { exact: false, collapseWhitespace: false }))[1]);`,
 			]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[
-				{
-					text: `await userEvent.click((await canvas.findAllByRole('button'))[0]);`,
-					warning: 'ROLE_WITHOUT_NAME',
-				},
-				{
-					text: `await userEvent.type((await canvas.findAllByRole('textarea'))[1], 'test');`,
-					warning: 'ROLE_WITHOUT_NAME',
-				},
-				`await userEvent.click((await canvas.findAllByText('hello world', { exact: false, collapseWhitespace: false }))[1]);`,
-			],
-		),
 	],
 	[
 		'Query selector and find',
@@ -506,25 +396,6 @@ with quotes and backslash \\\\\\\\
 				},
 			]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[
-				'const body = canvas.ownerDocument.body;',
-				{
-					text: `await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());`,
-					warning: 'QUERY_SELECTOR',
-				},
-				{
-					text: `await userEvent.click(body.querySelector('input') as HTMLElement);`,
-					warning: 'QUERY_SELECTOR',
-				},
-				{
-					text: `await userEvent.click(await canvas.findByRole('button'));`,
-					warning: 'ROLE_WITHOUT_NAME',
-				},
-			],
-			['waitFor', 'expect'],
-		),
 	],
 	[
 		'Query selector',
@@ -551,21 +422,6 @@ with quotes and backslash \\\\\\\\
 				},
 			]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[
-				'const body = canvas.ownerDocument.body;',
-				{
-					text: `await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());`,
-					warning: 'QUERY_SELECTOR',
-				},
-				{
-					text: `await userEvent.click(body.querySelector('input') as HTMLElement);`,
-					warning: 'QUERY_SELECTOR',
-				},
-			],
-			['waitFor', 'expect'],
-		),
 	],
 	[
 		'Assertion with toBeInTheDocument',
@@ -588,16 +444,6 @@ with quotes and backslash \\\\\\\\
 				},
 			]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[
-				{
-					text: `await waitFor(() => expect(canvas.queryByRole('button')).toBeInTheDocument())`,
-					warning: 'ROLE_WITHOUT_NAME',
-				},
-			],
-			['waitFor', 'expect'],
-		),
 	],
 	[
 		'Assertion with toHaveValue',
@@ -624,16 +470,6 @@ with quotes and backslash \\\\\\\\
 				},
 			]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[
-				{
-					text: `await waitFor(() => expect(canvas.queryByTestId('email-input')).toHaveValue('test@example.com'))`,
-					warning: 'TEST_ID',
-				},
-			],
-			['waitFor', 'expect'],
-		),
 	],
 	[
 		'Assertion with toHaveText',
@@ -660,17 +496,6 @@ with quotes and backslash \\\\\\\\
 				},
 			]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[
-				'const body = canvas.ownerDocument.body;',
-				{
-					text: `await waitFor(() => expect(body.querySelector('.error-message')).toHaveTextContent('Invalid email'))`,
-					warning: 'QUERY_SELECTOR',
-				},
-			],
-			['waitFor', 'expect'],
-		),
 	],
 	[
 		'Assertion without arguments',
@@ -695,13 +520,6 @@ with quotes and backslash \\\\\\\\
 				`await waitFor(() => expect(canvas.queryByRole('button', { name: 'Submit' })).toBeEnabled())`,
 			]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[
-				`await waitFor(() => expect(canvas.queryByRole('button', { name: 'Submit' })).toBeEnabled())`,
-			],
-			['waitFor', 'expect'],
-		),
 	],
 	[
 		'Assertion with string argument',
@@ -726,13 +544,6 @@ with quotes and backslash \\\\\\\\
 				`await waitFor(() => expect(canvas.queryByLabelText('Name')).toHaveValue('John Doe'))`,
 			]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[
-				`await waitFor(() => expect(canvas.queryByLabelText('Name')).toHaveValue('John Doe'))`,
-			],
-			['waitFor', 'expect'],
-		),
 	],
 	[
 		'Assertion with numeric argument',
@@ -757,13 +568,6 @@ with quotes and backslash \\\\\\\\
 				`await waitFor(() => expect(canvas.queryByLabelText('Age')).toHaveValue(25))`,
 			]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[
-				`await waitFor(() => expect(canvas.queryByLabelText('Age')).toHaveValue(25))`,
-			],
-			['waitFor', 'expect'],
-		),
 	],
 	[
 		'Multiple assertion arguments',
@@ -791,16 +595,6 @@ with quotes and backslash \\\\\\\\
 				},
 			]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[
-				{
-					text: `await waitFor(() => expect(canvas.queryByTestId('price-display')).toHaveTextContent('$99.99', { exact: false }))`,
-					warning: 'TEST_ID',
-				},
-			],
-			['waitFor', 'expect'],
-		),
 	],
 	[
 		'Multiple assertions in one test',
@@ -853,15 +647,6 @@ with quotes and backslash \\\\\\\\
 				`await waitFor(() => expect(canvas.queryByRole('button', { name: 'Submit' })).toBeDisabled())`,
 			]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[
-				`await waitFor(() => expect(canvas.queryByRole('checkbox', { name: 'Accept terms' })).toBeVisible())`,
-				`await waitFor(() => expect(canvas.queryByRole('checkbox', { name: 'Accept terms' })).not.toBeChecked())`,
-				`await waitFor(() => expect(canvas.queryByRole('button', { name: 'Submit' })).toBeDisabled())`,
-			],
-			['waitFor', 'expect'],
-		),
 	],
 	[
 		'Combining interactions and assertions',
@@ -911,15 +696,6 @@ with quotes and backslash \\\\\\\\
 				`await userEvent.click(await canvas.findByRole('button', { name: 'Submit' }));`,
 			]),
 		],
-		withNewTestSyntax(
-			['canvas', 'userEvent'],
-			[
-				`await userEvent.type(await canvas.findByLabelText('Name'), 'John Doe');`,
-				`await waitFor(() => expect(canvas.queryByLabelText('Name')).toHaveValue('John Doe'))`,
-				`await userEvent.click(await canvas.findByRole('button', { name: 'Submit' }));`,
-			],
-			['waitFor', 'expect'],
-		),
 	],
 ] satisfies [
 	string,
@@ -933,19 +709,13 @@ with quotes and backslash \\\\\\\\
 		event: Interaction['event'];
 	}[],
 	[GeneratedCodeLine[], GeneratedCodeLine[]],
-	{
-		imports: GeneratedCodeLine[];
-		parameters: string[];
-		tests: GeneratedCodeLine[];
-	},
 ][];
 
 describe('convertInteractionsToCode', () => {
-	test.each(TEST_CASES)(
-		'%s',
-		(_, interactions, [imports, play], newTestSyntax) => {
-			const playCode = convertInteractionsToCode({
-				interactions: interactions.map((interaction) => ({
+	test.each(TEST_CASES)('%s', (_, interactions, [imports, play]) => {
+		expect(
+			convertInteractionsToCode(
+				interactions.map((interaction) => ({
 					elementQuery: {
 						...interaction.elementQuery,
 						nth: ('nth' in interaction.elementQuery
@@ -954,32 +724,14 @@ describe('convertInteractionsToCode', () => {
 					},
 					event: interaction.event,
 				})),
-				hasTypescript: true,
-			});
-			expect(playCode).toEqual({ imports, play });
-			expect(playCode).toMatchSnapshot('Play Function');
-
-			const testCode = convertInteractionsToCode({
-				interactions: interactions.map((interaction) => ({
-					elementQuery: {
-						...interaction.elementQuery,
-						nth: ('nth' in interaction.elementQuery
-							? interaction.elementQuery.nth
-							: null) as number | null,
-					},
-					event: interaction.event,
-				})),
-				hasTypescript: true,
-				useNewTestSyntax: true,
-			});
-			expect(testCode).toEqual(newTestSyntax);
-			expect(testCode).toMatchSnapshot('Test Function');
-		},
-	);
+				true,
+			),
+		).toEqual({ imports, play });
+	});
 
 	test("doesn't generate 'as HTMLElement' without typescript", () => {
-		const result = convertInteractionsToCode({
-			interactions: [
+		const result = convertInteractionsToCode(
+			[
 				{
 					elementQuery: {
 						object: 'body',
@@ -990,14 +742,14 @@ describe('convertInteractionsToCode', () => {
 					event: { type: 'click' },
 				},
 			],
-		});
+			false,
+		);
 		// Check that one of the lines contains the expected text (without as HTMLElement)
 		expect(
-			'play' in result &&
-				result.play.some(
-					(line: GeneratedCodeLine) =>
-						line.text === tab(`await userEvent.click(body.querySelector('input'));`),
-				),
+			result.play.some(
+				(line) =>
+					line.text === tab(`await userEvent.click(body.querySelector('input'));`),
+			),
 		).toBe(true);
 	});
 });

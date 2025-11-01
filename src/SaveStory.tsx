@@ -4,11 +4,11 @@ import { dequal as deepEqual } from 'dequal';
 import React from 'react';
 import { type ChangeEvent, useEffect, useState } from 'react';
 import { TooltipNote, WithTooltip } from 'storybook/internal/components';
-import type { Args } from 'storybook/internal/types';
 import {
 	experimental_requestResponse,
 	useStorybookApi,
-} from 'storybook/manager-api';
+} from 'storybook/internal/manager-api';
+import type { Args } from 'storybook/internal/types';
 import type { GeneratedCode } from './codegen/interactions-to-code';
 import { EVENTS } from './constants';
 import type {
@@ -39,11 +39,9 @@ const stringifyArgs = (args: Record<string, unknown>) =>
 export const SaveStoryButton = ({
 	code,
 	turnOffRecording,
-	generationMode,
 }: {
 	code: GeneratedCode;
 	turnOffRecording: () => void;
-	generationMode: 'Play' | 'Test';
 }) => {
 	const api = useStorybookApi();
 
@@ -170,7 +168,7 @@ export const SaveStoryButton = ({
 			{state === 'input' && (
 				<>
 					<SaveInput
-						placeholder={`Type ${generationMode === 'Test' ? 'test' : 'story'} name`}
+						placeholder="Type story name"
 						required
 						autoFocus
 						value={name}

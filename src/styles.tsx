@@ -1,6 +1,6 @@
 import { AddIcon, CheckIcon, CrossIcon, SyncIcon } from '@storybook/icons';
 import { Button, Form } from 'storybook/internal/components';
-import { styled } from 'storybook/theming';
+import { styled } from 'storybook/internal/theming';
 
 export const Container = styled.div(({ theme }) => ({
 	height: '100%',
@@ -89,11 +89,11 @@ export const Group = styled.div({
 	gap: '9px',
 });
 
-export const EmptyStateDescription = styled.div({
+export const EmptyStateDescription = styled.div(({ theme }) => ({
 	display: 'flex',
 	alignItems: 'center',
 	gap: '8px',
-});
+}));
 
 export const RecordIcon = styled.span<{ isRecording: boolean }>(
 	({ theme, isRecording }) => ({
@@ -165,46 +165,3 @@ export const ErrorIcon = styled(CrossIcon)(({ theme }) => ({
 export const AssertIcon = styled(AddIcon)({
 	width: 14,
 });
-
-export const ToggleContainer = styled.div(({ theme }) => ({
-	display: 'flex',
-	alignItems: 'center',
-	gap: '6px',
-	fontSize: theme.typography.size.s1,
-	color: theme.textMutedColor,
-	cursor: 'pointer',
-	marginRight: 9,
-}));
-
-export const ToggleSwitch = styled.div<{ isActive: boolean }>(
-	({ theme, isActive }) => ({
-		position: 'relative',
-		width: '40px',
-		height: '20px',
-		backgroundColor: isActive ? theme.color.secondary : theme.appBorderColor,
-		borderRadius: '10px',
-		cursor: 'pointer',
-		transition: 'background-color 0.2s ease',
-	}),
-);
-
-export const ToggleThumb = styled.div<{ isActive: boolean }>(
-	({ theme, isActive }) => ({
-		position: 'absolute',
-		top: '2px',
-		left: isActive ? '22px' : '2px',
-		width: '16px',
-		height: '16px',
-		backgroundColor: isActive ? theme.background.content : theme.color.secondary,
-		borderRadius: '50%',
-		transition: 'left 0.2s ease',
-		boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
-	}),
-);
-
-export const ToggleLabel = styled.span<{ isActive: boolean }>(
-	({ theme, isActive }) => ({
-		color: isActive ? theme.color.secondary : theme.textMutedColor,
-		fontWeight: 'bold',
-	}),
-);

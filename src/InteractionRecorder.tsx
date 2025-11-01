@@ -3,21 +3,13 @@ import { DeleteIcon } from '@storybook/icons';
 import React from 'react';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Bar, EmptyTabContent } from 'storybook/internal/components';
-import {
-	useChannel,
-	useParameter,
-	useStorybookApi,
-} from 'storybook/manager-api';
+import { useChannel, useStorybookApi } from 'storybook/internal/manager-api';
 import { useDebounce } from 'use-debounce';
 import { CodeBlock } from './CodeBlock';
 import { SaveStoryButton } from './SaveStory';
 import { combineInteractions } from './codegen/combine-interactions';
-import {
-	convertInteractionsToCode,
-	isPlay,
-} from './codegen/interactions-to-code';
+import { convertInteractionsToCode } from './codegen/interactions-to-code';
 import { EVENTS } from './constants';
-import { useAddonParameters } from './decorators/state';
 import {
 	type Interaction,
 	useInteractions,
@@ -38,10 +30,6 @@ import {
 	StyledButtonSmallContent,
 	StyledSubnav,
 	SubnavWrapper,
-	ToggleContainer,
-	ToggleLabel,
-	ToggleSwitch,
-	ToggleThumb,
 } from './styles';
 
 export const InteractionRecorder = () => {
@@ -90,54 +78,12 @@ export const InteractionRecorder = () => {
 		storyData?.importPath.endsWith(ext),
 	);
 
-	// TODO: read it dynamically for each story as some can have old and some can have new syntax
-	const { useNewTestSyntax: canUseNewTestSyntax } =
-		useAddonParameters(useParameter);
-
-	const [generationMode, setGenerationMode] = useState<'Play' | 'Test'>('Play');
-
-	useEffect(() => {
-		setGenerationMode(canUseNewTestSyntax ? 'Test' : 'Play');
-	}, [canUseNewTestSyntax]);
-
 	const [debouncedInteractions] = useDebounce(interactions, 100);
-	const { generatedCode, codeToDisplay } = useMemo(() => {
-		const generatedCode = convertInteractionsToCode({
-			interactions: JSON.parse(debouncedInteractions),
-			hasTypescript,
-			useNewTestSyntax: generationMode === 'Test',
-		});
-
-		// If using new test syntax and there are test lines, wrap them
-		if (
-			generationMode === 'Test' &&
-			!isPlay(generatedCode) &&
-			generatedCode.tests.length > 0
-		) {
-			const storyName = storyData?.name || 'Story';
-			const parametersString =
-				generatedCode.parameters.length > 0
-					? `{ ${generatedCode.parameters.join(', ')} }`
-					: '{}';
-
-			return {
-				generatedCode,
-				codeToDisplay: {
-					...generatedCode,
-					tests: [
-						{ text: `${storyName}.test('test', async (${parametersString}) => {` },
-						...generatedCode.tests.map((testLine) => ({
-							text: `\t${testLine.text}`,
-							warning: testLine.warning,
-						})),
-						{ text: '});' },
-					],
-				},
-			};
-		}
-
-		return { generatedCode, codeToDisplay: generatedCode };
-	}, [debouncedInteractions, hasTypescript, generationMode, storyData?.name]);
+	const code = useMemo(
+		() =>
+			convertInteractionsToCode(JSON.parse(debouncedInteractions), hasTypescript),
+		[debouncedInteractions, hasTypescript],
+	);
 
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	useEffect(() => {
@@ -167,11 +113,7 @@ export const InteractionRecorder = () => {
 		observer.observe(element, { childList: true, subtree: true });
 
 		return () => observer.disconnect();
-	}, [codeToDisplay, isScrolledToBottom]);
-
-	const hasCodeLines = isPlay(codeToDisplay)
-		? codeToDisplay.play.length > 0
-		: codeToDisplay.tests.length > 0;
+	}, [code, isScrolledToBottom]);
 
 	return (
 		<Container ref={containerRef}>
@@ -199,37 +141,15 @@ export const InteractionRecorder = () => {
 								{isAsserting ? 'Choose element' : 'Add assertion'}
 							</AssertionButton>
 
-							<StyledButton onClick={resetInteractions} disabled={!hasCodeLines}>
+							<StyledButton onClick={resetInteractions} disabled={!code.play.length}>
 								<DeleteIcon />
 								Reset
 							</StyledButton>
 						</Group>
 
-						<Group>
-							{hasCodeLines && (
-								<>
-									{canUseNewTestSyntax && (
-										<ToggleContainer
-											onClick={() =>
-												setGenerationMode(generationMode === 'Play' ? 'Test' : 'Play')
-											}
-										>
-											<ToggleLabel isActive={generationMode === 'Play'}>Play</ToggleLabel>
-											<ToggleSwitch isActive={generationMode === 'Test'}>
-												<ToggleThumb isActive={generationMode === 'Test'} />
-											</ToggleSwitch>
-											<ToggleLabel isActive={generationMode === 'Test'}>Test</ToggleLabel>
-										</ToggleContainer>
-									)}
-
-									<SaveStoryButton
-										code={generatedCode}
-										turnOffRecording={turnOffRecording}
-										generationMode={generationMode}
-									/>
-								</>
-							)}
-						</Group>
+						{code.play.length > 0 && (
+							<SaveStoryButton code={code} turnOffRecording={turnOffRecording} />
+						)}
 					</StyledSubnav>
 				</Bar>
 			</SubnavWrapper>
@@ -243,7 +163,7 @@ export const InteractionRecorder = () => {
 					setIsScrolledToBottom(scrollTop + clientHeight >= scrollHeight);
 				}}
 			>
-				{!hasCodeLines && !isRecording && (
+				{code.play.length === 0 && !isRecording && (
 					<EmptyTabContent
 						title="No interactions have been recorded."
 						description={
@@ -262,7 +182,7 @@ export const InteractionRecorder = () => {
 					/>
 				)}
 
-				{!hasCodeLines && isRecording && (
+				{code.play.length === 0 && isRecording && (
 					<EmptyTabContent
 						title="Recording is in progress..."
 						description={
@@ -273,19 +193,11 @@ export const InteractionRecorder = () => {
 					/>
 				)}
 
-				{hasCodeLines && (
+				{code.play.length > 0 && (
 					<CodeBlocksWrapper>
-						{codeToDisplay.imports.length > 0 && (
-							<CodeBlock name="Imports" codeLines={codeToDisplay.imports} />
-						)}
+						<CodeBlock name="Imports" codeLines={code.imports} />
 
-						<CodeBlock
-							name={`${generationMode} Function`}
-							codeLines={
-								isPlay(codeToDisplay) ? codeToDisplay.play : codeToDisplay.tests
-							}
-							isSticky
-						/>
+						<CodeBlock name="Play Function" codeLines={code.play} isSticky />
 					</CodeBlocksWrapper>
 				)}
 			</ContentWrapper>

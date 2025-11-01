@@ -18,31 +18,15 @@ export type GeneratedCodeLine = {
 	warning?: Warning;
 };
 
-type GeneratedPlayCode = {
+export type GeneratedCode = {
 	imports: GeneratedCodeLine[];
 	play: GeneratedCodeLine[];
 };
 
-type GeneratedTestCode = {
-	imports: GeneratedCodeLine[];
-	parameters: string[];
-	tests: GeneratedCodeLine[];
-};
-
-export type GeneratedCode = GeneratedPlayCode | GeneratedTestCode;
-
-export const isPlay = (code: GeneratedCode): code is GeneratedPlayCode =>
-	'play' in code;
-
-export const convertInteractionsToCode = ({
-	interactions,
-	hasTypescript = false,
-	useNewTestSyntax = false,
-}: {
-	interactions: Interaction[];
-	hasTypescript?: boolean;
-	useNewTestSyntax?: boolean;
-}): GeneratedCode => {
+export const convertInteractionsToCode = (
+	interactions: Interaction[],
+	hasTypescript: boolean,
+): GeneratedCode => {
 	const codeLines: GeneratedCodeLine[] = [];
 	let usesBody = false;
 	let usesCanvas = false;
@@ -147,69 +131,9 @@ export const convertInteractionsToCode = ({
 	}
 
 	if (!codeLines.length) {
-		return useNewTestSyntax
-			? {
-					imports: [],
-					parameters: [],
-					tests: [],
-				}
-			: {
-					imports: [],
-					play: [],
-				};
-	}
-
-	if (useNewTestSyntax) {
-		const parameters: string[] = [];
-		const importNames: string[] = [];
-
-		// Add parameters based on what's used in the test
-		if (usesCanvas || usesBody) {
-			parameters.push('canvas');
-		}
-		// userEvent is needed for any user interactions or assertions
-		if (
-			usesBody ||
-			usesCanvas ||
-			needsExpect ||
-			codeLines.some((line) => line.text.includes('userEvent.'))
-		) {
-			parameters.push('userEvent');
-		}
-
-		// Generate imports for new test syntax - only include expect and waitFor when needed
-		if (needsExpect) {
-			importNames.push('waitFor', 'expect');
-		}
-
-		const tests: GeneratedCodeLine[] = [];
-
-		// Only add body constant if needed
-		if (usesBody) {
-			tests.push({
-				text: 'const body = canvas.ownerDocument.body;',
-			});
-		}
-
-		// Add test lines without canvas constant
-		tests.push(
-			...codeLines.map((codeLine) => ({
-				text: codeLine.text,
-				warning: codeLine.warning,
-			})),
-		);
-
 		return {
-			imports:
-				importNames.length > 0
-					? [
-							{
-								text: `import { ${importNames.join(', ')} } from 'storybook/test';`,
-							},
-						]
-					: [],
-			parameters,
-			tests,
+			imports: [],
+			play: [],
 		};
 	}
 
