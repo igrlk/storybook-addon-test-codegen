@@ -1,3 +1,20 @@
+# v3.0.0 (Sat Nov 01 2025)
+
+#### 💥 Breaking Change
+
+- Upgrade to Storybook 10 [#44](https://github.com/igrlk/storybook-addon-test-codegen/pull/44) ([@igrlk](https://github.com/igrlk) [@yannbf](https://github.com/yannbf))
+
+#### 🏠 Internal
+
+- e2e retries [#39](https://github.com/igrlk/storybook-addon-test-codegen/pull/39) ([@igrlk](https://github.com/igrlk))
+
+#### Authors: 2
+
+- Igor Luchenkov ([@igrlk](https://github.com/igrlk))
+- Yann Braga ([@yannbf](https://github.com/yannbf))
+
+---
+
 # v2.0.1 (Wed Jun 04 2025)
 
 #### 🐛 Bug Fix

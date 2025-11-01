@@ -1,6 +1,6 @@
 {
 	"name": "storybook-addon-test-codegen",
-	"version": "2.0.1",
+	"version": "3.0.0",
 	"description": "Addon for Storybook that generates test code for your stories.",
 	"repository": {
 		"type": "git",
@@ -94,7 +94,7 @@
 		"zx": "^8.7.1"
 	},
 	"peerDependencies": {
-		"storybook": "10.0.2"
+		"storybook": "^10.0.0"
 	},
 	"publishConfig": {
 		"access": "public"
