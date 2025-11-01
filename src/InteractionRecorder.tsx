@@ -3,7 +3,7 @@ import { DeleteIcon } from '@storybook/icons';
 import React from 'react';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Bar, EmptyTabContent } from 'storybook/internal/components';
-import { useChannel, useStorybookApi } from 'storybook/internal/manager-api';
+import { useChannel, useStorybookApi } from 'storybook/manager-api';
 import { useDebounce } from 'use-debounce';
 import { CodeBlock } from './CodeBlock';
 import { SaveStoryButton } from './SaveStory';

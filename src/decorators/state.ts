@@ -1,4 +1,4 @@
-import { useParameter } from 'storybook/internal/preview-api';
+import { useParameter } from 'storybook/preview-api';
 import { getConfig } from 'storybook/test';
 import { PARAMETER } from '../constants';
 
