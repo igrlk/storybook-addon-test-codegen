@@ -12,26 +12,34 @@ you. To see this live, check out the [demo](https://igrlk.github.io/storybook-ad
 
 ## Installation
 
-First, install the package.
+First, install the package using Storybook's commands:
 
 ```sh
-npm install --save-dev storybook-addon-test-codegen
+npx storybook add storybook-addon-test-codegen
 ```
 
 ### Storybook version compatibility
 
-This addon requires Storybook version **9.0.0 or higher**.
+This addon requires Storybook version **10.0.0 or higher**.
 
-For older versions of Storybook, use the following addon versions:
+For older versions of Storybook, use npm directly to install the following addon versions:
 
 | Storybook Version | Addon Version |
 |-------------------|---------------|
+| 9.*               | 2.0.1         |
 | 8.3.*             | 1.3.4         |
 | 8.2.*             | 1.0.3         |
 
-### Register the Addon
+## Manual installation
 
-Once installed, register it as an addon in `.storybook/main.js`.
+The `npx storybook add` command should automatically do everything that is necessary to set up this addon. If for any reason you need to do the steps manually, here's what you have to do.
+
+Install the addon:
+```sh
+npm install --save-dev storybook-addon-test-codegen
+```
+
+Once installed, register it as an addon in `.storybook/main.ts`.
 
 ```js
 // .storybook/main.ts
@@ -42,7 +50,6 @@ import type {StorybookConfig} from '@storybook/your-framework';
 const config: StorybookConfig = {
   // ...rest of config
   addons: [
-    '@storybook/addon-essentials',
     'storybook-addon-test-codegen', // 👈 register the addon here
   ],
 };
@@ -74,8 +81,35 @@ export const MyComponent = {
     const canvas = within(canvasElement.ownerDocument.body);
     await userEvent.click(await canvas.findByRole('textbox', {name: 'Name'}));
     await userEvent.type(await canvas.findByRole('textbox', {name: 'Name'}), 'John Doe');
-  }
 }
+}
+```
+
+### Usage with CSF Next
+
+If you're using CSF Next syntax with `definePreview` and `defineMain`, you'll need to register the addon in two places. **This is done automatically by the Storybook add command**. If you need to do it manually, change the following files:
+
+1. The `.storybook/main.ts` file:
+```tsx
+// Replace your-framework with the framework you are using (e.g., react-webpack5, vue3-vite)
+import {defineMain} from '@storybook/your-framework/node';
+export default defineMain({
+	// ...
+	addons: ['storybook-addon-codegen'],
+});
+```
+
+2. The `.storybook/preview.ts` file:
+```tsx
+import addonCodegen from 'storybook-addon-codegen';
+import {definePreview} from '@storybook/react-vite';
+// Replace your-framework with the framework you are using (e.g., react-webpack5, vue3-vite)
+import {definePreview} from '@storybook/your-framework';
+
+export default definePreview({
+	// ...
+	addons: [addonCodegen()],
+});
 ```
 
 ### Warnings
@@ -109,3 +143,26 @@ configure({
 ## Contributing
 
 Any contributions are welcome. Feel free to open an issue or a pull request.
+
+### Development Workflow
+
+When developing this addon locally, there are two different workflows you can use:
+
+#### Recommended: Separate watch and serve (saving to file works)
+
+Run these two commands in separate terminals:
+
+```sh
+pnpm start        # Watch addon files and rebuild on changes
+pnpm storybook    # Run Storybook (not in watch mode)
+```
+
+**Note:** With this setup, the "Save to story" feature works correctly. However, when you make changes to the addon itself, you'll need to manually restart `pnpm storybook` to pick up the new addon files.
+
+#### Alternative: Full watch mode (saving to file doesn't work)
+
+```sh
+pnpm start:storybook  # Runs both addon and Storybook in watch mode
+```
+
+This command runs both the addon build (tsup) and Storybook in watch mode, so changes to the addon are automatically picked up by Storybook without manual restarts. However, the "Save to story" feature has historically not worked with this setup and we haven't been able to resolve this issue yet.

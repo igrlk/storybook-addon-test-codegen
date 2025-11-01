@@ -70,6 +70,7 @@ test('Submit multi-step form', async ({ page }) => {
 		.getByRole('button', { name: 'Submit' })
 		.click();
 	await page.getByRole('button', { name: 'Add assertion' }).click();
+	await page.waitForTimeout(1000);
 	await page
 		.locator('iframe[title="storybook-preview-iframe"]')
 		.contentFrame()
