@@ -20,12 +20,13 @@ npx storybook add storybook-addon-test-codegen
 
 ### Storybook version compatibility
 
-This addon requires Storybook version **9.0.0 or higher**.
+This addon requires Storybook version **10.0.0 or higher**.
 
 For older versions of Storybook, use npm directly to install the following addon versions:
 
 | Storybook Version | Addon Version |
 |-------------------|---------------|
+| 9.*               | 2.0.1         |
 | 8.3.*             | 1.3.4         |
 | 8.2.*             | 1.0.3         |
 
