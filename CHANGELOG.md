@@ -1,3 +1,15 @@
+# v3.0.1 (Fri Nov 21 2025)
+
+#### 🐛 Bug Fix
+
+- feat: Expand dependency range for Storybook canaries and v10.x [#45](https://github.com/igrlk/storybook-addon-test-codegen/pull/45) ([@yannbf](https://github.com/yannbf))
+
+#### Authors: 1
+
+- Yann Braga ([@yannbf](https://github.com/yannbf))
+
+---
+
 # v3.0.0 (Sat Nov 01 2025)
 
 #### 💥 Breaking Change
