@@ -7,12 +7,7 @@
 		"url": "git+https://github.com/igrlk/storybook-addon-test-codegen.git"
 	},
 	"packageManager": "pnpm@9.15.3",
-	"keywords": [
-		"storybook-addons",
-		"interactions",
-		"test",
-		"codegen"
-	],
+	"keywords": ["storybook-addons", "interactions", "test", "codegen"],
 	"main": "dist/index.cjs",
 	"module": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -32,12 +27,7 @@
 		"./manager": "./dist/manager.js",
 		"./package.json": "./package.json"
 	},
-	"files": [
-		"dist/**/*",
-		"README.md",
-		"*.js",
-		"*.d.ts"
-	],
+	"files": ["dist/**/*", "README.md", "*.js", "*.d.ts"],
 	"scripts": {
 		"prebuild": "node -e \"fs.rmSync('./dist', { recursive: true, force: true })\"",
 		"build": "tsup",
@@ -104,24 +94,16 @@
 		"zx": "^8.7.1"
 	},
 	"peerDependencies": {
-		"storybook": "^10.0.0"
+		"storybook": "^0.0.0-0 || ^10.0.0 || ^10.0.0-0 || ^10.1.0-0 || ^10.2.0-0 || ^10.3.0-0"
 	},
 	"publishConfig": {
 		"access": "public"
 	},
 	"bundler": {
-		"exportEntries": [
-			"src/index.ts"
-		],
-		"managerEntries": [
-			"src/manager.tsx"
-		],
-		"previewEntries": [
-			"src/preview.ts"
-		],
-		"nodeEntries": [
-			"src/preset.ts"
-		]
+		"exportEntries": ["src/index.ts"],
+		"managerEntries": ["src/manager.tsx"],
+		"previewEntries": ["src/preview.ts"],
+		"nodeEntries": ["src/preset.ts"]
 	},
 	"storybook": {
 		"displayName": "Test Codegen",
@@ -139,8 +121,6 @@
 		"icon": "https://user-images.githubusercontent.com/321738/63501763-88dbf600-c4cc-11e9-96cd-94adadc2fd72.png"
 	},
 	"lint-staged": {
-		"*": [
-			"pnpm check"
-		]
+		"*": ["pnpm check"]
 	}
 }
