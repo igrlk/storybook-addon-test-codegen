@@ -1,0 +1,372 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`generateStoryCode > Play function syntax > Existing story 1`] = `
+"import { userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Component } from './Component';
+
+const meta: Meta<typeof Component> = {
+    component: Component
+};
+export default meta;
+type Story = StoryObj<typeof Component>;
+
+export const Default: Story = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    }
+};"
+`;
+
+exports[`generateStoryCode > Play function syntax > Existing story with args 1`] = `
+"import { userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Component } from './Component';
+
+const meta: Meta<typeof Component> = {
+    component: Component
+};
+export default meta;
+type Story = StoryObj<typeof Component>;
+
+export const Default: Story = {
+    args: {
+        existing: "existing value",
+        someFunction: () => 42,
+
+        hello: {
+            "world": {
+                "foo": "bar",
+
+                "baz": [1, 2, {
+                    "boo": "bee"
+                }]
+            }
+        }
+    },
+
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    }
+};"
+`;
+
+exports[`generateStoryCode > Play function syntax > Existing story with custom name 1`] = `
+"import { userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Component } from './Component';
+
+const meta: Meta<typeof Component> = {
+    component: Component
+};
+export default meta;
+type Story = StoryObj<typeof Component>;
+
+export const CustomName: Story = {
+    name: "My cool name",
+
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    }
+};"
+`;
+
+exports[`generateStoryCode > Play function syntax > New story and all existing imports 1`] = `
+"import { userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Component } from './Component';
+
+const meta: Meta<typeof Component> = {
+    component: Component
+};
+export default meta;
+type Story = StoryObj<typeof Component>;
+
+export const Default: Story = {};
+
+export const NewStory: Story = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    }
+};"
+`;
+
+exports[`generateStoryCode > Play function syntax > New story and new imports 1`] = `
+"import { userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Component } from './Component';
+
+const meta: Meta<typeof Component> = {
+    component: Component
+};
+export default meta;
+type Story = StoryObj<typeof Component>;
+
+export const Default: Story = {};
+
+export const NewStory: Story = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    }
+};"
+`;
+
+exports[`generateStoryCode > Play function syntax > New story with args 1`] = `
+"import { userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Component } from './Component';
+
+const meta: Meta<typeof Component> = {
+    component: Component
+};
+export default meta;
+type Story = StoryObj<typeof Component>;
+
+export const Default: Story = {};
+
+export const NewStory: Story = {
+    args: {
+        hello: {
+            "world": {
+                "foo": "bar",
+
+                "baz": [1, 2, {
+                    "boo": "bee"
+                }]
+            }
+        }
+    },
+
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    }
+};"
+`;
+
+exports[`generateStoryCode > Play function syntax > New story with spaces in name and some existing imports 1`] = `
+"import { userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Component } from './Component';
+
+const meta: Meta<typeof Component> = {
+    component: Component
+};
+export default meta;
+type Story = StoryObj<typeof Component>;
+
+export const Default: Story = {};
+
+export const NewStory: Story = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    }
+};"
+`;
+
+exports[`generateStoryCode > Play function syntax > New story without copying name 1`] = `
+"import { userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Component } from './Component';
+
+const meta: Meta<typeof Component> = {
+    component: Component
+};
+export default meta;
+type Story = StoryObj<typeof Component>;
+
+export const Default: Story = {
+    name: "Default"
+};
+
+export const NewStory: Story = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    }
+};"
+`;
+
+exports[`generateStoryCode > Play function syntax > Pure javascript 1`] = `
+"import { userEvent, within } from 'storybook/test';
+import { Component } from './Component';
+
+export default {
+    component: Component
+};
+
+export const Default = {};
+
+export const NewStory12 = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    }
+};"
+`;
+
+exports[`generateStoryCode > Test syntax > Existing story with args and test syntax 1`] = `
+"import preview from '../.storybook/preview';
+import { Component } from './Component';
+
+const meta = preview.meta({
+  component: Component
+});
+
+export const Default = meta.story({
+    args: {
+        existing: "existing value",
+        someFunction: () => 42,
+
+        hello: {
+            "world": {
+                "foo": "bar",
+
+                "baz": [1, 2, {
+                    "boo": "bee"
+                }]
+            }
+        }
+    }
+});
+
+Default.test("typed-test-name", async (
+    {
+        canvas,
+        userEvent
+    }
+) => {
+    const body = canvas.ownerDocument.body;
+    await userEvent.click(await canvas.findByRole("button"));
+});"
+`;
+
+exports[`generateStoryCode > Test syntax > Existing story with test syntax 1`] = `
+"import preview from '../.storybook/preview';
+import { Component } from './Component';
+
+const meta = preview.meta({
+  component: Component
+});
+
+export const Default = meta.story({});
+
+Default.test("typed-test-name", async (
+  {
+    canvas,
+    userEvent
+  }
+) => {
+  const body = canvas.ownerDocument.body;
+  await userEvent.click(await canvas.findByRole("button"));
+});"
+`;
+
+exports[`generateStoryCode > Test syntax > New story and all existing imports with test syntax 1`] = `
+"import preview from '../.storybook/preview';
+import { Component } from './Component';
+
+const meta = preview.meta({
+  component: Component
+});
+
+export const Default = meta.story({});
+export const NewStory = meta.story({});
+
+NewStory.test("typed-test-name", async (
+  {
+    canvas,
+    userEvent
+  }
+) => {
+  const body = canvas.ownerDocument.body;
+  await userEvent.click(await canvas.findByRole("button"));
+});"
+`;
+
+exports[`generateStoryCode > Test syntax > New story and new imports with test syntax 1`] = `
+"import { waitFor, expect } from 'storybook/test';
+import preview from '../.storybook/preview';
+import { Component } from './Component';
+
+const meta = preview.meta({
+  component: Component
+});
+
+export const Default = meta.story({});
+export const NewStory = meta.story({});
+
+NewStory.test("typed-test-name", async (
+  {
+    canvas,
+    userEvent
+  }
+) => {
+  const body = canvas.ownerDocument.body;
+  await userEvent.click(await canvas.findByRole("button"));
+  await waitFor(() => expect(canvas.queryByRole("button")).toBeInTheDocument());
+});"
+`;
+
+exports[`generateStoryCode > Test syntax > New story with args and test syntax 1`] = `
+"import preview from '../.storybook/preview';
+import { Component } from './Component';
+
+const meta = preview.meta({
+  component: Component
+});
+
+export const Default = meta.story({});
+
+export const NewStory = meta.story({
+  args: {
+    hello: {
+      "world": {
+        "foo": "bar",
+
+        "baz": [1, 2, {
+          "boo": "bee"
+        }]
+      }
+    }
+  }
+});
+
+NewStory.test("typed-test-name", async (
+  {
+    canvas,
+    userEvent
+  }
+) => {
+  const body = canvas.ownerDocument.body;
+  await userEvent.click(await canvas.findByRole("button"));
+});"
+`;
+
+exports[`generateStoryCode > Test syntax > New story with spaces in name and some existing imports with test syntax 1`] = `
+"import preview from '../.storybook/preview';
+import { Component } from './Component';
+
+const meta = preview.meta({
+  component: Component
+});
+
+export const Default = meta.story({});
+export const NewStory = meta.story({});
+
+NewStory.test("typed-test-name", async (
+  {
+    canvas,
+    userEvent
+  }
+) => {
+  const body = canvas.ownerDocument.body;
+  await userEvent.click(await canvas.findByRole("button"));
+});"
+`;

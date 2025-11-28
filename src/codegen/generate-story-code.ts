@@ -1,7 +1,7 @@
 import { formatFileContent } from 'storybook/internal/common';
 import { storyNameFromExport, toId } from 'storybook/internal/csf';
 import { type CsfFile, printCsf } from 'storybook/internal/csf-tools';
-import type { GeneratedCode } from './interactions-to-code';
+import { type GeneratedCode, isPlay } from './interactions-to-code';
 import {
 	duplicateStoryWithNewName,
 	parseArgs,
@@ -9,6 +9,7 @@ import {
 	updateArgsInCsfFile,
 	updateImportsInCsfFile,
 	updatePlayInCsfFile,
+	updateTestsInCsfFile,
 } from './save-story-utils';
 
 export const generateStoryCode = async ({
@@ -70,15 +71,30 @@ export const generateStoryCode = async ({
 
 	await updateArgsInCsfFile(node, args ? parseArgs(args) : {});
 
-	await updatePlayInCsfFile(
-		node,
-		code.play.map((line) => line.text),
-	);
+	if (isPlay(code)) {
+		await updatePlayInCsfFile(
+			node,
+			code.play.map((line) => line.text),
+		);
 
-	await updateImportsInCsfFile(
-		csf._ast,
-		code.imports.map((line) => line.text),
-	);
+		await updateImportsInCsfFile(
+			csf._ast,
+			code.imports.map((line) => line.text),
+		);
+	} else {
+		await updateTestsInCsfFile(
+			node,
+			code.parameters,
+			code.tests.map((line) => line.text),
+			newStoryName,
+			csf._ast,
+		);
+
+		await updateImportsInCsfFile(
+			csf._ast,
+			code.imports.map((line) => line.text),
+		);
+	}
 
 	return {
 		storyCode: await formatFileContent(

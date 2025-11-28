@@ -1,0 +1,3361 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`convertInteractionsToCode > Assertion with numeric argument > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByLabelText('Age')).toHaveValue(25))",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with numeric argument > Test Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByLabelText('Age')).toHaveValue(25))",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with numeric argument > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByLabelText('Age')).toHaveValue(25))",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with numeric argument > test 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByLabelText('Age')).toHaveValue(25))",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with numeric argument 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByLabelText('Age')).toHaveValue(25))",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with numeric argument 2`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByLabelText('Age')).toHaveValue(25))",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with string argument > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByLabelText('Name')).toHaveValue('John Doe'))",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with string argument > Test Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByLabelText('Name')).toHaveValue('John Doe'))",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with string argument > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByLabelText('Name')).toHaveValue('John Doe'))",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with string argument > test 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByLabelText('Name')).toHaveValue('John Doe'))",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with string argument 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByLabelText('Name')).toHaveValue('John Doe'))",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with string argument 2`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByLabelText('Name')).toHaveValue('John Doe'))",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with toBeInTheDocument > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByRole('button')).toBeInTheDocument())",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with toBeInTheDocument > Test Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByRole('button')).toBeInTheDocument())",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with toBeInTheDocument > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByRole('button')).toBeInTheDocument())",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with toBeInTheDocument > test 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByRole('button')).toBeInTheDocument())",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with toBeInTheDocument 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByRole('button')).toBeInTheDocument())",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with toBeInTheDocument 2`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByRole('button')).toBeInTheDocument())",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with toHaveText > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const body = canvasElement.ownerDocument.body;",
+    },
+    {
+      "text": "	await waitFor(() => expect(body.querySelector('.error-message')).toHaveTextContent('Invalid email'))",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with toHaveText > Test Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "const body = canvas.ownerDocument.body;",
+    },
+    {
+      "text": "await waitFor(() => expect(body.querySelector('.error-message')).toHaveTextContent('Invalid email'))",
+      "warning": "QUERY_SELECTOR",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with toHaveText > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const body = canvasElement.ownerDocument.body;",
+    },
+    {
+      "text": "	await waitFor(() => expect(body.querySelector('.error-message')).toHaveTextContent('Invalid email'))",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with toHaveText > test 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "const body = canvas.ownerDocument.body;",
+    },
+    {
+      "text": "await waitFor(() => expect(body.querySelector('.error-message')).toHaveTextContent('Invalid email'))",
+      "warning": "QUERY_SELECTOR",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with toHaveText 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const body = canvasElement.ownerDocument.body;",
+    },
+    {
+      "text": "	await waitFor(() => expect(body.querySelector('.error-message')).toHaveTextContent('Invalid email'))",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with toHaveText 2`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "const body = canvas.ownerDocument.body;",
+    },
+    {
+      "text": "await waitFor(() => expect(body.querySelector('.error-message')).toHaveTextContent('Invalid email'))",
+      "warning": "QUERY_SELECTOR",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with toHaveValue > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByTestId('email-input')).toHaveValue('test@example.com'))",
+      "warning": "TEST_ID",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with toHaveValue > Test Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByTestId('email-input')).toHaveValue('test@example.com'))",
+      "warning": "TEST_ID",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with toHaveValue > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByTestId('email-input')).toHaveValue('test@example.com'))",
+      "warning": "TEST_ID",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with toHaveValue > test 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByTestId('email-input')).toHaveValue('test@example.com'))",
+      "warning": "TEST_ID",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with toHaveValue 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByTestId('email-input')).toHaveValue('test@example.com'))",
+      "warning": "TEST_ID",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion with toHaveValue 2`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByTestId('email-input')).toHaveValue('test@example.com'))",
+      "warning": "TEST_ID",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion without arguments > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByRole('button', { name: 'Submit' })).toBeEnabled())",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion without arguments > Test Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByRole('button', { name: 'Submit' })).toBeEnabled())",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion without arguments > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByRole('button', { name: 'Submit' })).toBeEnabled())",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion without arguments > test 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByRole('button', { name: 'Submit' })).toBeEnabled())",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion without arguments 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByRole('button', { name: 'Submit' })).toBeEnabled())",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Assertion without arguments 2`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByRole('button', { name: 'Submit' })).toBeEnabled())",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Click > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.click(await canvas.findByRole('button'));",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Click > Test Function 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.click(await canvas.findByRole('button'));",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Click > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.click(await canvas.findByRole('button'));",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Click > test 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.click(await canvas.findByRole('button'));",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Click 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.click(await canvas.findByRole('button'));",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Click 2`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.click(await canvas.findByRole('button'));",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Combining interactions and assertions > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.type(await canvas.findByLabelText('Name'), 'John Doe');",
+      "warning": undefined,
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByLabelText('Name')).toHaveValue('John Doe'))",
+      "warning": undefined,
+    },
+    {
+      "text": "	await userEvent.click(await canvas.findByRole('button', { name: 'Submit' }));",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Combining interactions and assertions > Test Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.type(await canvas.findByLabelText('Name'), 'John Doe');",
+      "warning": undefined,
+    },
+    {
+      "text": "await waitFor(() => expect(canvas.queryByLabelText('Name')).toHaveValue('John Doe'))",
+      "warning": undefined,
+    },
+    {
+      "text": "await userEvent.click(await canvas.findByRole('button', { name: 'Submit' }));",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Combining interactions and assertions > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.type(await canvas.findByLabelText('Name'), 'John Doe');",
+      "warning": undefined,
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByLabelText('Name')).toHaveValue('John Doe'))",
+      "warning": undefined,
+    },
+    {
+      "text": "	await userEvent.click(await canvas.findByRole('button', { name: 'Submit' }));",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Combining interactions and assertions > test 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.type(await canvas.findByLabelText('Name'), 'John Doe');",
+      "warning": undefined,
+    },
+    {
+      "text": "await waitFor(() => expect(canvas.queryByLabelText('Name')).toHaveValue('John Doe'))",
+      "warning": undefined,
+    },
+    {
+      "text": "await userEvent.click(await canvas.findByRole('button', { name: 'Submit' }));",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Combining interactions and assertions 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.type(await canvas.findByLabelText('Name'), 'John Doe');",
+      "warning": undefined,
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByLabelText('Name')).toHaveValue('John Doe'))",
+      "warning": undefined,
+    },
+    {
+      "text": "	await userEvent.click(await canvas.findByRole('button', { name: 'Submit' }));",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Combining interactions and assertions 2`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.type(await canvas.findByLabelText('Name'), 'John Doe');",
+      "warning": undefined,
+    },
+    {
+      "text": "await waitFor(() => expect(canvas.queryByLabelText('Name')).toHaveValue('John Doe'))",
+      "warning": undefined,
+    },
+    {
+      "text": "await userEvent.click(await canvas.findByRole('button', { name: 'Submit' }));",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Double click > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.dblClick(await canvas.getByText('Submit'));",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Double click > Test Function 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.dblClick(await canvas.getByText('Submit'));",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Double click > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.dblClick(await canvas.getByText('Submit'));",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Double click > test 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.dblClick(await canvas.getByText('Submit'));",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Double click 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.dblClick(await canvas.getByText('Submit'));",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Double click 2`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.dblClick(await canvas.getByText('Submit'));",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Keydown > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	await userEvent.keyboard('{enter}');",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Keydown > Test Function 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.keyboard('{enter}');",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Keydown > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	await userEvent.keyboard('{enter}');",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Keydown > test 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.keyboard('{enter}');",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Keydown 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	await userEvent.keyboard('{enter}');",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Keydown 2`] = `
+{
+  "imports": [],
+  "parameters": [
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.keyboard('{enter}');",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Multiple assertion arguments > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByTestId('price-display')).toHaveTextContent('$99.99', { exact: false }))",
+      "warning": "TEST_ID",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Multiple assertion arguments > Test Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByTestId('price-display')).toHaveTextContent('$99.99', { exact: false }))",
+      "warning": "TEST_ID",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Multiple assertion arguments > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByTestId('price-display')).toHaveTextContent('$99.99', { exact: false }))",
+      "warning": "TEST_ID",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Multiple assertion arguments > test 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByTestId('price-display')).toHaveTextContent('$99.99', { exact: false }))",
+      "warning": "TEST_ID",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Multiple assertion arguments 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByTestId('price-display')).toHaveTextContent('$99.99', { exact: false }))",
+      "warning": "TEST_ID",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Multiple assertion arguments 2`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByTestId('price-display')).toHaveTextContent('$99.99', { exact: false }))",
+      "warning": "TEST_ID",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Multiple assertions in one test > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByRole('checkbox', { name: 'Accept terms' })).toBeVisible())",
+      "warning": undefined,
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByRole('checkbox', { name: 'Accept terms' })).not.toBeChecked())",
+      "warning": undefined,
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByRole('button', { name: 'Submit' })).toBeDisabled())",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Multiple assertions in one test > Test Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByRole('checkbox', { name: 'Accept terms' })).toBeVisible())",
+      "warning": undefined,
+    },
+    {
+      "text": "await waitFor(() => expect(canvas.queryByRole('checkbox', { name: 'Accept terms' })).not.toBeChecked())",
+      "warning": undefined,
+    },
+    {
+      "text": "await waitFor(() => expect(canvas.queryByRole('button', { name: 'Submit' })).toBeDisabled())",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Multiple assertions in one test > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByRole('checkbox', { name: 'Accept terms' })).toBeVisible())",
+      "warning": undefined,
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByRole('checkbox', { name: 'Accept terms' })).not.toBeChecked())",
+      "warning": undefined,
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByRole('button', { name: 'Submit' })).toBeDisabled())",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Multiple assertions in one test > test 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByRole('checkbox', { name: 'Accept terms' })).toBeVisible())",
+      "warning": undefined,
+    },
+    {
+      "text": "await waitFor(() => expect(canvas.queryByRole('checkbox', { name: 'Accept terms' })).not.toBeChecked())",
+      "warning": undefined,
+    },
+    {
+      "text": "await waitFor(() => expect(canvas.queryByRole('button', { name: 'Submit' })).toBeDisabled())",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Multiple assertions in one test 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByRole('checkbox', { name: 'Accept terms' })).toBeVisible())",
+      "warning": undefined,
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByRole('checkbox', { name: 'Accept terms' })).not.toBeChecked())",
+      "warning": undefined,
+    },
+    {
+      "text": "	await waitFor(() => expect(canvas.queryByRole('button', { name: 'Submit' })).toBeDisabled())",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Multiple assertions in one test 2`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await waitFor(() => expect(canvas.queryByRole('checkbox', { name: 'Accept terms' })).toBeVisible())",
+      "warning": undefined,
+    },
+    {
+      "text": "await waitFor(() => expect(canvas.queryByRole('checkbox', { name: 'Accept terms' })).not.toBeChecked())",
+      "warning": undefined,
+    },
+    {
+      "text": "await waitFor(() => expect(canvas.queryByRole('button', { name: 'Submit' })).toBeDisabled())",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Multiple interactions > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const body = canvasElement.ownerDocument.body;",
+    },
+    {
+      "text": "	const canvas = within(body);",
+    },
+    {
+      "text": "	await userEvent.click(await canvas.findByRole('button'));",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "	await waitFor(() => expect(body.querySelector('#input-field')).toBeInTheDocument());",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "	await userEvent.type(body.querySelector('#input-field') as HTMLElement, 'Sample Text with quotes and backslash \\' " \` \\\\');",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "	await userEvent.type(await canvas.findByRole('input', { name: 'Description' }), \`Multiline
+with quotes and backslash \\\\\\\\
+'single'
+"double"
+\\\`backticks\\\`
+\`);",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Multiple interactions > Test Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "const body = canvas.ownerDocument.body;",
+    },
+    {
+      "text": "await userEvent.click(await canvas.findByRole('button'));",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "await waitFor(() => expect(body.querySelector('#input-field')).toBeInTheDocument());",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "await userEvent.type(body.querySelector('#input-field') as HTMLElement, 'Sample Text with quotes and backslash \\' " \` \\\\');",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "await userEvent.type(await canvas.findByRole('input', { name: 'Description' }), \`Multiline
+with quotes and backslash \\\\\\\\
+'single'
+"double"
+\\\`backticks\\\`
+\`);",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Multiple interactions > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const body = canvasElement.ownerDocument.body;",
+    },
+    {
+      "text": "	const canvas = within(body);",
+    },
+    {
+      "text": "	await userEvent.click(await canvas.findByRole('button'));",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "	await waitFor(() => expect(body.querySelector('#input-field')).toBeInTheDocument());",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "	await userEvent.type(body.querySelector('#input-field') as HTMLElement, 'Sample Text with quotes and backslash \\' " \` \\\\');",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "	await userEvent.type(await canvas.findByRole('input', { name: 'Description' }), \`Multiline
+with quotes and backslash \\\\\\\\
+'single'
+"double"
+\\\`backticks\\\`
+\`);",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Multiple interactions > test 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "const body = canvas.ownerDocument.body;",
+    },
+    {
+      "text": "await userEvent.click(await canvas.findByRole('button'));",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "await waitFor(() => expect(body.querySelector('#input-field')).toBeInTheDocument());",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "await userEvent.type(body.querySelector('#input-field') as HTMLElement, 'Sample Text with quotes and backslash \\' " \` \\\\');",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "await userEvent.type(await canvas.findByRole('input', { name: 'Description' }), \`Multiline
+with quotes and backslash \\\\\\\\
+'single'
+"double"
+\\\`backticks\\\`
+\`);",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Multiple interactions 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const body = canvasElement.ownerDocument.body;",
+    },
+    {
+      "text": "	const canvas = within(body);",
+    },
+    {
+      "text": "	await userEvent.click(await canvas.findByRole('button'));",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "	await waitFor(() => expect(body.querySelector('#input-field')).toBeInTheDocument());",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "	await userEvent.type(body.querySelector('#input-field') as HTMLElement, 'Sample Text with quotes and backslash \\' " \` \\\\');",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "	await userEvent.type(await canvas.findByRole('input', { name: 'Description' }), \`Multiline
+with quotes and backslash \\\\\\\\
+'single'
+"double"
+\\\`backticks\\\`
+\`);",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Multiple interactions 2`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "const body = canvas.ownerDocument.body;",
+    },
+    {
+      "text": "await userEvent.click(await canvas.findByRole('button'));",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "await waitFor(() => expect(body.querySelector('#input-field')).toBeInTheDocument());",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "await userEvent.type(body.querySelector('#input-field') as HTMLElement, 'Sample Text with quotes and backslash \\' " \` \\\\');",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "await userEvent.type(await canvas.findByRole('input', { name: 'Description' }), \`Multiline
+with quotes and backslash \\\\\\\\
+'single'
+"double"
+\\\`backticks\\\`
+\`);",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Query selector > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const body = canvasElement.ownerDocument.body;",
+    },
+    {
+      "text": "	await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "	await userEvent.click(body.querySelector('input') as HTMLElement);",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Query selector > Test Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "const body = canvas.ownerDocument.body;",
+    },
+    {
+      "text": "await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "await userEvent.click(body.querySelector('input') as HTMLElement);",
+      "warning": "QUERY_SELECTOR",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Query selector > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const body = canvasElement.ownerDocument.body;",
+    },
+    {
+      "text": "	await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "	await userEvent.click(body.querySelector('input') as HTMLElement);",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Query selector > test 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "const body = canvas.ownerDocument.body;",
+    },
+    {
+      "text": "await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "await userEvent.click(body.querySelector('input') as HTMLElement);",
+      "warning": "QUERY_SELECTOR",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Query selector 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const body = canvasElement.ownerDocument.body;",
+    },
+    {
+      "text": "	await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "	await userEvent.click(body.querySelector('input') as HTMLElement);",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Query selector 2`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "const body = canvas.ownerDocument.body;",
+    },
+    {
+      "text": "await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "await userEvent.click(body.querySelector('input') as HTMLElement);",
+      "warning": "QUERY_SELECTOR",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Query selector and find > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const body = canvasElement.ownerDocument.body;",
+    },
+    {
+      "text": "	const canvas = within(body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "	await userEvent.click(body.querySelector('input') as HTMLElement);",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "	await userEvent.click(await canvas.findByRole('button'));",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Query selector and find > Test Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "const body = canvas.ownerDocument.body;",
+    },
+    {
+      "text": "await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "await userEvent.click(body.querySelector('input') as HTMLElement);",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "await userEvent.click(await canvas.findByRole('button'));",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Query selector and find > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const body = canvasElement.ownerDocument.body;",
+    },
+    {
+      "text": "	const canvas = within(body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "	await userEvent.click(body.querySelector('input') as HTMLElement);",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "	await userEvent.click(await canvas.findByRole('button'));",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Query selector and find > test 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "const body = canvas.ownerDocument.body;",
+    },
+    {
+      "text": "await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "await userEvent.click(body.querySelector('input') as HTMLElement);",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "await userEvent.click(await canvas.findByRole('button'));",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Query selector and find 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within, waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const body = canvasElement.ownerDocument.body;",
+    },
+    {
+      "text": "	const canvas = within(body);",
+    },
+    {
+      "text": "	await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "	await userEvent.click(body.querySelector('input') as HTMLElement);",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "	await userEvent.click(await canvas.findByRole('button'));",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Query selector and find 2`] = `
+{
+  "imports": [
+    {
+      "text": "import { waitFor, expect } from 'storybook/test';",
+    },
+  ],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "const body = canvas.ownerDocument.body;",
+    },
+    {
+      "text": "await waitFor(() => expect(body.querySelector('input')).toBeInTheDocument());",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "await userEvent.click(body.querySelector('input') as HTMLElement);",
+      "warning": "QUERY_SELECTOR",
+    },
+    {
+      "text": "await userEvent.click(await canvas.findByRole('button'));",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Select > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.selectOptions(await canvas.findByLabelText('Choose your options'), ['Option1', 'Option2']);",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Select > Test Function 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.selectOptions(await canvas.findByLabelText('Choose your options'), ['Option1', 'Option2']);",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Select > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.selectOptions(await canvas.findByLabelText('Choose your options'), ['Option1', 'Option2']);",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Select > test 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.selectOptions(await canvas.findByLabelText('Choose your options'), ['Option1', 'Option2']);",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Select 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.selectOptions(await canvas.findByLabelText('Choose your options'), ['Option1', 'Option2']);",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Select 2`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.selectOptions(await canvas.findByLabelText('Choose your options'), ['Option1', 'Option2']);",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Some events are ignored > Play Function 1`] = `
+{
+  "imports": [],
+  "play": [],
+}
+`;
+
+exports[`convertInteractionsToCode > Some events are ignored > Test Function 1`] = `
+{
+  "imports": [],
+  "parameters": [],
+  "tests": [],
+}
+`;
+
+exports[`convertInteractionsToCode > Some events are ignored > play 1`] = `
+{
+  "imports": [],
+  "play": [],
+}
+`;
+
+exports[`convertInteractionsToCode > Some events are ignored > test 1`] = `
+{
+  "imports": [],
+  "parameters": [],
+  "tests": [],
+}
+`;
+
+exports[`convertInteractionsToCode > Some events are ignored 1`] = `
+{
+  "imports": [],
+  "play": [],
+}
+`;
+
+exports[`convertInteractionsToCode > Some events are ignored 2`] = `
+{
+  "imports": [],
+  "parameters": [],
+  "tests": [],
+}
+`;
+
+exports[`convertInteractionsToCode > Tab > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	await userEvent.tab();",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Tab > Test Function 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.tab();",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Tab > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	await userEvent.tab();",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Tab > test 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.tab();",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Tab 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	await userEvent.tab();",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Tab 2`] = `
+{
+  "imports": [],
+  "parameters": [
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.tab();",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Tab shift > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	await userEvent.tab({ shift: true });",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Tab shift > Test Function 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.tab({ shift: true });",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Tab shift > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	await userEvent.tab({ shift: true });",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Tab shift > test 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.tab({ shift: true });",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Tab shift 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	await userEvent.tab({ shift: true });",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Tab shift 2`] = `
+{
+  "imports": [],
+  "parameters": [
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.tab({ shift: true });",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Type > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.type(await canvas.findByPlaceholderText('Enter your name'), 'John Doe');",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Type > Test Function 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.type(await canvas.findByPlaceholderText('Enter your name'), 'John Doe');",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Type > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.type(await canvas.findByPlaceholderText('Enter your name'), 'John Doe');",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Type > test 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.type(await canvas.findByPlaceholderText('Enter your name'), 'John Doe');",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Type 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.type(await canvas.findByPlaceholderText('Enter your name'), 'John Doe');",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Type 2`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.type(await canvas.findByPlaceholderText('Enter your name'), 'John Doe');",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Type empty string calls clear > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.clear(await canvas.findByPlaceholderText('Enter your name'));",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Type empty string calls clear > Test Function 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.clear(await canvas.findByPlaceholderText('Enter your name'));",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Type empty string calls clear > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.clear(await canvas.findByPlaceholderText('Enter your name'));",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Type empty string calls clear > test 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.clear(await canvas.findByPlaceholderText('Enter your name'));",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Type empty string calls clear 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.clear(await canvas.findByPlaceholderText('Enter your name'));",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Type empty string calls clear 2`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.clear(await canvas.findByPlaceholderText('Enter your name'));",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Type multiline > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.type(await canvas.findByPlaceholderText('Enter your name'), \`hello
+world\`);",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Type multiline > Test Function 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.type(await canvas.findByPlaceholderText('Enter your name'), \`hello
+world\`);",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Type multiline > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.type(await canvas.findByPlaceholderText('Enter your name'), \`hello
+world\`);",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Type multiline > test 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.type(await canvas.findByPlaceholderText('Enter your name'), \`hello
+world\`);",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Type multiline 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.type(await canvas.findByPlaceholderText('Enter your name'), \`hello
+world\`);",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Type multiline 2`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.type(await canvas.findByPlaceholderText('Enter your name'), \`hello
+world\`);",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Upload > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.upload(await canvas.findByTestId('file-upload'), [new File(['file1.txt'], 'file1.txt'), new File(['file2.png'], 'file2.png')]);",
+      "warning": "TEST_ID",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Upload > Test Function 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.upload(await canvas.findByTestId('file-upload'), [new File(['file1.txt'], 'file1.txt'), new File(['file2.png'], 'file2.png')]);",
+      "warning": "TEST_ID",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Upload > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.upload(await canvas.findByTestId('file-upload'), [new File(['file1.txt'], 'file1.txt'), new File(['file2.png'], 'file2.png')]);",
+      "warning": "TEST_ID",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Upload > test 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.upload(await canvas.findByTestId('file-upload'), [new File(['file1.txt'], 'file1.txt'), new File(['file2.png'], 'file2.png')]);",
+      "warning": "TEST_ID",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Upload 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.upload(await canvas.findByTestId('file-upload'), [new File(['file1.txt'], 'file1.txt'), new File(['file2.png'], 'file2.png')]);",
+      "warning": "TEST_ID",
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > Upload 2`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.upload(await canvas.findByTestId('file-upload'), [new File(['file1.txt'], 'file1.txt'), new File(['file2.png'], 'file2.png')]);",
+      "warning": "TEST_ID",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > findAll* > Play Function 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.click((await canvas.findAllByRole('button'))[0]);",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "	await userEvent.type((await canvas.findAllByRole('textarea'))[1], 'test');",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "	await userEvent.click((await canvas.findAllByText('hello world', { exact: false, collapseWhitespace: false }))[1]);",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > findAll* > Test Function 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.click((await canvas.findAllByRole('button'))[0]);",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "await userEvent.type((await canvas.findAllByRole('textarea'))[1], 'test');",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "await userEvent.click((await canvas.findAllByText('hello world', { exact: false, collapseWhitespace: false }))[1]);",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > findAll* > play 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.click((await canvas.findAllByRole('button'))[0]);",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "	await userEvent.type((await canvas.findAllByRole('textarea'))[1], 'test');",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "	await userEvent.click((await canvas.findAllByText('hello world', { exact: false, collapseWhitespace: false }))[1]);",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > findAll* > test 1`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.click((await canvas.findAllByRole('button'))[0]);",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "await userEvent.type((await canvas.findAllByRole('textarea'))[1], 'test');",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "await userEvent.click((await canvas.findAllByText('hello world', { exact: false, collapseWhitespace: false }))[1]);",
+      "warning": undefined,
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > findAll* 1`] = `
+{
+  "imports": [
+    {
+      "text": "import { userEvent, within } from 'storybook/test';",
+    },
+  ],
+  "play": [
+    {
+      "text": "play: async ({ canvasElement }) => {",
+    },
+    {
+      "text": "	const canvas = within(canvasElement.ownerDocument.body);",
+    },
+    {
+      "text": "	await userEvent.click((await canvas.findAllByRole('button'))[0]);",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "	await userEvent.type((await canvas.findAllByRole('textarea'))[1], 'test');",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "	await userEvent.click((await canvas.findAllByText('hello world', { exact: false, collapseWhitespace: false }))[1]);",
+      "warning": undefined,
+    },
+    {
+      "text": "}",
+    },
+  ],
+}
+`;
+
+exports[`convertInteractionsToCode > findAll* 2`] = `
+{
+  "imports": [],
+  "parameters": [
+    "canvas",
+    "userEvent",
+  ],
+  "tests": [
+    {
+      "text": "await userEvent.click((await canvas.findAllByRole('button'))[0]);",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "await userEvent.type((await canvas.findAllByRole('textarea'))[1], 'test');",
+      "warning": "ROLE_WITHOUT_NAME",
+    },
+    {
+      "text": "await userEvent.click((await canvas.findAllByText('hello world', { exact: false, collapseWhitespace: false }))[1]);",
+      "warning": undefined,
+    },
+  ],
+}
+`;
