@@ -17,7 +17,12 @@ export default defineConfig(async (options) => {
 		await import('./package.json', { with: { type: 'json' } })
 	).default;
 	const {
-		bundler: { managerEntries = [], previewEntries = [], nodeEntries = [] },
+		bundler: {
+			exportEntries = [],
+			managerEntries = [],
+			previewEntries = [],
+			nodeEntries = [],
+		},
 	} = packageJson;
 
 	const commonConfig: Options = {
@@ -38,6 +43,18 @@ export default defineConfig(async (options) => {
 	};
 
 	const configs: Options[] = [];
+
+	// export entries back the package root and need to match main/module/types.
+	if (exportEntries.length) {
+		configs.push({
+			...commonConfig,
+			dts: true,
+			entry: exportEntries,
+			format: ['esm', 'cjs'],
+			platform: 'browser',
+			target: BROWSER_TARGET,
+		});
+	}
 
 	// manager entries are entries meant to be loaded into the manager UI
 	// they'll have manager-specific packages externalized and they won't be usable in node
