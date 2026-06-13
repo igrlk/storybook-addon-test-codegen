@@ -1,146 +1,150 @@
 {
-	"name": "storybook-addon-test-codegen",
-	"version": "3.0.1",
-	"description": "Addon for Storybook that generates test code for your stories.",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/igrlk/storybook-addon-test-codegen.git"
-	},
-	"packageManager": "pnpm@9.15.3",
-	"keywords": [
-		"storybook-addons",
-		"interactions",
-		"test",
-		"codegen"
-	],
-	"main": "dist/index.cjs",
-	"module": "dist/index.js",
-	"types": "dist/index.d.ts",
-	"type": "module",
-	"license": "MIT",
-	"author": "igrlk",
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"default": "./dist/index.js"
-		},
-		"./preview": {
-			"types": "./dist/index.d.ts",
-			"default": "./dist/preview.js"
-		},
-		"./preset": "./dist/preset.js",
-		"./manager": "./dist/manager.js",
-		"./package.json": "./package.json"
-	},
-	"files": [
-		"dist/**/*",
-		"README.md",
-		"*.js",
-		"*.d.ts"
-	],
-	"scripts": {
-		"prebuild": "node -e \"fs.rmSync('./dist', { recursive: true, force: true })\"",
-		"build": "tsup",
-		"build:watch": "tsup --watch",
-		"build-storybook": "storybook build",
-		"check": "biome check --write",
-		"test": "vitest run",
-		"test:watch": "vitest",
-		"test:e2e": "npx playwright test",
-		"test:e2e:ui": "npx playwright test --ui",
-		"test:e2e:codegen": "npx playwright codegen",
-		"prerelease": "zx scripts/prepublish-checks.js",
-		"release": "npm run build && auto shipit",
-		"eject-ts": "zx scripts/eject-typescript.js",
-		"start": "concurrently \"pnpm build:watch\" \"pnpm tailwind:watch\"",
-		"start:storybook": "RUN_STORYBOOK=true pnpm start",
-		"storybook": "storybook dev -p 6006 --no-open",
-		"prepare": "husky",
-		"tailwind": "tailwindcss -i ./src/tailwind.css -o ./.storybook/tailwind.css",
-		"tailwind:watch": "pnpm tailwind -- --watch",
-		"tsc": "tsc --noEmit",
-		"pr:check": "npx concurrently \"pnpm check\" \"pnpm test\" \"pnpm build\" \"pnpm tailwind\" && pnpm build-storybook && pnpm pr:check:e2e",
-		"pr:check:e2e": "npx concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"http-server storybook-static --port 6006 --silent\" \"npx wait-on tcp:127.0.0.1:6006 && pnpm test:e2e\""
-	},
-	"devDependencies": {
-		"@babel/parser": "^7.26.7",
-		"@biomejs/biome": "^1.9.4",
-		"@medv/finder": "^4.0.2",
-		"@playwright/test": "^1.51.1",
-		"@storybook/addon-docs": "^10.0.2",
-		"@storybook/icons": "^1.6.0",
-		"@storybook/react-vite": "^10.0.2",
-		"@testing-library/dom": "^10.4.0",
-		"@types/jsdom": "^21.1.7",
-		"@types/node": "^20",
-		"@types/react": "^19.0.10",
-		"@types/react-dom": "^19.0.4",
-		"@types/react-syntax-highlighter": "^15.4.5",
-		"@vitejs/plugin-react": "^4.7.0",
-		"auto": "^11.3.0",
-		"boxen": "^8.0.1",
-		"concurrently": "^9.1.0",
-		"dedent": "^1.5.3",
-		"dequal": "^2.0.3",
-		"dom-accessibility-api": "^0.7.0",
-		"globals": "^15.14.0",
-		"happy-dom": "^15.11.7",
-		"http-server": "^14.1.1",
-		"husky": "^9.1.7",
-		"jsdom": "^25.0.1",
-		"lint-staged": "^15.2.11",
-		"prompts": "^2.4.2",
-		"react": "^19.0.0",
-		"react-dom": "^19.0.0",
-		"react-syntax-highlighter": "^15.4.5",
-		"storybook": "^10.0.2",
-		"tailwindcss": "^3.4.17",
-		"tsup": "^8.5.0",
-		"typescript": "^5.8.3",
-		"use-debounce": "^10.0.4",
-		"vite": "^7.0.5",
-		"vitest": "^2.1.8",
-		"wait-on": "^8.0.3",
-		"zx": "^8.7.1"
-	},
-	"peerDependencies": {
-		"storybook": "^0.0.0-0 || ^10.0.0 || ^10.0.0-0 || ^10.1.0-0 || ^10.2.0-0 || ^10.3.0-0"
-	},
-	"publishConfig": {
-		"access": "public"
-	},
-	"bundler": {
-		"exportEntries": [
-			"src/index.ts"
-		],
-		"managerEntries": [
-			"src/manager.tsx"
-		],
-		"previewEntries": [
-			"src/preview.ts"
-		],
-		"nodeEntries": [
-			"src/preset.ts"
-		]
-	},
-	"storybook": {
-		"displayName": "Test Codegen",
-		"supportedFrameworks": [
-			"react",
-			"vue",
-			"angular",
-			"web-components",
-			"ember",
-			"html",
-			"svelte",
-			"preact",
-			"react-native"
-		],
-		"icon": "https://user-images.githubusercontent.com/321738/63501763-88dbf600-c4cc-11e9-96cd-94adadc2fd72.png"
-	},
-	"lint-staged": {
-		"*": [
-			"pnpm check"
-		]
-	}
+  "name": "storybook-addon-test-codegen",
+  "version": "3.0.1",
+  "description": "Addon for Storybook that generates test code for your stories.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/igrlk/storybook-addon-test-codegen.git"
+  },
+  "packageManager": "pnpm@9.15.3",
+  "keywords": [
+    "storybook-addons",
+    "interactions",
+    "test",
+    "codegen"
+  ],
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "license": "MIT",
+  "author": "igrlk",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./preview": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/preview.js"
+    },
+    "./preset": "./dist/preset.js",
+    "./manager": "./dist/manager.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "*.js",
+    "*.d.ts"
+  ],
+  "scripts": {
+    "prebuild": "node -e \"fs.rmSync('./dist', { recursive: true, force: true })\"",
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "build-storybook": "storybook build",
+    "check": "biome check --write",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "npx playwright test",
+    "test:e2e:ui": "npx playwright test --ui",
+    "test:e2e:codegen": "npx playwright codegen",
+    "prerelease": "zx scripts/prepublish-checks.js",
+    "release": "npm run build && auto shipit",
+    "eject-ts": "zx scripts/eject-typescript.js",
+    "start": "concurrently \"pnpm build:watch\" \"pnpm tailwind:watch\"",
+    "start:storybook": "RUN_STORYBOOK=true pnpm start",
+    "storybook": "storybook dev -p 6006 --no-open",
+    "prepare": "husky",
+    "tailwind": "tailwindcss -i ./src/tailwind.css -o ./.storybook/tailwind.css",
+    "tailwind:watch": "pnpm tailwind -- --watch",
+    "tsc": "tsc --noEmit",
+    "pr:check": "npx concurrently \"pnpm check\" \"pnpm test\" \"pnpm build\" \"pnpm tailwind\" && pnpm build-storybook && pnpm pr:check:e2e",
+    "pr:check:e2e": "npx concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"http-server storybook-static --port 6006 --silent\" \"npx wait-on tcp:127.0.0.1:6006 && pnpm test:e2e\""
+  },
+  "devDependencies": {
+    "@babel/parser": "^7.26.7",
+    "@biomejs/biome": "^1.9.4",
+    "@medv/finder": "^4.0.2",
+    "@playwright/test": "^1.51.1",
+    "@storybook/addon-docs": "^10.0.2",
+    "@storybook/icons": "^1.6.0",
+    "@storybook/react-vite": "^10.0.2",
+    "@testing-library/dom": "^10.4.0",
+    "@types/jsdom": "^21.1.7",
+    "@types/node": "^20",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@types/react-syntax-highlighter": "^15.4.5",
+    "@vitejs/plugin-react": "^4.7.0",
+    "auto": "^11.3.0",
+    "boxen": "^8.0.1",
+    "concurrently": "^9.1.0",
+    "dedent": "^1.5.3",
+    "dequal": "^2.0.3",
+    "dom-accessibility-api": "^0.7.0",
+    "globals": "^15.14.0",
+    "happy-dom": "^15.11.7",
+    "http-server": "^14.1.1",
+    "husky": "^9.1.7",
+    "jsdom": "^25.0.1",
+    "lint-staged": "^15.2.11",
+    "prompts": "^2.4.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-syntax-highlighter": "^15.4.5",
+    "storybook": "^10.0.2",
+    "tailwindcss": "^3.4.17",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3",
+    "use-debounce": "^10.0.4",
+    "vite": "^7.0.5",
+    "vitest": "^2.1.8",
+    "wait-on": "^8.0.3",
+    "zx": "^8.7.1"
+  },
+  "peerDependencies": {
+    "storybook": "^0.0.0-0 || ^10.0.0 || ^10.0.0-0 || ^10.1.0-0 || ^10.2.0-0 || ^10.3.0-0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "bundler": {
+    "exportEntries": [
+      "src/index.ts"
+    ],
+    "managerEntries": [
+      "src/manager.tsx"
+    ],
+    "previewEntries": [
+      "src/preview.ts"
+    ],
+    "nodeEntries": [
+      "src/preset.ts"
+    ]
+  },
+  "storybook": {
+    "displayName": "Test Codegen",
+    "supportedFrameworks": [
+      "react",
+      "vue",
+      "angular",
+      "web-components",
+      "ember",
+      "html",
+      "svelte",
+      "preact",
+      "react-native"
+    ],
+    "icon": "https://user-images.githubusercontent.com/321738/63501763-88dbf600-c4cc-11e9-96cd-94adadc2fd72.png"
+  },
+  "lint-staged": {
+    "*": [
+      "pnpm check"
+    ]
+  },
+  "bugs": {
+    "url": "git+https://github.com/igrlk/storybook-addon-test-codegen/issues"
+  },
+  "homepage": "git+https://github.com/igrlk/storybook-addon-test-codegen#readme"
 }
