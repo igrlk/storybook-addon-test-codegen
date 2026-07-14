@@ -71,7 +71,12 @@ export const InteractionRecorder = () => {
 	// biome-ignore lint/correctness/useExhaustiveDependencies: reset events & recording when story changes
 	useEffect(() => {
 		resetInteractions();
-		turnOffRecording();
+		// Only emit a globals update when there is something to turn off. Unconditional
+		// setGlobals on every story change forces a story re-render that can abort the
+		// incoming story's play function mid-handoff, showing a false "Bail" status.
+		if (isRecording || isAsserting) {
+			turnOffRecording();
+		}
 	}, [storyData?.id]);
 
 	const hasTypescript = ['.ts', '.tsx'].some((ext) =>
