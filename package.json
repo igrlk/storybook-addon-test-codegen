@@ -6,6 +6,10 @@
 		"type": "git",
 		"url": "git+https://github.com/igrlk/storybook-addon-test-codegen.git"
 	},
+	"bugs": {
+		"url": "https://github.com/igrlk/storybook-addon-test-codegen/issues"
+	},
+	"homepage": "https://github.com/igrlk/storybook-addon-test-codegen#readme",
 	"packageManager": "pnpm@9.15.3",
 	"keywords": [
 		"storybook-addons",
