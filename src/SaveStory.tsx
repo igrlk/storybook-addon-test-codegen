@@ -39,9 +39,11 @@ const stringifyArgs = (args: Record<string, unknown>) =>
 export const SaveStoryButton = ({
 	code,
 	turnOffRecording,
+	generationMode,
 }: {
 	code: GeneratedCode;
 	turnOffRecording: () => void;
+	generationMode: 'Play' | 'Test';
 }) => {
 	const api = useStorybookApi();
 
@@ -168,7 +170,7 @@ export const SaveStoryButton = ({
 			{state === 'input' && (
 				<>
 					<SaveInput
-						placeholder="Type story name"
+						placeholder={`Type ${generationMode === 'Test' ? 'test' : 'story'} name`}
 						required
 						autoFocus
 						value={name}

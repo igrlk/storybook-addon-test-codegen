@@ -216,14 +216,28 @@ export const duplicateStoryWithNewName = (
 		noScope: true,
 	});
 
-	// detect CSF2 and throw
-	if (
-		t.isArrowFunctionExpression(cloned.init) ||
-		t.isCallExpression(cloned.init)
-	) {
+	// detect CSF2 and throw (but allow new test syntax)
+	if (t.isArrowFunctionExpression(cloned.init)) {
 		throw new SaveStoryError(
 			'Creating a new story based on a CSF2 story is not supported',
 		);
+	}
+
+	// Allow new test syntax (meta.story() calls)
+	if (t.isCallExpression(cloned.init)) {
+		const callee = cloned.init.callee;
+		// Check if this is a meta.story() call (new test syntax)
+		if (
+			t.isMemberExpression(callee) &&
+			t.isIdentifier(callee.property) &&
+			callee.property.name === 'story'
+		) {
+			// This is new test syntax, allow it
+		} else {
+			throw new SaveStoryError(
+				'Creating a new story based on a CSF2 story is not supported',
+			);
+		}
 	}
 
 	traverse(csfFile._ast, {
@@ -332,10 +346,137 @@ const prepareLine = (line: string) => {
 	return result;
 };
 
+export const updateTestsInCsfFile = async (
+	node: t.Node,
+	parameters: string[],
+	tests: string[],
+	storyName: string,
+	csfAst: CsfFile['_ast'],
+) => {
+	let found = false;
+
+	// Find the story export node first
+	let storyExportNode = null;
+	traverse(csfAst, {
+		CallExpression(path) {
+			if (found) {
+				return;
+			}
+
+			// Check if this is a meta.story() call
+			const callee = path.get('callee');
+			if (callee.isMemberExpression()) {
+				const property = callee.get('property');
+				if (property.isIdentifier() && property.node.name === 'story') {
+					// Check if this is the story we're looking for
+					const parentPath = path.parentPath;
+					if (parentPath?.isVariableDeclarator()) {
+						const id = parentPath.get('id');
+						if (id.isIdentifier() && id.node.name === storyName) {
+							found = true;
+							storyExportNode = path;
+						}
+					}
+				}
+			}
+		},
+
+		noScope: true,
+	});
+
+	if (!storyExportNode) {
+		throw new SaveStoryError(`Story export node for '${storyName}' not found`);
+	}
+
+	// Create the test method call: storyName.test('typed-test-name', async ({ canvas, userEvent }) => { ... })
+	const testMethodCall = t.expressionStatement(
+		t.callExpression(
+			t.memberExpression(t.identifier(storyName), t.identifier('test')),
+			[
+				t.stringLiteral('typed-test-name'),
+				t.arrowFunctionExpression(
+					[
+						t.objectPattern(
+							parameters.map((param) =>
+								t.objectProperty(t.identifier(param), t.identifier(param), false, true),
+							),
+						),
+					],
+					t.blockStatement(
+						tests.map((testLine) => {
+							// Parse the test line to create proper AST
+							const parser = require('@babel/parser');
+							try {
+								const parsed = parser.parse(testLine, {
+									sourceType: 'module',
+									allowReturnOutsideFunction: true,
+								});
+								return parsed.program.body[0];
+							} catch {
+								// If parsing fails, treat as expression statement
+								return t.expressionStatement(t.identifier(testLine));
+							}
+						}),
+					),
+					true, // async: true
+				),
+			],
+		),
+	);
+
+	// Find existing test method call and replace it, or add new one
+	let testExists = false;
+	traverse(csfAst, {
+		ExpressionStatement(path) {
+			if (
+				path.node.expression.type === 'CallExpression' &&
+				path.node.expression.callee.type === 'MemberExpression' &&
+				path.node.expression.callee.object.type === 'Identifier' &&
+				path.node.expression.callee.object.name === storyName &&
+				path.node.expression.callee.property.type === 'Identifier' &&
+				path.node.expression.callee.property.name === 'test' &&
+				path.node.expression.arguments.length > 0 &&
+				path.node.expression.arguments[0].type === 'StringLiteral' &&
+				path.node.expression.arguments[0].value === 'typed-test-name'
+			) {
+				// Replace existing test
+				path.replaceWith(testMethodCall);
+				testExists = true;
+			}
+		},
+		noScope: true,
+	});
+
+	if (!testExists) {
+		// Add new test after the story export
+		const program = csfAst.program;
+		const storyExportIndex = program.body.findIndex((stmt) => {
+			if (stmt.type === 'ExportNamedDeclaration' && stmt.declaration) {
+				if (stmt.declaration.type === 'VariableDeclaration') {
+					const declaration = stmt.declaration.declarations[0];
+					return declaration && declaration.id.name === storyName;
+				}
+			}
+			return false;
+		});
+
+		if (storyExportIndex !== -1) {
+			program.body.splice(storyExportIndex + 1, 0, testMethodCall);
+		} else {
+			// Fallback: add at the end
+			program.body.push(testMethodCall);
+		}
+	}
+};
+
 export const updateImportsInCsfFile = async (
 	node: t.Node,
 	imports: string[],
 ) => {
+	if (!imports.length) {
+		return;
+	}
+
 	let found = false;
 
 	// detect CSF2 and throw an error
