@@ -1,3 +1,15 @@
+# v3.0.2 (Sun Jul 19 2026)
+
+#### 🐛 Bug Fix
+
+- fix: Only reset recording globals on story change when recording is active [#53](https://github.com/igrlk/storybook-addon-test-codegen/pull/53) ([@noranda](https://github.com/noranda))
+
+#### Authors: 1
+
+- Noranda Brown ([@noranda](https://github.com/noranda))
+
+---
+
 # v3.0.1 (Fri Nov 21 2025)
 
 #### 🐛 Bug Fix
