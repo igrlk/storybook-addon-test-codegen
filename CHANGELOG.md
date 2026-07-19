@@ -1,3 +1,17 @@
+# v3.0.4 (Sun Jul 19 2026)
+
+#### 🐛 Bug Fix
+
+- fix: add bugs and homepage metadata to package.json [#54](https://github.com/igrlk/storybook-addon-test-codegen/pull/54) ([@igrlk](https://github.com/igrlk))
+- fix: build root package entry [#47](https://github.com/igrlk/storybook-addon-test-codegen/pull/47) ([@luuhongyii](https://github.com/luuhongyii))
+
+#### Authors: 2
+
+- [@luuhongyii](https://github.com/luuhongyii)
+- Igor Luchenkov ([@igrlk](https://github.com/igrlk))
+
+---
+
 # v3.0.2 (Sun Jul 19 2026)
 
 #### 🐛 Bug Fix
