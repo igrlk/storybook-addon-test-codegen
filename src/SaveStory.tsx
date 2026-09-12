@@ -36,6 +36,89 @@ const stringifyArgs = (args: Record<string, unknown>) =>
 		return value;
 	});
 
+export type SaveStoryState =
+	| 'button'
+	| 'input'
+	| 'creating'
+	| 'success'
+	| 'error';
+
+/**
+ * Presentational "Save to story" control. Renders every save state from props so
+ * it can be driven directly (in tests and stories) without the manager API.
+ */
+export const SaveStoryView = ({
+	state,
+	isDevelopment,
+	name,
+	onNameChange,
+	onStartInput,
+	onSave,
+}: {
+	state: SaveStoryState;
+	isDevelopment: boolean;
+	name: string;
+	onNameChange: (name: string) => void;
+	onStartInput: () => void;
+	onSave: () => void;
+}) => (
+	<SaveContainer>
+		{state === 'button' && isDevelopment && (
+			<StyledButton onClick={onStartInput} variant="outline">
+				<SaveIconColorful size={16} /> Save to story
+			</StyledButton>
+		)}
+
+		{state === 'button' && !isDevelopment && (
+			<WithTooltip
+				as="div"
+				hasChrome={false}
+				trigger="hover"
+				tooltip={<TooltipNote note="Only available in development mode" />}
+			>
+				<DisabledButton variant="outline" type="button">
+					<SaveIconColorful size={16} /> Save to story
+				</DisabledButton>
+			</WithTooltip>
+		)}
+
+		{state === 'input' && (
+			<>
+				<SaveInput
+					placeholder="Type story name"
+					required
+					autoFocus
+					value={name}
+					onChange={(e: ChangeEvent<HTMLInputElement>) =>
+						onNameChange(e.target.value)
+					}
+				/>
+				<StyledButton onClick={onSave} type="submit" variant="outline">
+					Save
+				</StyledButton>
+			</>
+		)}
+
+		{state === 'creating' && (
+			<StyledButton onClick={onStartInput} variant="outline">
+				<RotatingIcon /> Saving
+			</StyledButton>
+		)}
+
+		{state === 'success' && (
+			<SavedButton variant="solid" type="button">
+				<StyledCheckIcon /> Saved
+			</SavedButton>
+		)}
+
+		{state === 'error' && (
+			<ErrorButton variant="ghost" type="button">
+				<ErrorIcon /> Failed to save
+			</ErrorButton>
+		)}
+	</SaveContainer>
+);
+
 export const SaveStoryButton = ({
 	code,
 	turnOffRecording,
@@ -145,59 +228,14 @@ export const SaveStoryButton = ({
 		(global as any as { CONFIG_TYPE: string }).CONFIG_TYPE === 'DEVELOPMENT';
 
 	return (
-		<SaveContainer>
-			{state === 'button' && isDevelopment && (
-				<StyledButton onClick={() => setState('input')} variant="outline">
-					<SaveIconColorful size={16} /> Save to story
-				</StyledButton>
-			)}
-
-			{state === 'button' && !isDevelopment && (
-				<WithTooltip
-					as="div"
-					hasChrome={false}
-					trigger="hover"
-					tooltip={<TooltipNote note="Only available in development mode" />}
-				>
-					<DisabledButton variant="outline" type="button">
-						<SaveIconColorful size={16} /> Save to story
-					</DisabledButton>
-				</WithTooltip>
-			)}
-
-			{state === 'input' && (
-				<>
-					<SaveInput
-						placeholder="Type story name"
-						required
-						autoFocus
-						value={name}
-						onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-					/>
-					<StyledButton onClick={saveStory} type="submit" variant="outline">
-						Save
-					</StyledButton>
-				</>
-			)}
-
-			{state === 'creating' && (
-				<StyledButton onClick={() => setState('input')} variant="outline">
-					<RotatingIcon /> Saving
-				</StyledButton>
-			)}
-
-			{state === 'success' && (
-				<SavedButton variant="solid" type="button">
-					<StyledCheckIcon /> Saved
-				</SavedButton>
-			)}
-
-			{state === 'error' && (
-				<ErrorButton variant="ghost" type="button">
-					<ErrorIcon /> Failed to save
-				</ErrorButton>
-			)}
-		</SaveContainer>
+		<SaveStoryView
+			state={state}
+			isDevelopment={isDevelopment}
+			name={name}
+			onNameChange={setName}
+			onStartInput={() => setState('input')}
+			onSave={saveStory}
+		/>
 	);
 };
 
