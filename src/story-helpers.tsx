@@ -9,14 +9,28 @@ import {
 import type { Interaction } from './state';
 
 /**
- * Full-height framed surface that renders the recorder panel like the manager does.
- * The panel's effect forces its parent to height:100%, so the inner wrapper takes
- * that and the fixed outer height stays put, letting the body scroll.
+ * UI Verify modes: capture every story in both themes automatically, each as its
+ * own baseline, instead of hand-writing a `*Dark` twin per story. A mode's `theme`
+ * is applied as the `theme:<value>` Storybook global (which our frames read below)
+ * and also emulates the OS color scheme.
+ */
+export const themeModes = {
+	Light: { theme: 'light' },
+	Dark: { theme: 'dark' },
+} as const;
+
+const resolveTheme = (globals: { theme?: string }) =>
+	ensure(themes[globals.theme === 'dark' ? 'dark' : 'light']);
+
+/**
+ * Frame that renders the full-height addon panel exactly like the manager does:
+ * a fixed-size, themed surface so `height: 100%` inside the panel resolves. The
+ * theme comes from the `theme` global so UI Verify modes can drive it.
  */
 export const panelFrame =
 	({ width = 560, height = 380 } = {}): Decorator =>
-	(Story) => {
-		const theme = ensure(themes.light);
+	(Story, { globals }) => {
+		const theme = resolveTheme(globals);
 		return (
 			<ThemeProvider theme={theme}>
 				<div
@@ -31,6 +45,9 @@ export const panelFrame =
 						fontFamily: theme.typography.fonts.base,
 					}}
 				>
+					{/* Inner wrapper: the panel's effect forces its parent to height:100%,
+					    so give it this div (100% of the fixed outer) to keep the outer height
+					    fixed and let the panel body scroll instead of expanding. */}
 					<div style={{ flex: 1, minWidth: 0, height: '100%' }}>
 						<Story />
 					</div>
@@ -39,14 +56,18 @@ export const panelFrame =
 		);
 	};
 
-/** A padded, themed surface for the smaller controls (save button, code block). */
+/**
+ * Padded, themed surface for the smaller controls (Save button, code block). Uses
+ * the app background (not content) so the bordered card and its padding stay
+ * visible in dark mode too.
+ */
 export const contentFrame =
 	({
 		width,
 		padding = 24,
 	}: { width?: number; padding?: number } = {}): Decorator =>
-	(Story) => {
-		const theme = ensure(themes.light);
+	(Story, { globals }) => {
+		const theme = resolveTheme(globals);
 		return (
 			<ThemeProvider theme={theme}>
 				<div

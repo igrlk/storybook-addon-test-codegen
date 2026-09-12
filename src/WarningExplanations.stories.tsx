@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import React from 'react';
 import { styled } from 'storybook/theming';
 import { WarningExplanation } from './CodeBlock';
-import { contentFrame } from './story-helpers';
+import { contentFrame, themeModes } from './story-helpers';
 
 // Mimics the popover chrome the explanation normally renders inside, so each
 // warning is shown as its own complete, self-contained card (no portal, no
@@ -28,6 +28,7 @@ const meta: Meta<typeof WarningExplanation> = {
 	),
 	parameters: {
 		layout: 'centered',
+		uiVerify: { modes: themeModes },
 	},
 };
 export default meta;

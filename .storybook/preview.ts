@@ -10,4 +10,21 @@ configure({
 
 export default definePreview({
 	addons: [addonDocs(), addonCodegen()],
+	// The addon-UI stories read this global to pick their ThemeProvider; UI Verify
+	// modes set it per capture, and the toolbar lets you switch it locally.
+	initialGlobals: { theme: 'light' },
+	globalTypes: {
+		theme: {
+			description: 'Theme for the addon UI stories',
+			toolbar: {
+				title: 'Theme',
+				icon: 'paintbrush',
+				items: [
+					{ value: 'light', title: 'Light' },
+					{ value: 'dark', title: 'Dark' },
+				],
+				dynamicTitle: true,
+			},
+		},
+	},
 });

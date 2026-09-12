@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import React from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { SaveStoryView } from './SaveStory';
-import { contentFrame } from './story-helpers';
+import { contentFrame, themeModes } from './story-helpers';
 
 const noop = () => {};
 
@@ -20,6 +20,7 @@ const meta: Meta<typeof SaveStoryView> = {
 	decorators: [contentFrame({ padding: 48 })],
 	parameters: {
 		layout: 'centered',
+		uiVerify: { modes: themeModes },
 	},
 };
 export default meta;
