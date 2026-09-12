@@ -1,0 +1,51 @@
+name: UI Verify Auto-Rerun
+
+# `uiverify.yml` runs `uiverify upload`, which waits for the verdict and exits non-zero when a build is
+# changed/failed, so an unreviewed build leaves that job red on the PR. When you then accept the diffs
+# in the dashboard (or over MCP), UI Verify flips its commit status (context `UI Verify: <project>`) to
+# success, but the failed Actions run stays red until it is re-run. This listens for that transition and
+# re-runs the failed visual run so its status turns green too, with no manual "Re-run jobs" click. The
+# re-uploaded build sees the now-accepted baseline, finds no changes, and exits 0.
+#
+# Note: `status` events only fire for the copy of this workflow on the default branch, so it starts
+# working once this is merged to main.
+#
+# Alternative if you'd rather not have this file: make the `UI Verify: <project>` commit status a
+# required status check in branch protection and drop the job gate. Then accepting updates that status
+# in place and the PR is mergeable with no re-run at all.
+
+on: status
+
+permissions:
+  actions: write
+
+jobs:
+  rerun:
+    if: >
+      startsWith(github.event.context, 'UI Verify:') &&
+      github.event.state == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Re-run the failed visual check for this commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_SHA: ${{ github.event.sha }}
+        run: |
+          set -euo pipefail
+          # Single project, single visual workflow, so re-run its failed run for this commit.
+          run_ids=$(gh run list \
+            --repo "$GITHUB_REPOSITORY" \
+            --workflow uiverify.yml \
+            --commit "$HEAD_SHA" \
+            --status failure \
+            --json databaseId --jq '.[].databaseId')
+
+          if [ -z "$run_ids" ]; then
+            echo "No failed uiverify.yml run for $HEAD_SHA, nothing to do"
+            exit 0
+          fi
+
+          for run_id in $run_ids; do
+            echo "Re-running failed run $run_id"
+            gh run rerun "$run_id" --failed --repo "$GITHUB_REPOSITORY"
+          done

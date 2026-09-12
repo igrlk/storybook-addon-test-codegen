@@ -8,3 +8,6 @@ build-storybook.log
 .env
 .idea
 .storybook/tailwind.css
+
+# Claude Code local files (skills are shared via .agents + skills-lock.json)
+.claude/

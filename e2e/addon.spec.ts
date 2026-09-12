@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test('Submit multi-step form', async ({ page }) => {
 	await page.goto(
-		'http://localhost:6006/?path=/story/stories-multistepform--default',
+		'http://localhost:6006/?path=/story/examples-multi-step-form--default',
 	);
 	await page.getByRole('tab', { name: 'Interaction Recorder' }).click();
 
