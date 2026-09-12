@@ -140,6 +140,21 @@ configure({
 });
 ```
 
+## Visual testing with UI Verify
+
+This addon uses [UI Verify](https://uiverify.ai) to catch unintended
+visual changes in pull requests. It compares screenshots of our
+Storybook stories against a baseline, including light and dark
+variants of the Interaction Recorder, save-to-story UI, and
+selector warnings.
+
+I also build UI Verify, and use this addon to test it on a real
+open-source project.
+
+[Browse our visual test builds](https://uiverify.ai/dashboard/teams/storybook-addon-test-codegen/projects/storybook-addon-test-codegen)
+· [See our CI setup](.github/workflows/uiverify.yml)
+· [Add visual testing to your Storybook](https://uiverify.ai/docs/quickstart-storybook)
+
 ## Contributing
 
 Any contributions are welcome. Feel free to open an issue or a pull request.
