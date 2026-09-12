@@ -271,18 +271,27 @@ const warningToRender = {
 	},
 };
 
-function WarningIndicator({ warning }: { warning: Warning }) {
+/**
+ * The explanation shown when hovering a code warning. Exported so each warning's
+ * content can be rendered (and visually tested) on its own, without the portaled
+ * tooltip chrome.
+ */
+export function WarningExplanation({ warning }: { warning: Warning }) {
 	const { title, description } = warningToRender[warning];
 
 	return (
+		<Message>
+			<Title>{title}</Title>
+			<Desc>{description}</Desc>
+		</Message>
+	);
+}
+
+function WarningIndicator({ warning }: { warning: Warning }) {
+	return (
 		<WithTooltip
 			trigger="hover"
-			tooltip={
-				<Message>
-					<Title>{title}</Title>
-					<Desc>{description}</Desc>
-				</Message>
-			}
+			tooltip={<WarningExplanation warning={warning} />}
 		>
 			<WarningButton>
 				<WarningIcon />
