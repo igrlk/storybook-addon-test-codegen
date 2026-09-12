@@ -2,6 +2,8 @@ name: UI Verify
 
 on:
   pull_request:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 # Read-only: the PR check itself is posted by the UI Verify GitHub App, not this job.
