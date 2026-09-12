@@ -8,6 +8,7 @@ import {
 	longCode,
 	panelFrame,
 	simpleCode,
+	themeModes,
 	warningCode,
 } from './story-helpers';
 
@@ -36,6 +37,8 @@ const meta: Meta<typeof InteractionRecorderView> = {
 	decorators: [panelFrame()],
 	parameters: {
 		layout: 'centered',
+		// Capture each state in light and dark automatically.
+		uiVerify: { modes: themeModes },
 	},
 };
 export default meta;
