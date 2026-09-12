@@ -1,0 +1,35 @@
+{
+	"version": 1,
+	"skills": {
+		"check-visual-changes": {
+			"source": "uiverify/uiverify",
+			"sourceType": "github",
+			"skillPath": "packages/skills/skills/check-visual-changes/SKILL.md",
+			"computedHash": "4b8b62ce19f17fc3f3fb4b675d7536a1e3531af6d6f08135df0c29ef2c855baa"
+		},
+		"economical-visual-tests": {
+			"source": "uiverify/uiverify",
+			"sourceType": "github",
+			"skillPath": "packages/skills/skills/economical-visual-tests/SKILL.md",
+			"computedHash": "6dcf84486a480d04041e068a744a43f73758a4ec46693d36a96a7e94c84b7fbe"
+		},
+		"making-ui-changes": {
+			"source": "uiverify/uiverify",
+			"sourceType": "github",
+			"skillPath": "packages/skills/skills/making-ui-changes/SKILL.md",
+			"computedHash": "33d135d556bc4e198f1622389afd610f2ce9a7814afe7fa0427ed91fe724b5b6"
+		},
+		"storybook-visual-testing": {
+			"source": "uiverify/uiverify",
+			"sourceType": "github",
+			"skillPath": "packages/skills/skills/storybook-visual-testing/SKILL.md",
+			"computedHash": "9fc519ba05e13caafcd9d058aaa1c0f1ea9a22321be4e0dd89910c5f64a3eb41"
+		},
+		"triage-visual-changes": {
+			"source": "uiverify/uiverify",
+			"sourceType": "github",
+			"skillPath": "packages/skills/skills/triage-visual-changes/SKILL.md",
+			"computedHash": "93e51149b914d5976e949b819dcc9ecddbe8e6d68f46ccc8c15f6be32a056e7e"
+		}
+	}
+}

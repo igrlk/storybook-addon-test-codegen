@@ -1,0 +1,11 @@
+{
+	"mcpServers": {
+		"uiverify": {
+			"type": "http",
+			"url": "https://uiverify.ai/api/mcp",
+			"headers": {
+				"Authorization": "Bearer ${UIVERIFY_API_KEY}"
+			}
+		}
+	}
+}

@@ -1,0 +1,34 @@
+Play Function
+[data-radix-scroll-area-viewport] {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+[data-radix-scroll-area-viewport]::-webkit-scrollbar {
+  display: none;
+}
+:where([data-radix-scroll-area-viewport]) {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+:where([data-radix-scroll-area-content]) {
+  flex-grow: 1;
+}
+play: async ({ canvasElement }) => {
+	const canvas = within(canvasElement.ownerDocument.body);
+	await userEvent.click(await canvas.findByRole('textbox', { name: 'Name' }));
+	await userEvent.type(await canvas.findByRole('textbox', { name: 'Name' }), 'john doe');
+	await userEvent.click(await canvas.findByRole('textbox', { name: 'Email' }));
+	await userEvent.type(await canvas.findByRole('textbox', { name: 'Email' }), 'johndoe@gmail.com');
+	await userEvent.click(await canvas.findByRole('button', { name: 'Submit' }));
+	await userEvent.click(await canvas.findByRole('textbox', { name: 'Phone' }));
+	await userEvent.type(await canvas.findByRole('textbox', { name: 'Phone' }), '12345');
+	await userEvent.click(await canvas.findByRole('textbox', { name: 'Address' }));
+	await userEvent.type(await canvas.findByRole('textbox', { name: 'Address' }), '42 avenue');
+	await userEvent.click(await canvas.findByRole('button', { name: 'Submit' }));
+	await waitFor(() => expect(canvas.queryByText(': johndoe@gmail.com', { exact: true })).toBeVisible())
+	await waitFor(() => expect(canvas.queryByText(': 12345', { exact: true })).toBeVisible())
+	await waitFor(() => expect(canvas.queryByText(': 12345', { exact: true })).toBeVisible())
+	await waitFor(() => expect(canvas.queryByText(': 42 avenue', { exact: true })).toBeVisible())
+}
