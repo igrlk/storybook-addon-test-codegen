@@ -31,6 +31,6 @@ jobs:
       # The addon is loaded from its own dist, and the preview imports a generated
       # tailwind.css, so both have to exist before Storybook builds.
       - run: pnpm build && pnpm tailwind && pnpm build-storybook
-      - run: pnpm dlx uiverify@1.4.0 upload --static-dir ./storybook-static
+      - run: pnpm dlx uiverify@1.4.0 upload --static-dir ./storybook-static --only-changed
         env:
           UIVERIFY_API_KEY: ${{ secrets.UIVERIFY_API_KEY }}
