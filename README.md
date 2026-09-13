@@ -6,7 +6,7 @@
 [![GitHub license](https://img.shields.io/github/license/igrlk/storybook-addon-test-codegen)](https://github.com/igrlk/storybook-addon-test-codegen/blob/main/LICENSE)
 
 Interact with your Storybook and get test code generated for
-you. To see this live, check out the [demo](https://igrlk.github.io/storybook-addon-test-codegen/).
+you. To see this live, check out the [demo](https://main--01a08f2e-809f-7f94-8377-0f4b7e79edb0.storybook.uiverify.ai).
 
 ![Alt Text](/assets/addon.gif)
 
