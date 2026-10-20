@@ -685,6 +685,95 @@ Primary.play = async ({ canvasElement }) => {
 		},
 	],
 	[
+		'Existing story that only spreads another, with args',
+		{
+			storyName: 'Primary',
+			csfId: 'form--primary',
+			args: JSON.stringify({ label: 'Click' }),
+			story: `import { Button } from './Button';
+
+export default {
+    component: Button
+};
+
+const Base = { args: { primary: true } };
+
+export const Primary = { ...Base };`,
+			code: {
+				imports: [{ text: "import { userEvent, within } from 'storybook/test';" }],
+				play: [
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
+				],
+			},
+			result: `import { userEvent, within } from 'storybook/test';
+import { Button } from './Button';
+
+export default {
+    component: Button
+};
+
+const Base = { args: { primary: true } };
+
+export const Primary = {
+    ...Base,
+    args: { ...Base.args, label: 'Click' },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    }
+};`,
+			newStoryId: 'form--primary',
+		},
+	],
+	[
+		'New story with args from a story that spreads another',
+		{
+			csfId: 'form--secondary',
+			args: JSON.stringify({ label: 'Click' }),
+			story: `import { Button } from './Button';
+
+export default {
+    component: Button
+};
+
+export const Primary = { args: { primary: true } };
+
+export const Secondary = { ...Primary, args: { primary: false } };`,
+			code: {
+				imports: [{ text: "import { userEvent, within } from 'storybook/test';" }],
+				play: [
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
+				],
+			},
+			result: `import { userEvent, within } from 'storybook/test';
+import { Button } from './Button';
+
+export default {
+    component: Button
+};
+
+export const Primary = { args: { primary: true } };
+
+export const Secondary = { ...Primary, args: { primary: false } };
+
+export const NewStory = {
+    ...Primary,
+    args: { ...Primary.args, label: 'Click' },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    }
+};`,
+			newStoryId: 'form--new-story',
+		},
+	],
+	[
 		'New story in a file without semicolons',
 		{
 			story: `import { Component } from './Component'
