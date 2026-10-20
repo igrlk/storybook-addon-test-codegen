@@ -264,13 +264,11 @@ type Story = StoryObj<typeof Component>;
 export const Default: Story = {};
 
 export const NewStory: Story = {
-    args: {
-        hello: { world: { foo: 'bar', baz: [1, 2, { boo: 'bee' }] } },
-    },
+    args: { hello: { world: { foo: 'bar', baz: [1, 2, { boo: 'bee' }] } } },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
-    },
+    }
 };`,
 			newStoryId: 'form--new-story',
 		},
@@ -466,7 +464,7 @@ export const Primary = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
-    },
+    }
 };`,
 			newStoryId: 'form--primary',
 		},
@@ -505,13 +503,11 @@ export default {
 };
 
 export const Primary = {
-    args: {
-        onClick: () => {},
-    },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
     },
+    args: { onClick: () => {} },
 };`,
 			newStoryId: 'form--primary',
 		},

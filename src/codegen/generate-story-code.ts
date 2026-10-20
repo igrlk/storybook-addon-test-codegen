@@ -5,7 +5,6 @@ import type { GeneratedCode } from './interactions-to-code';
 import {
 	duplicateStoryWithNewName,
 	parseArgs,
-	separateStory,
 	updateArgsInCsfFile,
 	updateImportsInCsfFile,
 	updatePlayInCsfFile,
@@ -78,10 +77,6 @@ export const generateStoryCode = async ({
 		exportName,
 		code.play.map((line) => line.text),
 	);
-
-	if (isNewStory) {
-		separateStory(csf, exportName);
-	}
 
 	await updateImportsInCsfFile(
 		csf,

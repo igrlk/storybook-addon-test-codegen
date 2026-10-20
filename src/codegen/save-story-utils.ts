@@ -9,18 +9,12 @@ import {
 	type ESTree,
 	appendStatement,
 	isCsfFactoryCall,
-	itemText,
-	lineIndent,
-	objectList,
 	outerSpan,
 	parseExpression,
 	parseModule,
 	prependStatement,
-	printMembers,
-	reindent,
 	setImportSpecifiers,
 	staticKey,
-	unwrapExpression,
 } from 'storybook/internal/csf-tools';
 
 class SaveStoryError extends Error {}
@@ -50,107 +44,25 @@ const check = (result: CsfMutationResult) => {
 	}
 };
 
-// The object literal of a story in the file's tree: `{ … }`, or the one in `meta.story({ … })`.
-const storyLiteral = (csf: CsfFile, story: CsfObject) => {
-	if (story.target.kind !== 'story') {
-		return undefined;
-	}
-	const { localName } = story.target;
-	const declarator = csf._program.body
-		.map((statement) =>
-			statement.type === 'ExportNamedDeclaration'
-				? statement.declaration
-				: statement,
-		)
-		.flatMap((declaration) =>
-			declaration?.type === 'VariableDeclaration' ? declaration.declarations : [],
-		)
-		.find(({ id }) => id.type === 'Identifier' && id.name === localName);
-	let init: ESTree.Expression | null | undefined = unwrapExpression(
-		declarator?.init,
-	);
-	if (
-		init?.type === 'CallExpression' &&
-		init.arguments[0]?.type !== 'SpreadElement'
-	) {
-		init = unwrapExpression(init.arguments[0]);
-	}
-	return init?.type === 'ObjectExpression' ? init : undefined;
-};
-
-// The object literal of a story's `args`, if it has one.
-const argsLiteral = (csf: CsfFile, story: CsfObject) => {
-	const args = storyLiteral(csf, story)?.properties.find(
-		(property) => property.type === 'Property' && staticKey(property) === 'args',
-	);
-	const value =
-		args?.type === 'Property' ? unwrapExpression(args.value) : undefined;
-	return value?.type === 'ObjectExpression' ? value : undefined;
-};
-
-/**
- * Lay out an object on one line one member per line. `set` keeps a one-line object on one line,
- * also when it adds a member that spans lines, such as a play function.
- */
-const expandObject = (
-	csf: CsfFile,
-	object: ESTree.ObjectExpression | undefined,
-) => {
-	const editor = csf._editor;
-	if (
-		!object ||
-		object.properties.length === 0 ||
-		editor.source(object).includes('\n') ||
-		editor.comments.some(
-			(comment) => comment.start > object.start && comment.end < object.end,
-		)
-	) {
-		return;
-	}
-	const list = objectList(editor, object);
-	const members = object.properties.map((property) =>
-		itemText(editor, list, property),
-	);
-	editor.edits.overwrite(
-		object.start,
-		object.end,
-		reindent(
-			printMembers(members, editor.indent),
-			'',
-			lineIndent(editor.code, object.start),
-		),
-	);
-	editor.commit();
-};
-
 // What the controls panel sends for a function arg, which it cannot serialize.
 const EMPTY_FUNCTION_ARG = '__sb_empty_function_arg__';
 
-const hasFunctionArg = (value: unknown): boolean =>
-	value === EMPTY_FUNCTION_ARG ||
-	(typeof value === 'object' &&
-		value !== null &&
-		Object.values(value).some(hasFunctionArg));
+type ArgValue = Parameters<CsfObject['set']>[1];
 
-// Set an arg value. Function args, which `set` takes as expressions only, are written one by one.
-const setArg = (story: CsfObject, path: string[], value: unknown) => {
+// An arg value for `set`, with function args as `() => {}` expressions at any depth.
+const argValue = (value: unknown): ArgValue => {
 	if (value === EMPTY_FUNCTION_ARG) {
-		check(story.set(path, parseExpression('() => {}')));
-		return;
+		return parseExpression('() => {}');
 	}
-	if (value && typeof value === 'object' && hasFunctionArg(value)) {
-		if (Array.isArray(value)) {
-			throw new SaveStoryError(
-				'Saving a function inside an array arg is not supported',
-			);
-		}
-		check(story.set(path, {}));
-		for (const [key, item] of Object.entries(value)) {
-			setArg(story, [...path, key], item);
-		}
-		return;
+	if (Array.isArray(value)) {
+		return value.map(argValue);
 	}
-	check(story.set(path, value as Parameters<CsfObject['set']>[1]));
+	if (value && typeof value === 'object') {
+		return Object.fromEntries(
+			Object.entries(value).map(([key, item]) => [key, argValue(item)]),
+		);
+	}
+	return value as ArgValue;
 };
 
 export const updateArgsInCsfFile = async (
@@ -160,15 +72,9 @@ export const updateArgsInCsfFile = async (
 	input: Record<string, any>,
 ) => {
 	const story = storyObject(csf, exportName);
-	const createsArgs = story.get(['args']) === undefined;
+	// Each arg is set on its own, so the story's other args stay.
 	for (const [key, value] of Object.entries(input)) {
-		setArg(story, ['args', key], value);
-	}
-	// An args object the save creates is laid out one member per line, as before, in a story that
-	// is laid out so as well.
-	if (createsArgs) {
-		expandObject(csf, storyLiteral(csf, story));
-		expandObject(csf, argsLiteral(csf, story));
+		check(story.set(['args', key], argValue(value)));
 	}
 };
 
@@ -204,41 +110,17 @@ export const duplicateStoryWithNewName = (
 	);
 	editor.commit();
 
-	// Remove args and name properties when duplicating a story
+	// Remove args and name properties when duplicating a story. Only the ones the copy writes: next
+	// to a spread, csf-tools cannot tell that a member it does not write is missing.
 	const story = storyObject(csf, newStoryName);
-	check(story.remove(['args']));
-	check(story.remove(['name']));
-};
-
-/**
- * Set a story apart from the statement before it with a blank line. `appendStatement` adds none
- * for a copy of a one-line story, which the save then makes span lines.
- */
-export const separateStory = (csf: CsfFile, exportName: string) => {
-	const { body } = csf._program;
-	const index = body.findIndex(
-		(statement) =>
-			statement.type === 'ExportNamedDeclaration' &&
-			statement.declaration?.type === 'VariableDeclaration' &&
-			statement.declaration.declarations.some(
-				(declarator) =>
-					declarator.id.type === 'Identifier' && declarator.id.name === exportName,
-			),
-	);
-	const [previous, statement] = [body[index - 1], body[index]];
-	const editor = csf._editor;
-	if (
-		index > 0 &&
-		statement &&
-		editor.source(statement).includes('\n') &&
-		!/\n[^\S\n]*\n/.test(editor.code.slice(previous.end, statement.start))
-	) {
-		editor.edits.appendRight(statement.start, '\n');
-		editor.commit();
+	for (const key of ['args', 'name']) {
+		if (story.node?.properties.some((property) => staticKey(property) === key)) {
+			check(story.remove([key]));
+		}
 	}
 };
 
-// Function args stay `EMPTY_FUNCTION_ARG` strings, which `setArg` writes as `() => {}`.
+// Function args stay `EMPTY_FUNCTION_ARG` strings, which `argValue` turns into `() => {}`.
 // biome-ignore lint/suspicious/noExplicitAny:
 export const parseArgs = (args: string): Record<string, any> =>
 	JSON.parse(args);
@@ -248,21 +130,20 @@ export const updatePlayInCsfFile = async (
 	exportName: string,
 	play: string[],
 ) => {
-	expandObject(csf, storyLiteral(csf, storyObject(csf, exportName)));
 	const story = storyObject(csf, exportName);
 
 	const { indent } = csf._editor;
 	const lines = preparePlay(play).map((line) => `${indent}${line};`);
-	const playExpression = parseExpression(
-		lines.length > 0
-			? `async ({ canvasElement }) => {\n${lines.join('\n')}\n}`
-			: 'async ({ canvasElement }) => {}',
+	check(
+		story.set(
+			['play'],
+			parseExpression(
+				lines.length > 0
+					? `async ({ canvasElement }) => {\n${lines.join('\n')}\n}`
+					: 'async ({ canvasElement }) => {}',
+			),
+		),
 	);
-
-	// `set` would replace an existing play in place but keep the indentation of the new code, so
-	// the play is removed and added again, which indents it.
-	check(story.remove(['play']));
-	check(story.set(['play'], playExpression));
 };
 
 const preparePlay = (play: string[]) => play.slice(1, -1).map(prepareLine);
