@@ -9,6 +9,7 @@ import {
 import { readCsf } from 'storybook/internal/csf-tools';
 import type { Options } from 'storybook/internal/types';
 import { generateStoryCode } from './codegen/generate-story-code';
+import { type StorySaver, loadStorySaver } from './codegen/story-saver';
 import { EVENTS } from './constants';
 import type {
 	SaveNewStoryRequestPayload,
@@ -19,6 +20,9 @@ export const experimental_serverChannel = async (
 	channel: Channel,
 	options: Options,
 ) => {
+	// Picked on the first save, by the csf-tools of the installed Storybook.
+	let saver: Promise<StorySaver> | undefined;
+
 	channel.on(
 		EVENTS.SAVE_NEW_STORY_REQUEST,
 		async ({ id, payload }: RequestData<SaveNewStoryRequestPayload>) => {
@@ -31,7 +35,11 @@ export const experimental_serverChannel = async (
 					makeTitle: (userTitle: string) => userTitle || 'myTitle',
 				});
 
+				if (!saver) {
+					saver = loadStorySaver();
+				}
 				const { storyCode, newStoryId } = await generateStoryCode({
+					saver: await saver,
 					csf,
 					csfId,
 					name,

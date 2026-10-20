@@ -1,3 +1,7 @@
+// The save steps on Storybook 11, whose csf-tools hand out ESTree nodes and
+// edit the source as text. `save-story-babel.ts` does the same on
+// Storybook 10.
+
 import {
 	type CsfFile,
 	type CsfMutationResult,
@@ -12,11 +16,13 @@ import {
 	parseExpression,
 	parseModule,
 	prependStatement,
+	printCsf,
 	removeFromList,
 	setImportSpecifiers,
 	staticKey,
 	unwrapExpression,
 } from 'storybook/internal/csf-tools';
+import type { StorySaver } from './story-saver';
 
 class SaveStoryError extends Error {}
 
@@ -133,6 +139,7 @@ export const duplicateStoryWithNewName = (
 	editor.commit();
 };
 
+/** `play` holds the body's lines, as `generateStoryCode` prepares them. */
 export const updatePlayInCsfFile = (
 	csf: CsfFile,
 	exportName: string,
@@ -141,7 +148,7 @@ export const updatePlayInCsfFile = (
 	const story = storyObject(csf, exportName);
 
 	const editor = csf._editor;
-	const lines = preparePlay(play).map(
+	const lines = play.map(
 		(line) => `${editor.indent}${line}${statementEnd(editor)}`,
 	);
 	check(
@@ -154,22 +161,6 @@ export const updatePlayInCsfFile = (
 			),
 		),
 	);
-};
-
-const preparePlay = (play: string[]) => play.slice(1, -1).map(prepareLine);
-
-const prepareLine = (line: string) => {
-	let result = line;
-
-	if (result.endsWith(';')) {
-		result = result.slice(0, -1);
-	}
-
-	if (result.startsWith('\t')) {
-		result = result.slice(1);
-	}
-
-	return result;
 };
 
 export const updateImportsInCsfFile = (csf: CsfFile, imports: string[]) => {
@@ -226,4 +217,16 @@ export const updateImportsInCsfFile = (csf: CsfFile, imports: string[]) => {
 		}
 		editor.commit();
 	}
+};
+
+export const estreeStorySaver: StorySaver = {
+	edit: (csf) => ({
+		duplicateStory: (originalExportName, newExportName) =>
+			duplicateStoryWithNewName(csf, originalExportName, newExportName),
+		setArgs: (exportName, args) =>
+			updateArgsInCsfFile(csf, exportName, args ? JSON.parse(args) : {}),
+		setPlay: (exportName, play) => updatePlayInCsfFile(csf, exportName, play),
+		addImports: (imports) => updateImportsInCsfFile(csf, imports),
+		print: () => printCsf(csf).code,
+	}),
 };

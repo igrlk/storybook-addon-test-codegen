@@ -1,13 +1,26 @@
 import { formatFileContent } from 'storybook/internal/common';
 import { storyNameFromExport, toId } from 'storybook/internal/csf';
-import { type CsfFile, printCsf } from 'storybook/internal/csf-tools';
+import type { CsfFile } from 'storybook/internal/csf-tools';
 import type { GeneratedCode } from './interactions-to-code';
-import {
-	duplicateStoryWithNewName,
-	updateArgsInCsfFile,
-	updateImportsInCsfFile,
-	updatePlayInCsfFile,
-} from './save-story-utils';
+import type { StorySaver } from './story-saver';
+
+// The body lines of a generated `play: async (...) => { ... }`, without the
+// first and last line, their trailing semicolon and one level of indent.
+const preparePlay = (play: string[]) => play.slice(1, -1).map(prepareLine);
+
+const prepareLine = (line: string) => {
+	let result = line;
+
+	if (result.endsWith(';')) {
+		result = result.slice(0, -1);
+	}
+
+	if (result.startsWith('\t')) {
+		result = result.slice(1);
+	}
+
+	return result;
+};
 
 export const generateStoryCode = async ({
 	csf,
@@ -15,15 +28,18 @@ export const generateStoryCode = async ({
 	name,
 	args,
 	code,
+	saver,
 }: {
 	csf: CsfFile;
 	csfId: string;
 	name: string;
 	args: string;
 	code: GeneratedCode;
+	/** The save steps for the installed Storybook, from `loadStorySaver`. */
+	saver: StorySaver;
 }) => {
-	csf.parse();
-	const stories = Object.entries(csf._stories);
+	const parsed = csf.parse();
+	const stories = Object.entries(parsed._stories);
 
 	const [componentId, storyId] = csfId.split('--');
 
@@ -62,23 +78,20 @@ export const generateStoryCode = async ({
 
 	// Update the existing story in place, or a copy of the original under the new name
 	const exportName = existingStoryToUpdate?.[0] ?? newStoryName;
-	if (!csf._storyExports[exportName]) {
-		duplicateStoryWithNewName(csf, originalStoryName, newStoryName);
+	const edits = saver.edit(parsed);
+	if (!parsed._storyExports[exportName]) {
+		edits.duplicateStory(originalStoryName, newStoryName);
 	}
 
-	updateArgsInCsfFile(csf, exportName, args ? JSON.parse(args) : {});
-	updatePlayInCsfFile(
-		csf,
+	await edits.setArgs(exportName, args);
+	await edits.setPlay(
 		exportName,
-		code.play.map((line) => line.text),
+		preparePlay(code.play.map((line) => line.text)),
 	);
-	updateImportsInCsfFile(
-		csf,
-		code.imports.map((line) => line.text),
-	);
+	await edits.addImports(code.imports.map((line) => line.text));
 
 	return {
-		storyCode: await formatFileContent('.', printCsf(csf).code),
+		storyCode: await formatFileContent('.', edits.print(newStoryName)),
 		newStoryId,
 	};
 };
