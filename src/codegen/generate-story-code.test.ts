@@ -684,6 +684,48 @@ Primary.play = async ({ canvasElement }) => {
 			newStoryId: 'form--primary',
 		},
 	],
+	[
+		'New story in a file without semicolons',
+		{
+			story: `import { Component } from './Component'
+
+export default {
+  component: Component
+}
+
+export const Default = {
+  render: () => null,
+}`,
+			code: {
+				imports: [{ text: "import { userEvent, within } from 'storybook/test';" }],
+				play: [
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
+				],
+			},
+			result: `import { userEvent, within } from 'storybook/test'
+import { Component } from './Component'
+
+export default {
+  component: Component
+}
+
+export const Default = {
+  render: () => null,
+}
+
+export const NewStory = {
+  render: () => null,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body)
+    await userEvent.click(await canvas.findByRole('button'))
+  },
+}`,
+			newStoryId: 'form--new-story',
+		},
+	],
 ] satisfies [
 	string,
 	{
@@ -708,5 +750,61 @@ describe('generateStoryCode', () => {
 		});
 		expect(storyCode).toBe(params.result);
 		expect(newStoryId).toBe(params.newStoryId);
+	});
+});
+
+const REFUSED_CASES = [
+	[
+		'New story from a function declaration',
+		{
+			csfId: 'form--primary',
+			story: `export default { title: 'Button' };
+
+export function Primary() {}
+Primary.args = { label: 'Button' };`,
+			error: 'Creating a new story based on a CSF2 story is not supported',
+		},
+	],
+	[
+		'New story from a function expression',
+		{
+			csfId: 'form--primary',
+			story: `export default { title: 'Button' };
+
+export const Primary = function () {};
+Primary.args = { label: 'Button' };`,
+			error: 'Creating a new story based on a CSF2 story is not supported',
+		},
+	],
+	[
+		'Story with two play functions',
+		{
+			storyName: 'Primary',
+			csfId: 'form--primary',
+			story: `export default { title: 'Button' };
+
+export const Primary = { play: async () => {}, play: async () => {} };`,
+			error: 'Cannot mutate play because the target contains duplicate field',
+		},
+	],
+] satisfies [
+	string,
+	{ storyName?: string; csfId: string; story: string; error: string },
+][];
+
+describe('generateStoryCode refuses', () => {
+	test.each(REFUSED_CASES)('%s', async (_, params) => {
+		await expect(
+			generateStoryCode({
+				code: {
+					imports: [],
+					play: ['play: async () => {', '}'].map((text) => ({ text })),
+				},
+				name: 'storyName' in params ? params.storyName : 'NewStory',
+				args: '{}',
+				csfId: params.csfId,
+				csf: loadCsf(params.story, { makeTitle: () => 'story' }),
+			}),
+		).rejects.toThrow(params.error);
 	});
 });
