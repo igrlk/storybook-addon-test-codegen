@@ -1,7 +1,3 @@
-// Writes a recorded play function and the current args into a story file. Stories are edited
-// through csf-tools' `CsfObject` where it fits, and through the file's source editor for the rest,
-// so code an edit does not touch stays as written.
-
 import {
 	type CsfFile,
 	type CsfMutationResult,
@@ -30,13 +26,11 @@ const storyObject = (csf: CsfFile, exportName: string): CsfObject => {
 			({ target }) => target.kind === 'story' && target.exportName === exportName,
 		);
 	if (!object) {
-		// CSF2 stories, such as `Template.bind({})`, have no story object to edit, and csf-tools
-		// reports why it skipped any other story.
 		const diagnostic = csf.mutationDiagnostics.find(
 			({ target }) => 'exportName' in target && target.exportName === exportName,
 		);
 		throw new SaveStoryError(
-			diagnostic?.message ?? 'Updating a CSF2 story is not supported',
+			diagnostic?.message ?? `Cannot edit the story ${exportName}`,
 		);
 	}
 	return object;
@@ -69,11 +63,10 @@ const argValue = (value: unknown): ArgValue => {
 	return value as ArgValue;
 };
 
-export const updateArgsInCsfFile = async (
+export const updateArgsInCsfFile = (
 	csf: CsfFile,
 	exportName: string,
-	// biome-ignore lint/suspicious/noExplicitAny:
-	input: Record<string, any>,
+	input: Record<string, unknown>,
 ) => {
 	const story = storyObject(csf, exportName);
 	// Each arg is set on its own, so the story's other args stay.
@@ -109,8 +102,8 @@ export const duplicateStoryWithNewName = (
 			? editor.source(node.id.typeAnnotation)
 			: '';
 
-	// Remove args and name properties when duplicating a story. The copy is edited on its own, so
-	// they go even after a spread, whose values the copy must not take on in their place.
+	// The copy is parsed on its own, so its `args` and `name` can be removed even after a spread,
+	// which csf-tools refuses to do on the story itself.
 	const copy = new SourceEditor(
 		`(${editor.source(outerSpan(node.init))})`,
 		csf._options.fileName,
@@ -140,12 +133,7 @@ export const duplicateStoryWithNewName = (
 	editor.commit();
 };
 
-// Function args stay `EMPTY_FUNCTION_ARG` strings, which `argValue` turns into `() => {}`.
-// biome-ignore lint/suspicious/noExplicitAny:
-export const parseArgs = (args: string): Record<string, any> =>
-	JSON.parse(args);
-
-export const updatePlayInCsfFile = async (
+export const updatePlayInCsfFile = (
 	csf: CsfFile,
 	exportName: string,
 	play: string[],
@@ -182,10 +170,12 @@ const prepareLine = (line: string) => {
 	return result;
 };
 
-export const updateImportsInCsfFile = async (
-	csf: CsfFile,
-	imports: string[],
-) => {
+const isNamespace = (declaration: ESTree.ImportDeclaration) =>
+	declaration.specifiers.some(
+		(specifier) => specifier.type === 'ImportNamespaceSpecifier',
+	);
+
+export const updateImportsInCsfFile = (csf: CsfFile, imports: string[]) => {
 	const editor = csf._editor;
 	for (const importString of imports) {
 		const parsed = parseModule(importString);
@@ -201,44 +191,37 @@ export const updateImportsInCsfFile = async (
 				statement.importKind !== 'type' &&
 				statement.source.value === importNode.source.value,
 		);
-		const isNamespace = (declaration: ESTree.ImportDeclaration) =>
-			declaration.specifiers.some(
-				(specifier) => specifier.type === 'ImportNamespaceSpecifier',
-			);
-		const existingImport =
-			sameSource.findLast((declaration) => !isNamespace(declaration)) ??
-			sameSource.at(-1);
+		const imported = new Set(
+			sameSource.flatMap((declaration) =>
+				declaration.specifiers.map((specifier) => specifier.local.name),
+			),
+		);
+		const added = importNode.specifiers
+			.filter(
+				(specifier) =>
+					specifier.type === 'ImportSpecifier' &&
+					!imported.has(specifier.local.name),
+			)
+			.map((specifier) => parsed.code.slice(specifier.start, specifier.end));
+		const mergeInto = sameSource.findLast(
+			(declaration) => !isNamespace(declaration),
+		);
 
-		if (existingImport) {
-			const existingSpecifierNames = new Set(
-				sameSource.flatMap((declaration) =>
-					declaration.specifiers.map((specifier) => specifier.local.name),
-				),
-			);
-			const added = importNode.specifiers
-				.filter(
-					(specifier) =>
-						specifier.type === 'ImportSpecifier' &&
-						!existingSpecifierNames.has(specifier.local.name),
-				)
-				.map((specifier) => parsed.code.slice(specifier.start, specifier.end));
-			if (added.length === 0) {
-				continue;
-			}
-			if (isNamespace(existingImport)) {
-				prependStatement(
-					editor,
-					`import { ${added.join(', ')} } from ${editor.source(existingImport.source)};`,
-				);
-			} else {
-				setImportSpecifiers(editor, existingImport, existingImport.specifiers, {
-					named: added,
-				});
-			}
-		} else {
+		if (sameSource.length === 0) {
 			prependStatement(
 				editor,
 				importString.endsWith(';') ? importString : `${importString};`,
+			);
+		} else if (added.length === 0) {
+			continue;
+		} else if (mergeInto) {
+			setImportSpecifiers(editor, mergeInto, mergeInto.specifiers, {
+				named: added,
+			});
+		} else {
+			prependStatement(
+				editor,
+				`import { ${added.join(', ')} } from ${editor.source(sameSource[0].source)};`,
 			);
 		}
 		editor.commit();

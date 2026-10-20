@@ -4,7 +4,6 @@ import { type CsfFile, printCsf } from 'storybook/internal/csf-tools';
 import type { GeneratedCode } from './interactions-to-code';
 import {
 	duplicateStoryWithNewName,
-	parseArgs,
 	updateArgsInCsfFile,
 	updateImportsInCsfFile,
 	updatePlayInCsfFile,
@@ -61,24 +60,19 @@ export const generateStoryCode = async ({
 		? toId(componentId, storyId)
 		: toId(componentId, storyNameFromExport(newStoryName));
 
-	// If we're updating an existing story, edit it in place, otherwise edit a copy of the original
-	const exportName = existingStoryToUpdate
-		? existingStoryToUpdate[0]
-		: newStoryName;
-	const isNewStory = !existingStoryToUpdate && !csf._storyExports[newStoryName];
-	if (isNewStory) {
+	// Update the existing story in place, or a copy of the original under the new name
+	const exportName = existingStoryToUpdate?.[0] ?? newStoryName;
+	if (!csf._storyExports[exportName]) {
 		duplicateStoryWithNewName(csf, originalStoryName, newStoryName);
 	}
 
-	await updateArgsInCsfFile(csf, exportName, args ? parseArgs(args) : {});
-
-	await updatePlayInCsfFile(
+	updateArgsInCsfFile(csf, exportName, args ? JSON.parse(args) : {});
+	updatePlayInCsfFile(
 		csf,
 		exportName,
 		code.play.map((line) => line.text),
 	);
-
-	await updateImportsInCsfFile(
+	updateImportsInCsfFile(
 		csf,
 		code.imports.map((line) => line.text),
 	);
