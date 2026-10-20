@@ -1,5 +1,6 @@
-// The save steps on Storybook 10, whose csf-tools hand out Babel nodes and
-// print with recast. Storybook 11 removes `storybook/internal/babel`;
+// The save steps on the Babel csf-tools of Storybook 10 (and of 11
+// prereleases without storybookjs/storybook#36613), which hand out Babel
+// nodes and print with recast. #36613 removes `storybook/internal/babel`;
 // `save-story-estree.ts` does the same there. This file can go when the
 // addon drops Storybook 10.
 //

@@ -1,6 +1,7 @@
 // Test helpers: which csf-tools the installed Storybook has, and a `describe`
 // for tests of one of them. Not part of the addon's build.
 import { describe } from 'vitest';
+import { hasEstreeCsfTools } from './story-saver';
 
 const csfTools = await import('storybook/internal/csf-tools');
 
@@ -9,10 +10,11 @@ const csfTools = await import('storybook/internal/csf-tools');
  * `parseModule` (storybookjs/storybook#36613), Babel otherwise (Storybook
  * 10, and 11 prereleases without #36613).
  */
-export const csfToolsGeneration: 'babel' | 'estree' =
-	'parseModule' in csfTools && typeof csfTools.parseModule === 'function'
-		? 'estree'
-		: 'babel';
+export const csfToolsGeneration: 'babel' | 'estree' = hasEstreeCsfTools(
+	csfTools,
+)
+	? 'estree'
+	: 'babel';
 
 const needs = {
 	babel: 'the Babel csf-tools: Storybook 10, or 11 without #36613',

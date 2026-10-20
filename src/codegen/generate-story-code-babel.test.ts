@@ -479,3 +479,29 @@ describeFor('babel', 'generateStoryCode', () => {
 		expect(newStoryId).toBe(params.newStoryId);
 	});
 });
+
+describeFor('babel', 'generateStoryCode refuses', () => {
+	test('a new story from a CSF2 story', async () => {
+		await expect(
+			generateStoryCode({
+				saver: await loadStorySaver(),
+				code: {
+					imports: [],
+					play: ['play: async () => {', '}'].map((text) => ({ text })),
+				},
+				name: 'NewStory',
+				args: '{}',
+				csfId: 'form--primary',
+				csf: loadCsf(
+					`export default { title: 'Button' };
+
+const Template = (args) => null;
+export const Primary = Template.bind({});`,
+					{ makeTitle: () => 'story' },
+				),
+			}),
+		).rejects.toThrow(
+			'Creating a new story based on a CSF2 story is not supported',
+		);
+	});
+});

@@ -1,6 +1,6 @@
-// The save steps on Storybook 11, whose csf-tools hand out ESTree nodes and
-// edit the source as text. `save-story-babel.ts` does the same on
-// Storybook 10.
+// The save steps on the csf-tools of storybookjs/storybook#36613
+// (Storybook 11), which hand out ESTree nodes and edit the source as text.
+// `save-story-babel.ts` does the same with the Babel csf-tools.
 
 import {
 	type CsfFile,
