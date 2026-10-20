@@ -7,14 +7,18 @@ import {
 	type CsfMutationResult,
 	type CsfObject,
 	type ESTree,
+	SourceEditor,
 	appendStatement,
 	isCsfFactoryCall,
+	objectList,
 	outerSpan,
 	parseExpression,
 	parseModule,
 	prependStatement,
+	removeFromList,
 	setImportSpecifiers,
 	staticKey,
+	unwrapExpression,
 } from 'storybook/internal/csf-tools';
 
 class SaveStoryError extends Error {}
@@ -104,20 +108,36 @@ export const duplicateStoryWithNewName = (
 		node.id.type === 'Identifier' && node.id.typeAnnotation
 			? editor.source(node.id.typeAnnotation)
 			: '';
-	appendStatement(
-		editor,
-		`export const ${newStoryName}${typeAnnotation} = ${editor.source(outerSpan(node.init))};`,
-	);
-	editor.commit();
 
-	// Remove args and name properties when duplicating a story. Only the ones the copy writes: next
-	// to a spread, csf-tools cannot tell that a member it does not write is missing.
-	const story = storyObject(csf, newStoryName);
-	for (const key of ['args', 'name']) {
-		if (story.node?.properties.some((property) => staticKey(property) === key)) {
-			check(story.remove([key]));
+	// Remove args and name properties when duplicating a story. The copy is edited on its own, so
+	// they go even after a spread, whose values the copy must not take on in their place.
+	const copy = new SourceEditor(
+		`(${editor.source(outerSpan(node.init))})`,
+		csf._options.fileName,
+	);
+	const [statement] = copy.program.body;
+	let init =
+		statement?.type === 'ExpressionStatement'
+			? unwrapExpression(statement.expression)
+			: undefined;
+	if (init?.type === 'CallExpression') {
+		// A CSF4 story, `meta.story({ … })`.
+		init = unwrapExpression(init.arguments[0] as ESTree.Expression | undefined);
+	}
+	if (init?.type === 'ObjectExpression') {
+		const removed = init.properties.filter((property) =>
+			['args', 'name'].includes(staticKey(property) ?? ''),
+		);
+		if (removed.length > 0) {
+			removeFromList(copy, objectList(copy, init), removed);
 		}
 	}
+
+	appendStatement(
+		editor,
+		`export const ${newStoryName}${typeAnnotation} = ${copy.toString().slice(1, -1)};`,
+	);
+	editor.commit();
 };
 
 // Function args stay `EMPTY_FUNCTION_ARG` strings, which `argValue` turns into `() => {}`.
