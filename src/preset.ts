@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { Channel } from 'storybook/internal/channels';
 import {
@@ -6,6 +6,7 @@ import {
 	type ResponseData,
 	STORY_RENDERED,
 } from 'storybook/internal/core-events';
+import { readCsf } from 'storybook/internal/csf-tools';
 import type { Options } from 'storybook/internal/types';
 import { generateStoryCode } from './codegen/generate-story-code';
 import { EVENTS } from './constants';
@@ -26,11 +27,12 @@ export const experimental_serverChannel = async (
 			try {
 				const sourceFilePath = join(process.cwd(), importPath);
 
-				const source = await readFile(sourceFilePath, 'utf-8');
+				const csf = await readCsf(sourceFilePath, {
+					makeTitle: (userTitle: string) => userTitle || 'myTitle',
+				});
 
 				const { storyCode, newStoryId } = await generateStoryCode({
-					source,
-					fileName: sourceFilePath,
+					csf,
 					csfId,
 					name,
 					args,

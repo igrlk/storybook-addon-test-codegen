@@ -1,252 +1,161 @@
 // Ported from Storybook's save-story utilities, except for "updatePlayInCsfFile" and
-// "updateImportsInCsfFile". Every edit is a text edit of the story file's source, so code that an
-// edit does not touch stays as written.
+// "updateImportsInCsfFile". Stories are edited through csf-tools' `CsfObject` where it fits, and
+// through the file's source editor for the rest; code an edit does not touch stays as written.
 
-import { parse } from '@babel/parser';
 import {
-	type Node,
-	SourceEditor,
+	type CsfFile,
+	type CsfMutationResult,
+	type CsfObject,
+	type ESTree,
+	appendStatement,
+	itemText,
 	lineIndent,
+	objectList,
+	outerSpan,
+	parseExpression,
+	parseModule,
+	prependStatement,
+	printMembers,
 	reindent,
-	staticKey,
-	walk,
-} from './source-editor';
+	setImportSpecifiers,
+	unwrapExpression,
+} from 'storybook/internal/csf-tools';
 
 class SaveStoryError extends Error {}
 
-/** Finds the story node again, as every commit parses the file again. */
-type StoryLocator = () => Node | undefined;
-
-const IDENTIFIER = /^[A-Za-z_$][\w$]*$/;
-
-const printString = (value: string, quote: string) => {
-	const json = JSON.stringify(value);
-	return quote === '"'
-		? json
-		: `'${json.slice(1, -1).replaceAll('\\"', '"').replaceAll("'", "\\'")}'`;
-};
-
-const printKey = (key: string, quote: string) =>
-	IDENTIFIER.test(key) ? key : printString(key, quote);
-
-/** Print an arg value as source in the story file's style. */
-export function valueToSource(value: unknown, editor: SourceEditor): string {
-	if (value === null) {
-		return 'null';
-	}
-	switch (typeof value) {
-		case 'function':
-			// It's the source of a function, an expression.
-			return value.toString();
-		case 'number':
-			return Object.is(value, -0) ? '-0' : String(value);
-		case 'string':
-			return printString(value, editor.quote);
-		case 'boolean':
-			return String(value);
-		case 'undefined':
-			return 'undefined';
-		default:
-			if (Array.isArray(value)) {
-				return `[${value.map((item) => valueToSource(item, editor)).join(', ')}]`;
-			}
-			return editor.printObject(
-				Object.entries(value as Record<string, unknown>)
-					.filter(([, item]) => typeof item !== 'undefined')
-					.map(
-						([key, item]) =>
-							`${printKey(key, editor.quote)}: ${valueToSource(item, editor)}`,
-					),
-			);
-	}
-}
-
-/** The declaration of a story export: `export const Name = …`, or the local it re-exports. */
-export const findStoryExport = (
-	editor: SourceEditor,
-	exportName: string,
-): Node | undefined => {
-	const declarationOf = (name: string) => {
-		for (const statement of editor.program.body as Node[]) {
-			const declaration =
-				statement.type === 'ExportNamedDeclaration'
-					? statement.declaration
-					: statement;
-			if (declaration?.type === 'VariableDeclaration') {
-				const declarator = declaration.declarations.find(
-					(candidate: Node) =>
-						candidate.id.type === 'Identifier' && candidate.id.name === name,
-				);
-				if (declarator) {
-					return declarator as Node;
-				}
-			}
-			if (
-				declaration?.type === 'FunctionDeclaration' &&
-				declaration.id?.name === name
-			) {
-				return declaration as Node;
-			}
-		}
-		return undefined;
-	};
-
-	for (const statement of editor.program.body as Node[]) {
-		if (statement.type !== 'ExportNamedDeclaration' || statement.source) {
-			continue;
-		}
-		if (statement.declaration) {
-			const declared = declarationOf(exportName);
-			if (
-				declared &&
-				declared.start >= statement.start &&
-				declared.end <= statement.end
-			) {
-				return declared;
-			}
-		}
-		for (const specifier of statement.specifiers ?? []) {
-			const exported = specifier.exported.name ?? specifier.exported.value;
-			if (specifier.type === 'ExportSpecifier' && exported === exportName) {
-				return declarationOf(specifier.local.name);
-			}
-		}
-	}
-	return undefined;
-};
-
-// The first object literal in a story: the story object itself, or the first object inside it.
-const storyObject = (node: Node | undefined): Node | undefined => {
-	let object: Node | undefined;
-	if (node) {
-		walk(node, (child) => {
-			if (object) {
-				return false;
-			}
-			if (child.type === 'ObjectExpression') {
-				object = child;
-				return false;
-			}
-			return undefined;
-		});
+const storyObject = (csf: CsfFile, exportName: string): CsfObject => {
+	const object = csf
+		.objects({ meta: false })
+		.find(
+			({ target }) => target.kind === 'story' && target.exportName === exportName,
+		);
+	if (!object) {
+		// CSF2 stories, such as `Template.bind({})`, have no story object to edit.
+		throw new SaveStoryError('Updating a CSF2 story is not supported');
 	}
 	return object;
 };
 
-// The last member of a key, as that is the one that counts when the key is repeated.
-const findProperty = (object: Node, key: string): Node | undefined =>
-	object.properties.findLast((property: Node) => staticKey(property) === key);
-
-// Replace a member's value. A shorthand or method is written out as `key: value`.
-const replaceValue = (editor: SourceEditor, property: Node, text: string) => {
-	const value = reindent(text, lineIndent(editor.code, property.start));
-	if (property.type === 'ObjectMethod' || property.shorthand) {
-		const key = editor.source(property.key);
-		editor.replace(
-			property.start,
-			property.end,
-			`${property.computed ? `[${key}]` : key}: ${value}`,
-		);
-		return;
+const check = (result: CsfMutationResult) => {
+	if (!result.ok) {
+		throw new SaveStoryError(result.diagnostic.message);
 	}
-	editor.replace(property.value.start, property.value.end, value);
 };
 
-// Lay out a story object on one line one member per line, as the members that a save adds span
-// lines.
-const expandStoryObject = (editor: SourceEditor, locate: StoryLocator) => {
-	const story = storyObject(locate());
+// The object literal of a story in the file's tree: `{ … }`, or the one in `meta.story({ … })`.
+const storyLiteral = (csf: CsfFile, exportName: string) => {
+	const declarator = csf._storyExports[exportName];
+	let init: ESTree.Expression | null | undefined =
+		declarator?.type === 'VariableDeclarator'
+			? unwrapExpression(declarator.init)
+			: undefined;
 	if (
-		!story ||
-		story.properties.length === 0 ||
-		editor.source(story).includes('\n') ||
-		editor.hasCommentsIn(story)
+		init?.type === 'CallExpression' &&
+		init.arguments[0]?.type !== 'SpreadElement'
+	) {
+		init = unwrapExpression(init.arguments[0]);
+	}
+	return init?.type === 'ObjectExpression' ? init : undefined;
+};
+
+/**
+ * Lay out a story object on one line one member per line, as `set` keeps a one-line object on
+ * one line when it adds a member that spans lines, such as a play function.
+ */
+const expandStoryObject = (csf: CsfFile, exportName: string) => {
+	const editor = csf._editor;
+	const object = storyLiteral(csf, exportName);
+	if (
+		!object ||
+		object.properties.length === 0 ||
+		editor.source(object).includes('\n') ||
+		editor.comments.some(
+			(comment) => comment.start > object.start && comment.end < object.end,
+		)
 	) {
 		return;
 	}
-	editor.replace(
-		story.start,
-		story.end,
-		editor.printObject(
-			story.properties.map((property: Node) => editor.source(property)),
-			lineIndent(editor.code, story.start),
+	const list = objectList(editor, object);
+	const members = object.properties.map((property) =>
+		itemText(editor, list, property),
+	);
+	editor.edits.overwrite(
+		object.start,
+		object.end,
+		reindent(
+			printMembers(members, editor.indent),
+			'',
+			lineIndent(editor.code, object.start),
 		),
 	);
 	editor.commit();
 };
 
+// Set an arg value. Functions, which `set` takes as expressions only, are written one by one.
+const setArg = (story: CsfObject, path: string[], value: unknown) => {
+	if (typeof value === 'function') {
+		check(story.set(path, parseExpression(value.toString())));
+		return;
+	}
+	if (value && typeof value === 'object' && hasFunction(value)) {
+		if (Array.isArray(value)) {
+			throw new SaveStoryError(
+				'Saving a function inside an array arg is not supported',
+			);
+		}
+		check(story.set(path, {}));
+		for (const [key, item] of Object.entries(value)) {
+			if (typeof item !== 'undefined') {
+				setArg(story, [...path, key], item);
+			}
+		}
+		return;
+	}
+	check(
+		story.set(path, withoutUndefined(value) as Parameters<CsfObject['set']>[1]),
+	);
+};
+
+const hasFunction = (value: unknown): boolean =>
+	typeof value === 'function' ||
+	(typeof value === 'object' &&
+		value !== null &&
+		Object.values(value).some(hasFunction));
+
+// Members set to `undefined` are left out, as before.
+const withoutUndefined = (value: unknown): unknown => {
+	if (Array.isArray(value)) {
+		return value.map(withoutUndefined);
+	}
+	if (value && typeof value === 'object') {
+		return Object.fromEntries(
+			Object.entries(value)
+				.filter(([, item]) => typeof item !== 'undefined')
+				.map(([key, item]) => [key, withoutUndefined(item)]),
+		);
+	}
+	return value;
+};
+
 export const updateArgsInCsfFile = async (
-	editor: SourceEditor,
-	locate: StoryLocator,
+	csf: CsfFile,
+	exportName: string,
 	// biome-ignore lint/suspicious/noExplicitAny:
 	input: Record<string, any>,
 ) => {
-	const args = new Map(
-		Object.entries(input).map(([key, value]) => [
-			key,
-			valueToSource(value, editor),
-		]),
-	);
-	const member = ([key, value]: [string, string]) =>
-		`${printKey(key, editor.quote)}: ${value}`;
-
-	// A story exported through `export { … } from` has no declaration in the file to edit.
-	if (!locate()) {
-		throw new SaveStoryError('Updating a re-exported story is not supported');
-	}
-
-	expandStoryObject(editor, locate);
-	const story = storyObject(locate());
-	if (!story) {
-		return;
-	}
-
-	const argsProperty = findProperty(story, 'args');
-	if (!argsProperty) {
-		if (args.size > 0) {
-			editor.insertMembers(
-				story,
-				[`args: ${editor.printObject([...args].map(member))}`],
-				'start',
-			);
-			editor.commit();
-		}
-		return;
-	}
-
-	if (
-		argsProperty.type !== 'ObjectProperty' ||
-		argsProperty.value.type !== 'ObjectExpression'
-	) {
-		return;
-	}
-	for (const property of argsProperty.value.properties) {
-		const key = staticKey(property);
-		if (key !== undefined && args.has(key)) {
-			replaceValue(editor, property, args.get(key) as string);
-			args.delete(key);
-		}
-	}
-	editor.commit();
-
-	if (args.size > 0) {
-		const argsObject = findProperty(storyObject(locate()) as Node, 'args')
-			?.value as Node;
-		editor.insertMembers(argsObject, [...args].map(member), 'end');
-		editor.commit();
+	const story = storyObject(csf, exportName);
+	for (const [key, value] of Object.entries(input)) {
+		setArg(story, ['args', key], value);
 	}
 };
 
-/**
- * Copy a story without its `args` and `name` into a source of its own, exported as
- * `newStoryName`. Edit the copy, then append it to the story file.
- */
+/** Copy a story without its `args` and `name` and export it as `newStoryName`. */
 export const duplicateStoryWithNewName = (
-	editor: SourceEditor,
+	csf: CsfFile,
 	originalStoryName: string,
 	newStoryName: string,
-): SourceEditor => {
-	const node = findStoryExport(editor, originalStoryName);
+) => {
+	const node = csf._storyExports[originalStoryName];
 	if (node?.type !== 'VariableDeclarator' || !node.init) {
 		throw new SaveStoryError('cannot clone Node');
 	}
@@ -261,33 +170,49 @@ export const duplicateStoryWithNewName = (
 		);
 	}
 
-	const typeAnnotation = node.id.typeAnnotation
-		? editor.source(node.id.typeAnnotation)
-		: '';
-	const copy = new SourceEditor(
-		`export const ${newStoryName}${typeAnnotation} = ${editor.source(node.init)};`,
-		editor.fileName,
-		editor.style,
+	const editor = csf._editor;
+	const typeAnnotation =
+		node.id.type === 'Identifier' && node.id.typeAnnotation
+			? editor.source(node.id.typeAnnotation)
+			: '';
+	appendStatement(
+		editor,
+		`export const ${newStoryName}${typeAnnotation} = ${editor.source(outerSpan(node.init))};`,
 	);
+	editor.commit();
 
 	// Remove args and name properties when duplicating a story
-	const isRemoved = (property: Node) =>
-		['args', 'name'].includes(staticKey(property) ?? '');
-	walk(copy.program, (child) => {
-		if (isRemoved(child)) {
-			return false;
-		}
-		if (child.type === 'ObjectExpression') {
-			const removed = child.properties.filter(isRemoved);
-			if (removed.length > 0) {
-				copy.removeMembers(child, removed);
-			}
-		}
-		return undefined;
-	});
-	copy.commit();
+	const story = storyObject(csf, newStoryName);
+	check(story.remove(['args']));
+	check(story.remove(['name']));
+};
 
-	return copy;
+/**
+ * Set a story apart from the statement before it with a blank line, as `appendStatement` adds
+ * none for a copy of a one-line story, which the save then makes span lines.
+ */
+export const separateStory = (csf: CsfFile, exportName: string) => {
+	const { body } = csf._program;
+	const index = body.findIndex(
+		(statement) =>
+			statement.type === 'ExportNamedDeclaration' &&
+			statement.declaration?.type === 'VariableDeclaration' &&
+			statement.declaration.declarations.some(
+				(declarator) =>
+					declarator.id.type === 'Identifier' && declarator.id.name === exportName,
+			),
+	);
+	const [previous, statement] = [body[index - 1], body[index]];
+	const editor = csf._editor;
+	if (
+		previous &&
+		statement &&
+		editor.source(statement).includes('\n') &&
+		!/\n[^\S\n]*\n/.test(editor.code.slice(previous.end, statement.start))
+	) {
+		editor.edits.appendRight(statement.start, '\n');
+		editor.commit();
+	}
 };
 
 /**
@@ -308,29 +233,25 @@ export const parseArgs = (args: string): Record<string, any> =>
 	});
 
 export const updatePlayInCsfFile = async (
-	editor: SourceEditor,
-	locate: StoryLocator,
+	csf: CsfFile,
+	exportName: string,
 	play: string[],
 ) => {
-	expandStoryObject(editor, locate);
-	const story = storyObject(locate());
-	if (!story) {
-		return;
-	}
+	expandStoryObject(csf, exportName);
+	const story = storyObject(csf, exportName);
 
-	const lines = preparePlay(play).map((line) => `${editor.indent}${line};`);
-	const playExpression =
+	const { indent } = csf._editor;
+	const lines = preparePlay(play).map((line) => `${indent}${line};`);
+	const playExpression = parseExpression(
 		lines.length > 0
 			? `async ({ canvasElement }) => {\n${lines.join('\n')}\n}`
-			: 'async ({ canvasElement }) => {}';
+			: 'async ({ canvasElement }) => {}',
+	);
 
-	const playProperty = findProperty(story, 'play');
-	if (playProperty) {
-		replaceValue(editor, playProperty, playExpression);
-	} else {
-		editor.insertMembers(story, [`play: ${playExpression}`], 'end');
-	}
-	editor.commit();
+	// `set` would replace an existing play in place but keep the indentation of the new code, so
+	// the play is removed and added again, which indents it.
+	check(story.remove(['play']));
+	check(story.set(['play'], playExpression));
 };
 
 const preparePlay = (play: string[]) => play.slice(1, -1).map(prepareLine);
@@ -350,60 +271,55 @@ const prepareLine = (line: string) => {
 };
 
 export const updateImportsInCsfFile = async (
-	editor: SourceEditor,
+	csf: CsfFile,
 	imports: string[],
 ) => {
+	const editor = csf._editor;
 	for (const importString of imports) {
-		const importNode = parse(importString, { sourceType: 'module' }).program
-			.body[0] as Node | undefined;
+		const parsed = parseModule(importString);
+		const importNode = parsed.program.body[0];
 		if (importNode?.type !== 'ImportDeclaration') {
 			throw new SaveStoryError(`Not an import: ${importString}`);
 		}
 
-		const importNodesBySource = new Map<string, Node>();
-		for (const statement of editor.program.body as Node[]) {
-			// Values cannot be added to a type-only import.
-			if (
+		// Values cannot be added to a type-only import.
+		const existingImport = csf._program.body.findLast(
+			(statement): statement is ESTree.ImportDeclaration =>
 				statement.type === 'ImportDeclaration' &&
-				statement.importKind !== 'type'
-			) {
-				importNodesBySource.set(statement.source.value, statement);
-			}
-		}
+				statement.importKind !== 'type' &&
+				statement.source.value === importNode.source.value,
+		);
 
-		const existingImport = importNodesBySource.get(importNode.source.value);
 		if (existingImport) {
-			const specifiers: Node[] = existingImport.specifiers;
 			const existingSpecifierNames = new Set(
-				specifiers.map((specifier) => specifier.local.name),
+				existingImport.specifiers.map((specifier) => specifier.local.name),
 			);
-			const added = (importNode.specifiers as Node[])
+			const added = importNode.specifiers
 				.filter(
 					(specifier) =>
 						specifier.type === 'ImportSpecifier' &&
 						!existingSpecifierNames.has(specifier.local.name),
 				)
-				.map((specifier) => importString.slice(specifier.start, specifier.end));
-			const lastNamed = specifiers
-				.filter((specifier) => specifier.type === 'ImportSpecifier')
-				.at(-1);
+				.map((specifier) => parsed.code.slice(specifier.start, specifier.end));
 			if (added.length === 0) {
-				// Everything is imported already.
-			} else if (lastNamed) {
-				editor.insert(lastNamed.end, `, ${added.join(', ')}`);
-			} else if (
-				specifiers.length === 1 &&
-				specifiers[0].type === 'ImportDefaultSpecifier'
+				continue;
+			}
+			if (
+				existingImport.specifiers.some((s) => s.type === 'ImportNamespaceSpecifier')
 			) {
-				editor.insert(specifiers[0].end, `, { ${added.join(', ')} }`);
-			} else {
-				// A namespace or side-effect import cannot take named specifiers.
-				editor.prependStatement(
+				// A namespace import cannot take named specifiers.
+				prependStatement(
+					editor,
 					`import { ${added.join(', ')} } from ${editor.source(existingImport.source)};`,
 				);
+			} else {
+				setImportSpecifiers(editor, existingImport, existingImport.specifiers, {
+					named: added,
+				});
 			}
 		} else {
-			editor.prependStatement(
+			prependStatement(
+				editor,
 				importString.endsWith(';') ? importString : `${importString};`,
 			);
 		}

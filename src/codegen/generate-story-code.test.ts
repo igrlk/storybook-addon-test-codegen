@@ -1,3 +1,4 @@
+import { loadCsf } from 'storybook/internal/csf-tools';
 import { describe, expect, test } from 'vitest';
 import { generateStoryCode } from './generate-story-code';
 import type { GeneratedCode } from './interactions-to-code';
@@ -41,7 +42,7 @@ export const NewStory: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
-    }
+    },
 };`,
 			newStoryId: 'form--new-story',
 		},
@@ -86,7 +87,7 @@ export const NewStory: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
-    }
+    },
 };`,
 			newStoryId: 'form--new-story',
 		},
@@ -131,7 +132,7 @@ export const NewStory: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
-    }
+    },
 };`,
 			newStoryId: 'form--new-story',
 		},
@@ -174,7 +175,7 @@ export const Default: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
-    }
+    },
 };`,
 			newStoryId: 'form--default',
 		},
@@ -213,7 +214,7 @@ export const NewStory12 = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
-    }
+    },
 };`,
 			newStoryId: 'form--new-story-12',
 		},
@@ -263,20 +264,11 @@ type Story = StoryObj<typeof Component>;
 export const Default: Story = {};
 
 export const NewStory: Story = {
-    args: {
-        hello: {
-            world: {
-                foo: 'bar',
-                baz: [1, 2, {
-                    boo: 'bee'
-                }]
-            }
-        }
-    },
+    args: { hello: { world: { foo: 'bar', baz: [1, 2, { boo: 'bee' }] } } },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
-    }
+    },
 };`,
 			newStoryId: 'form--new-story',
 		},
@@ -332,14 +324,7 @@ export const Default: Story = {
     args: {
         existing: "existing value",
 		someFunction: () => 42,
-		hello: {
-		    world: {
-		        foo: 'bar',
-		        baz: [1, 2, {
-		            boo: 'bee'
-		        }]
-		    }
-		}
+		hello: { world: { foo: 'bar', baz: [1, 2, { boo: 'bee' }] } }
     },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
@@ -392,7 +377,7 @@ export const NewStory: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
-    }
+    },
 };`,
 			newStoryId: 'form--new-story',
 		},
@@ -479,7 +464,7 @@ export const Primary = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
-    }
+    },
 };`,
 			newStoryId: 'form--primary',
 		},
@@ -518,9 +503,7 @@ export default {
 };
 
 export const Primary = {
-    args: {
-        onClick: () => {}
-    },
+    args: { onClick: () => {} },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
@@ -563,7 +546,7 @@ export const Default = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
-    }
+    },
 };`,
 			newStoryId: 'form--default',
 		},
@@ -606,7 +589,7 @@ export const Default = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
-    }
+    },
 };`,
 			newStoryId: 'form--default',
 		},
@@ -675,7 +658,7 @@ describe('generateStoryCode', () => {
 			name: 'storyName' in params ? params.storyName : 'NewStory',
 			args: 'args' in params ? params.args : '{}',
 			csfId: 'csfId' in params ? params.csfId : 'form--default',
-			source: params.story,
+			csf: loadCsf(params.story, { makeTitle: () => 'story' }),
 		});
 		expect(storyCode).toBe(params.result);
 		expect(newStoryId).toBe(params.newStoryId);
