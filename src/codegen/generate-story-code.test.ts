@@ -638,6 +638,52 @@ export const NewStory = {
 			newStoryId: 'form--new-story',
 		},
 	],
+	[
+		'Existing CSF2 story',
+		{
+			storyName: 'Primary',
+			csfId: 'form--primary',
+			args: JSON.stringify({
+				label: 'Click',
+				onClick: '__sb_empty_function_arg__',
+			}),
+			story: `import { Button } from './Button';
+
+export default {
+    component: Button
+};
+
+const Template = (args) => Button(args);
+
+export const Primary = Template.bind({});
+Primary.args = { label: 'Button' };`,
+			code: {
+				imports: [{ text: "import { userEvent, within } from 'storybook/test';" }],
+				play: [
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
+				],
+			},
+			result: `import { userEvent, within } from 'storybook/test';
+import { Button } from './Button';
+
+export default {
+    component: Button
+};
+
+const Template = (args) => Button(args);
+
+export const Primary = Template.bind({});
+Primary.args = { label: 'Click', onClick: () => {} };
+Primary.play = async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await canvas.findByRole('button'));
+};`,
+			newStoryId: 'form--primary',
+		},
+	],
 ] satisfies [
 	string,
 	{
