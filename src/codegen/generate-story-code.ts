@@ -1,31 +1,38 @@
 import { formatFileContent } from 'storybook/internal/common';
 import { storyNameFromExport, toId } from 'storybook/internal/csf';
-import { type CsfFile, printCsf } from 'storybook/internal/csf-tools';
+import { loadCsf } from 'storybook/internal/csf-tools';
 import type { GeneratedCode } from './interactions-to-code';
 import {
 	duplicateStoryWithNewName,
+	findStoryExport,
 	parseArgs,
-	removeExtraNewlines,
 	updateArgsInCsfFile,
 	updateImportsInCsfFile,
 	updatePlayInCsfFile,
 } from './save-story-utils';
+import { SourceEditor } from './source-editor';
 
 export const generateStoryCode = async ({
-	csf,
+	source,
+	fileName,
 	csfId,
 	name,
 	args,
 	code,
 }: {
-	csf: CsfFile;
+	/** The story file's source. */
+	source: string;
+	fileName?: string;
 	csfId: string;
 	name: string;
 	args: string;
 	code: GeneratedCode;
 }) => {
-	const parsed = csf.parse();
-	const stories = Object.entries(parsed._stories);
+	const csf = loadCsf(source, {
+		fileName,
+		makeTitle: (userTitle?: string) => userTitle || 'myTitle',
+	}).parse();
+	const stories = Object.entries(csf._stories);
 
 	const [componentId, storyId] = csfId.split('--');
 
@@ -62,29 +69,41 @@ export const generateStoryCode = async ({
 		? toId(componentId, storyId)
 		: toId(componentId, storyNameFromExport(newStoryName));
 
-	// If we're updating an existing story, use that node, otherwise create a new one
-	const node = existingStoryToUpdate
-		? csf._storyExports[existingStoryToUpdate[0]]
-		: (csf._storyExports[newStoryName] ??
-			duplicateStoryWithNewName(parsed, originalStoryName, newStoryName));
+	const editor = new SourceEditor(source, fileName);
+	const storyArgs = args ? parseArgs(args) : {};
+	const play = code.play.map((line) => line.text);
 
-	await updateArgsInCsfFile(node, args ? parseArgs(args) : {});
+	// If we're updating an existing story, edit it in place, otherwise edit a copy and append it
+	const existingExportName = existingStoryToUpdate
+		? existingStoryToUpdate[0]
+		: csf._storyExports[newStoryName]
+			? newStoryName
+			: undefined;
 
-	await updatePlayInCsfFile(
-		node,
-		code.play.map((line) => line.text),
-	);
+	if (existingExportName) {
+		const locate = () => findStoryExport(editor, existingExportName);
+		await updateArgsInCsfFile(editor, locate, storyArgs);
+		await updatePlayInCsfFile(editor, locate, play);
+	} else {
+		const copy = duplicateStoryWithNewName(
+			editor,
+			originalStoryName,
+			newStoryName,
+		);
+		const locate = () => copy.program;
+		await updateArgsInCsfFile(copy, locate, storyArgs);
+		await updatePlayInCsfFile(copy, locate, play);
+		editor.appendStatement(copy.code);
+		editor.commit();
+	}
 
 	await updateImportsInCsfFile(
-		csf._ast,
+		editor,
 		code.imports.map((line) => line.text),
 	);
 
 	return {
-		storyCode: await formatFileContent(
-			'.',
-			removeExtraNewlines(printCsf(csf).code, newStoryName),
-		),
+		storyCode: await formatFileContent('.', editor.toString()),
 		newStoryId,
 	};
 };

@@ -1,4 +1,3 @@
-import { loadCsf } from 'storybook/internal/csf-tools';
 import { describe, expect, test } from 'vitest';
 import { generateStoryCode } from './generate-story-code';
 import type { GeneratedCode } from './interactions-to-code';
@@ -266,16 +265,14 @@ export const Default: Story = {};
 export const NewStory: Story = {
     args: {
         hello: {
-            "world": {
-                "foo": "bar",
-
-                "baz": [1, 2, {
-                    "boo": "bee"
+            world: {
+                foo: 'bar',
+                baz: [1, 2, {
+                    boo: 'bee'
                 }]
             }
         }
     },
-
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
@@ -334,19 +331,16 @@ type Story = StoryObj<typeof Component>;
 export const Default: Story = {
     args: {
         existing: "existing value",
-        someFunction: () => 42,
-
-        hello: {
-            "world": {
-                "foo": "bar",
-
-                "baz": [1, 2, {
-                    "boo": "bee"
-                }]
-            }
-        }
+		someFunction: () => 42,
+		hello: {
+		    world: {
+		        foo: 'bar',
+		        baz: [1, 2, {
+		            boo: 'bee'
+		        }]
+		    }
+		}
     },
-
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
@@ -441,13 +435,224 @@ type Story = StoryObj<typeof Component>;
 
 export const CustomName: Story = {
     name: "My cool name",
-
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
     }
 };`,
 			newStoryId: 'form--custom-name',
+		},
+	],
+	[
+		'Existing one-line story with args, below a header comment',
+		{
+			storyName: 'Primary',
+			csfId: 'form--primary',
+			args: JSON.stringify({ primary: false, label: 'Click' }),
+			story: `// Stories for the button
+import { Button } from './Button';
+
+export default {
+    component: Button
+};
+
+export const Primary = { args: { primary: true } };`,
+			code: {
+				imports: [{ text: "import { userEvent, within } from 'storybook/test';" }],
+				play: [
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
+				],
+			},
+			result: `// Stories for the button
+import { userEvent, within } from 'storybook/test';
+import { Button } from './Button';
+
+export default {
+    component: Button
+};
+
+export const Primary = {
+    args: { primary: false, label: 'Click' },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    }
+};`,
+			newStoryId: 'form--primary',
+		},
+	],
+	[
+		'Existing story with a play function and a function arg',
+		{
+			storyName: 'Primary',
+			csfId: 'form--primary',
+			args: JSON.stringify({ onClick: '__sb_empty_function_arg__' }),
+			story: `import { Button } from './Button';
+
+export default {
+    component: Button
+};
+
+export const Primary = {
+    play: async () => {
+        // recorded before
+    },
+};`,
+			code: {
+				imports: [{ text: "import { userEvent, within } from 'storybook/test';" }],
+				play: [
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
+				],
+			},
+			result: `import { userEvent, within } from 'storybook/test';
+import { Button } from './Button';
+
+export default {
+    component: Button
+};
+
+export const Primary = {
+    args: {
+        onClick: () => {}
+    },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    },
+};`,
+			newStoryId: 'form--primary',
+		},
+	],
+	[
+		'New import above a comment about the first import',
+		{
+			storyName: 'Default',
+			csfId: 'form--default',
+			story: `// @ts-expect-error untyped
+import { Component } from './Component';
+
+export default {
+    component: Component
+};
+
+export const Default = {};`,
+			code: {
+				imports: [{ text: "import { userEvent, within } from 'storybook/test';" }],
+				play: [
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
+				],
+			},
+			result: `import { userEvent, within } from 'storybook/test';
+// @ts-expect-error untyped
+import { Component } from './Component';
+
+export default {
+    component: Component
+};
+
+export const Default = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    }
+};`,
+			newStoryId: 'form--default',
+		},
+	],
+	[
+		'New import below a Flow pragma',
+		{
+			storyName: 'Default',
+			csfId: 'form--default',
+			story: `// @flow
+import { Component } from './Component';
+
+type Props = { label: string };
+
+export default {
+    component: Component
+};
+
+export const Default = {};`,
+			code: {
+				imports: [{ text: "import { userEvent, within } from 'storybook/test';" }],
+				play: [
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
+				],
+			},
+			result: `// @flow
+import { userEvent, within } from 'storybook/test';
+import { Component } from './Component';
+
+type Props = { label: string };
+
+export default {
+    component: Component
+};
+
+export const Default = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    }
+};`,
+			newStoryId: 'form--default',
+		},
+	],
+	[
+		'New story from a story whose removed name shares a line with code',
+		{
+			storyName: 'NewStory',
+			csfId: 'form--default',
+			story: `import { Component } from './Component';
+
+export default {
+    component: Component
+};
+
+export const Default = {
+    render: () => null, // custom render
+    name() { return { name: 'Default' }; } };`,
+			code: {
+				imports: [{ text: "import { userEvent, within } from 'storybook/test';" }],
+				play: [
+					{ text: 'play: async ({ canvasElement }) => {' },
+					{ text: '\tconst canvas = within(canvasElement.ownerDocument.body);' },
+					{ text: "\tawait userEvent.click(await canvas.findByRole('button'));" },
+					{ text: '}' },
+				],
+			},
+			result: `import { userEvent, within } from 'storybook/test';
+import { Component } from './Component';
+
+export default {
+    component: Component
+};
+
+export const Default = {
+    render: () => null, // custom render
+    name() { return { name: 'Default' }; } };
+
+export const NewStory = {
+    render: () => null, // custom render
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement.ownerDocument.body);
+        await userEvent.click(await canvas.findByRole('button'));
+    }
+ };`,
+			newStoryId: 'form--new-story',
 		},
 	],
 ] satisfies [
@@ -470,7 +675,7 @@ describe('generateStoryCode', () => {
 			name: 'storyName' in params ? params.storyName : 'NewStory',
 			args: 'args' in params ? params.args : '{}',
 			csfId: 'csfId' in params ? params.csfId : 'form--default',
-			csf: loadCsf(params.story, { makeTitle: () => 'story' }),
+			source: params.story,
 		});
 		expect(storyCode).toBe(params.result);
 		expect(newStoryId).toBe(params.newStoryId);
