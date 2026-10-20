@@ -264,7 +264,9 @@ type Story = StoryObj<typeof Component>;
 export const Default: Story = {};
 
 export const NewStory: Story = {
-    args: { hello: { world: { foo: 'bar', baz: [1, 2, { boo: 'bee' }] } } },
+    args: {
+        hello: { world: { foo: 'bar', baz: [1, 2, { boo: 'bee' }] } },
+    },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));
@@ -503,7 +505,9 @@ export default {
 };
 
 export const Primary = {
-    args: { onClick: () => {} },
+    args: {
+        onClick: () => {},
+    },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement.ownerDocument.body);
         await userEvent.click(await canvas.findByRole('button'));

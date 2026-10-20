@@ -1,6 +1,6 @@
-// Ported from Storybook's save-story utilities, except for "updatePlayInCsfFile" and
-// "updateImportsInCsfFile". Stories are edited through csf-tools' `CsfObject` where it fits, and
-// through the file's source editor for the rest; code an edit does not touch stays as written.
+// Writes a recorded play function and the current args into a story file. Stories are edited
+// through csf-tools' `CsfObject` where it fits, and through the file's source editor for the rest,
+// so code an edit does not touch stays as written.
 
 import {
 	type CsfFile,
@@ -8,6 +8,7 @@ import {
 	type CsfObject,
 	type ESTree,
 	appendStatement,
+	isCsfFactoryCall,
 	itemText,
 	lineIndent,
 	objectList,
@@ -18,6 +19,7 @@ import {
 	printMembers,
 	reindent,
 	setImportSpecifiers,
+	staticKey,
 	unwrapExpression,
 } from 'storybook/internal/csf-tools';
 
@@ -30,8 +32,14 @@ const storyObject = (csf: CsfFile, exportName: string): CsfObject => {
 			({ target }) => target.kind === 'story' && target.exportName === exportName,
 		);
 	if (!object) {
-		// CSF2 stories, such as `Template.bind({})`, have no story object to edit.
-		throw new SaveStoryError('Updating a CSF2 story is not supported');
+		// CSF2 stories, such as `Template.bind({})`, have no story object to edit, and csf-tools
+		// reports why it skipped any other story.
+		const diagnostic = csf.mutationDiagnostics.find(
+			({ target }) => 'exportName' in target && target.exportName === exportName,
+		);
+		throw new SaveStoryError(
+			diagnostic?.message ?? 'Updating a CSF2 story is not supported',
+		);
 	}
 	return object;
 };
@@ -43,12 +51,24 @@ const check = (result: CsfMutationResult) => {
 };
 
 // The object literal of a story in the file's tree: `{ … }`, or the one in `meta.story({ … })`.
-const storyLiteral = (csf: CsfFile, exportName: string) => {
-	const declarator = csf._storyExports[exportName];
-	let init: ESTree.Expression | null | undefined =
-		declarator?.type === 'VariableDeclarator'
-			? unwrapExpression(declarator.init)
-			: undefined;
+const storyLiteral = (csf: CsfFile, story: CsfObject) => {
+	if (story.target.kind !== 'story') {
+		return undefined;
+	}
+	const { localName } = story.target;
+	const declarator = csf._program.body
+		.map((statement) =>
+			statement.type === 'ExportNamedDeclaration'
+				? statement.declaration
+				: statement,
+		)
+		.flatMap((declaration) =>
+			declaration?.type === 'VariableDeclaration' ? declaration.declarations : [],
+		)
+		.find(({ id }) => id.type === 'Identifier' && id.name === localName);
+	let init: ESTree.Expression | null | undefined = unwrapExpression(
+		declarator?.init,
+	);
 	if (
 		init?.type === 'CallExpression' &&
 		init.arguments[0]?.type !== 'SpreadElement'
@@ -58,13 +78,25 @@ const storyLiteral = (csf: CsfFile, exportName: string) => {
 	return init?.type === 'ObjectExpression' ? init : undefined;
 };
 
+// The object literal of a story's `args`, if it has one.
+const argsLiteral = (csf: CsfFile, story: CsfObject) => {
+	const args = storyLiteral(csf, story)?.properties.find(
+		(property) => property.type === 'Property' && staticKey(property) === 'args',
+	);
+	const value =
+		args?.type === 'Property' ? unwrapExpression(args.value) : undefined;
+	return value?.type === 'ObjectExpression' ? value : undefined;
+};
+
 /**
- * Lay out a story object on one line one member per line, as `set` keeps a one-line object on
- * one line when it adds a member that spans lines, such as a play function.
+ * Lay out an object on one line one member per line. `set` keeps a one-line object on one line,
+ * also when it adds a member that spans lines, such as a play function.
  */
-const expandStoryObject = (csf: CsfFile, exportName: string) => {
+const expandObject = (
+	csf: CsfFile,
+	object: ESTree.ObjectExpression | undefined,
+) => {
 	const editor = csf._editor;
-	const object = storyLiteral(csf, exportName);
 	if (
 		!object ||
 		object.properties.length === 0 ||
@@ -91,13 +123,22 @@ const expandStoryObject = (csf: CsfFile, exportName: string) => {
 	editor.commit();
 };
 
-// Set an arg value. Functions, which `set` takes as expressions only, are written one by one.
+// What the controls panel sends for a function arg, which it cannot serialize.
+const EMPTY_FUNCTION_ARG = '__sb_empty_function_arg__';
+
+const hasFunctionArg = (value: unknown): boolean =>
+	value === EMPTY_FUNCTION_ARG ||
+	(typeof value === 'object' &&
+		value !== null &&
+		Object.values(value).some(hasFunctionArg));
+
+// Set an arg value. Function args, which `set` takes as expressions only, are written one by one.
 const setArg = (story: CsfObject, path: string[], value: unknown) => {
-	if (typeof value === 'function') {
-		check(story.set(path, parseExpression(value.toString())));
+	if (value === EMPTY_FUNCTION_ARG) {
+		check(story.set(path, parseExpression('() => {}')));
 		return;
 	}
-	if (value && typeof value === 'object' && hasFunction(value)) {
+	if (value && typeof value === 'object' && hasFunctionArg(value)) {
 		if (Array.isArray(value)) {
 			throw new SaveStoryError(
 				'Saving a function inside an array arg is not supported',
@@ -105,36 +146,11 @@ const setArg = (story: CsfObject, path: string[], value: unknown) => {
 		}
 		check(story.set(path, {}));
 		for (const [key, item] of Object.entries(value)) {
-			if (typeof item !== 'undefined') {
-				setArg(story, [...path, key], item);
-			}
+			setArg(story, [...path, key], item);
 		}
 		return;
 	}
-	check(
-		story.set(path, withoutUndefined(value) as Parameters<CsfObject['set']>[1]),
-	);
-};
-
-const hasFunction = (value: unknown): boolean =>
-	typeof value === 'function' ||
-	(typeof value === 'object' &&
-		value !== null &&
-		Object.values(value).some(hasFunction));
-
-// Members set to `undefined` are left out, as before.
-const withoutUndefined = (value: unknown): unknown => {
-	if (Array.isArray(value)) {
-		return value.map(withoutUndefined);
-	}
-	if (value && typeof value === 'object') {
-		return Object.fromEntries(
-			Object.entries(value)
-				.filter(([, item]) => typeof item !== 'undefined')
-				.map(([key, item]) => [key, withoutUndefined(item)]),
-		);
-	}
-	return value;
+	check(story.set(path, value as Parameters<CsfObject['set']>[1]));
 };
 
 export const updateArgsInCsfFile = async (
@@ -144,8 +160,15 @@ export const updateArgsInCsfFile = async (
 	input: Record<string, any>,
 ) => {
 	const story = storyObject(csf, exportName);
+	const createsArgs = story.get(['args']) === undefined;
 	for (const [key, value] of Object.entries(input)) {
 		setArg(story, ['args', key], value);
+	}
+	// An args object the save creates is laid out one member per line, as before, in a story that
+	// is laid out so as well.
+	if (createsArgs) {
+		expandObject(csf, storyLiteral(csf, story));
+		expandObject(csf, argsLiteral(csf, story));
 	}
 };
 
@@ -163,7 +186,7 @@ export const duplicateStoryWithNewName = (
 	// detect CSF2 and throw
 	if (
 		node.init.type === 'ArrowFunctionExpression' ||
-		node.init.type === 'CallExpression'
+		(node.init.type === 'CallExpression' && !isCsfFactoryCall(node.init))
 	) {
 		throw new SaveStoryError(
 			'Creating a new story based on a CSF2 story is not supported',
@@ -188,8 +211,8 @@ export const duplicateStoryWithNewName = (
 };
 
 /**
- * Set a story apart from the statement before it with a blank line, as `appendStatement` adds
- * none for a copy of a one-line story, which the save then makes span lines.
+ * Set a story apart from the statement before it with a blank line. `appendStatement` adds none
+ * for a copy of a one-line story, which the save then makes span lines.
  */
 export const separateStory = (csf: CsfFile, exportName: string) => {
 	const { body } = csf._program;
@@ -205,7 +228,7 @@ export const separateStory = (csf: CsfFile, exportName: string) => {
 	const [previous, statement] = [body[index - 1], body[index]];
 	const editor = csf._editor;
 	if (
-		previous &&
+		index > 0 &&
 		statement &&
 		editor.source(statement).includes('\n') &&
 		!/\n[^\S\n]*\n/.test(editor.code.slice(previous.end, statement.start))
@@ -215,29 +238,17 @@ export const separateStory = (csf: CsfFile, exportName: string) => {
 	}
 };
 
-/**
- * Stands in for a function arg, which the controls panel cannot send. It prints as `() => {}`,
- * whatever the bundler made of its source.
- */
-const emptyFunction: () => void = Object.assign(() => {}, {
-	toString: () => '() => {}',
-});
-
+// Function args stay `EMPTY_FUNCTION_ARG` strings, which `setArg` writes as `() => {}`.
 // biome-ignore lint/suspicious/noExplicitAny:
 export const parseArgs = (args: string): Record<string, any> =>
-	JSON.parse(args, (_, value) => {
-		if (value === '__sb_empty_function_arg__') {
-			return emptyFunction;
-		}
-		return value;
-	});
+	JSON.parse(args);
 
 export const updatePlayInCsfFile = async (
 	csf: CsfFile,
 	exportName: string,
 	play: string[],
 ) => {
-	expandStoryObject(csf, exportName);
+	expandObject(csf, storyLiteral(csf, storyObject(csf, exportName)));
 	const story = storyObject(csf, exportName);
 
 	const { indent } = csf._editor;
@@ -282,17 +293,26 @@ export const updateImportsInCsfFile = async (
 			throw new SaveStoryError(`Not an import: ${importString}`);
 		}
 
-		// Values cannot be added to a type-only import.
-		const existingImport = csf._program.body.findLast(
+		// Values cannot be added to a type-only import, and named ones not to a namespace import.
+		const sameSource = csf._program.body.filter(
 			(statement): statement is ESTree.ImportDeclaration =>
 				statement.type === 'ImportDeclaration' &&
 				statement.importKind !== 'type' &&
 				statement.source.value === importNode.source.value,
 		);
+		const isNamespace = (declaration: ESTree.ImportDeclaration) =>
+			declaration.specifiers.some(
+				(specifier) => specifier.type === 'ImportNamespaceSpecifier',
+			);
+		const existingImport =
+			sameSource.findLast((declaration) => !isNamespace(declaration)) ??
+			sameSource.at(-1);
 
 		if (existingImport) {
 			const existingSpecifierNames = new Set(
-				existingImport.specifiers.map((specifier) => specifier.local.name),
+				sameSource.flatMap((declaration) =>
+					declaration.specifiers.map((specifier) => specifier.local.name),
+				),
 			);
 			const added = importNode.specifiers
 				.filter(
@@ -304,10 +324,7 @@ export const updateImportsInCsfFile = async (
 			if (added.length === 0) {
 				continue;
 			}
-			if (
-				existingImport.specifiers.some((s) => s.type === 'ImportNamespaceSpecifier')
-			) {
-				// A namespace import cannot take named specifiers.
+			if (isNamespace(existingImport)) {
 				prependStatement(
 					editor,
 					`import { ${added.join(', ')} } from ${editor.source(existingImport.source)};`,
