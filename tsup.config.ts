@@ -93,6 +93,10 @@ export default defineConfig(async (options) => {
 			entry: nodeEntries,
 			platform: 'node',
 			target: NODE_TARGET,
+			// The save steps for each csf-tools generation import what only that
+			// generation has (`storybook/internal/babel`, or the ESTree csf-tools
+			// API), so they must stay in chunks the preset loads on demand.
+			splitting: true,
 		});
 	}
 

@@ -57,7 +57,6 @@
 		"pr:check:e2e": "npx concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"http-server storybook-static --port 6006 --silent\" \"npx wait-on tcp:127.0.0.1:6006 && pnpm test:e2e\""
 	},
 	"devDependencies": {
-		"@babel/parser": "^7.26.7",
 		"@biomejs/biome": "^1.9.4",
 		"@medv/finder": "^4.0.2",
 		"@playwright/test": "^1.51.1",
@@ -98,7 +97,7 @@
 		"zx": "^8.7.1"
 	},
 	"peerDependencies": {
-		"storybook": "^0.0.0-0 || ^10.0.0 || ^10.0.0-0 || ^10.1.0-0 || ^10.2.0-0 || ^10.3.0-0"
+		"storybook": "^0.0.0-0 || ^10.0.0 || ^10.0.0-0 || ^10.1.0-0 || ^10.2.0-0 || ^10.3.0-0 || ^11.0.0-0"
 	},
 	"publishConfig": {
 		"access": "public"

@@ -9,6 +9,7 @@ import {
 import { readCsf } from 'storybook/internal/csf-tools';
 import type { Options } from 'storybook/internal/types';
 import { generateStoryCode } from './codegen/generate-story-code';
+import { loadStorySaver } from './codegen/story-saver';
 import { EVENTS } from './constants';
 import type {
 	SaveNewStoryRequestPayload,
@@ -32,6 +33,8 @@ export const experimental_serverChannel = async (
 				});
 
 				const { storyCode, newStoryId } = await generateStoryCode({
+					// The save steps for the installed csf-tools; Node caches the import.
+					saver: await loadStorySaver(),
 					csf,
 					csfId,
 					name,

@@ -1,8 +1,15 @@
+// The save steps on the Babel csf-tools of Storybook 10 (and of 11
+// prereleases without storybookjs/storybook#36613), which hand out Babel
+// nodes and print with recast. #36613 removes `storybook/internal/babel`;
+// `save-story-estree.ts` does the same there. This file can go when the
+// addon drops Storybook 10.
+//
 // Copied from storybook package
 // Except for "updatePlayInCsfFile" and "updateImportsInCsfFile"
 
 import { parser, types as t, traverse } from 'storybook/internal/babel';
-import type { CsfFile } from 'storybook/internal/csf-tools';
+import { type CsfFile, printCsf } from 'storybook/internal/csf-tools';
+import type { StorySaver } from './story-saver';
 
 class SaveStoryError extends Error {}
 
@@ -269,6 +276,7 @@ export const removeExtraNewlines = (code: string, name: string) => {
 		: code;
 };
 
+/** `play` holds the body's lines, as `generateStoryCode` prepares them. */
 export const updatePlayInCsfFile = async (node: t.Node, play: string[]) => {
 	let found = false;
 
@@ -296,7 +304,7 @@ export const updatePlayInCsfFile = async (node: t.Node, play: string[]) => {
 			const playExpression = t.arrowFunctionExpression(
 				[t.identifier('async ({ canvasElement })')],
 				t.blockStatement(
-					preparePlay(play).map((line) => t.expressionStatement(t.identifier(line))),
+					play.map((line) => t.expressionStatement(t.identifier(line))),
 				),
 			);
 
@@ -314,22 +322,6 @@ export const updatePlayInCsfFile = async (node: t.Node, play: string[]) => {
 
 		noScope: true,
 	});
-};
-
-const preparePlay = (play: string[]) => play.slice(1, -1).map(prepareLine);
-
-const prepareLine = (line: string) => {
-	let result = line;
-
-	if (result.endsWith(';')) {
-		result = result.slice(0, -1);
-	}
-
-	if (result.startsWith('\t')) {
-		result = result.slice(1);
-	}
-
-	return result;
 };
 
 export const updateImportsInCsfFile = async (
@@ -351,15 +343,15 @@ export const updateImportsInCsfFile = async (
 
 			found = true;
 
-			const parser = require('@babel/parser');
-
+			// Storybook's own Babel parser. This used to require `@babel/parser`,
+			// a dev dependency the build had to bundle into the preset.
 			const packagesToImport = imports.map((importString) => {
 				const importStatement = parser.parse(importString, {
 					sourceType: 'module',
 				});
 
 				return {
-					importNode: importStatement.program.body[0],
+					importNode: importStatement.program.body[0] as t.ImportDeclaration,
 					importString,
 				};
 			});
@@ -404,4 +396,29 @@ export const updateImportsInCsfFile = async (
 
 		noScope: true,
 	});
+};
+
+export const babelStorySaver: StorySaver = {
+	edit(csf) {
+		// The copies a save made, which `csf._storyExports` does not list.
+		const copies = new Map<string, t.VariableDeclarator>();
+		const storyNode = (exportName: string): t.Node =>
+			copies.get(exportName) ?? csf._storyExports[exportName];
+
+		return {
+			duplicateStory(originalExportName, newExportName) {
+				copies.set(
+					newExportName,
+					duplicateStoryWithNewName(csf, originalExportName, newExportName),
+				);
+			},
+			setArgs: (exportName, args) =>
+				updateArgsInCsfFile(storyNode(exportName), args ? parseArgs(args) : {}),
+			setPlay: (exportName, play) =>
+				updatePlayInCsfFile(storyNode(exportName), play),
+			addImports: (imports) => updateImportsInCsfFile(csf._ast, imports),
+			print: (newStoryName) =>
+				removeExtraNewlines(printCsf(csf).code, newStoryName),
+		};
+	},
 };

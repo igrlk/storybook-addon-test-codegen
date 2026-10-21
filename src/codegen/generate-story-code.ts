@@ -1,15 +1,26 @@
 import { formatFileContent } from 'storybook/internal/common';
 import { storyNameFromExport, toId } from 'storybook/internal/csf';
-import { type CsfFile, printCsf } from 'storybook/internal/csf-tools';
+import type { CsfFile } from 'storybook/internal/csf-tools';
 import type { GeneratedCode } from './interactions-to-code';
-import {
-	duplicateStoryWithNewName,
-	parseArgs,
-	removeExtraNewlines,
-	updateArgsInCsfFile,
-	updateImportsInCsfFile,
-	updatePlayInCsfFile,
-} from './save-story-utils';
+import type { StorySaver } from './story-saver';
+
+// The body lines of a generated `play: async (...) => { ... }`, without the
+// first and last line, their trailing semicolon and one level of indent.
+const preparePlay = (play: string[]) => play.slice(1, -1).map(prepareLine);
+
+const prepareLine = (line: string) => {
+	let result = line;
+
+	if (result.endsWith(';')) {
+		result = result.slice(0, -1);
+	}
+
+	if (result.startsWith('\t')) {
+		result = result.slice(1);
+	}
+
+	return result;
+};
 
 export const generateStoryCode = async ({
 	csf,
@@ -17,12 +28,15 @@ export const generateStoryCode = async ({
 	name,
 	args,
 	code,
+	saver,
 }: {
 	csf: CsfFile;
 	csfId: string;
 	name: string;
 	args: string;
 	code: GeneratedCode;
+	/** The save steps for the installed Storybook, from `loadStorySaver`. */
+	saver: StorySaver;
 }) => {
 	const parsed = csf.parse();
 	const stories = Object.entries(parsed._stories);
@@ -62,29 +76,22 @@ export const generateStoryCode = async ({
 		? toId(componentId, storyId)
 		: toId(componentId, storyNameFromExport(newStoryName));
 
-	// If we're updating an existing story, use that node, otherwise create a new one
-	const node = existingStoryToUpdate
-		? csf._storyExports[existingStoryToUpdate[0]]
-		: (csf._storyExports[newStoryName] ??
-			duplicateStoryWithNewName(parsed, originalStoryName, newStoryName));
+	// Update the existing story in place, or a copy of the original under the new name
+	const exportName = existingStoryToUpdate?.[0] ?? newStoryName;
+	const edits = saver.edit(parsed);
+	if (!parsed._storyExports[exportName]) {
+		edits.duplicateStory(originalStoryName, newStoryName);
+	}
 
-	await updateArgsInCsfFile(node, args ? parseArgs(args) : {});
-
-	await updatePlayInCsfFile(
-		node,
-		code.play.map((line) => line.text),
+	await edits.setArgs(exportName, args);
+	await edits.setPlay(
+		exportName,
+		preparePlay(code.play.map((line) => line.text)),
 	);
-
-	await updateImportsInCsfFile(
-		csf._ast,
-		code.imports.map((line) => line.text),
-	);
+	await edits.addImports(code.imports.map((line) => line.text));
 
 	return {
-		storyCode: await formatFileContent(
-			'.',
-			removeExtraNewlines(printCsf(csf).code, newStoryName),
-		),
+		storyCode: await formatFileContent('.', edits.print(newStoryName)),
 		newStoryId,
 	};
 };
