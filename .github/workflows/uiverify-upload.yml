@@ -1,0 +1,95 @@
+name: UI Verify Fork Upload
+
+# GitHub gives a fork's pull request no secrets, so `uiverify.yml` only builds Storybook for it and
+# saves the build as the `uiverify-archive` artifact. This uploads that artifact with the key, for the
+# pull request's own commit, branch and number. https://uiverify.ai/docs/open-source-and-forks
+#
+# It never runs code from the pull request: no checkout of its files, no pnpm install, no CLI run
+# inside its tree. `workflow_run` always runs the copy on the default branch, so a pull request that
+# edits this file changes nothing here. Values the pull request controls (its branch name) reach the
+# shell only through env, never through ${{ }} inside a script.
+#
+# Note: like `status`, `workflow_run` only fires for the copy on the default branch, so this starts
+# working once it is merged to main.
+#
+# The run is recorded against main, not the pull request, so it never shows as a job on the PR, which
+# is why it passes --exit-zero-on-changes. The gate for a fork's pull request is the
+# `UI Verify: <project>` commit status, which turns green once the changes are accepted.
+
+on:
+  workflow_run:
+    workflows: [UI Verify] # the `name:` of uiverify.yml
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+
+jobs:
+  upload:
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.head_repository.full_name != github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: uiverify-archive
+          path: ${{ runner.temp }}/archive
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+
+      - name: Find the pull request
+        id: meta
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          HEAD_OWNER: ${{ github.event.workflow_run.head_repository.owner.login }}
+        run: |
+          set -euo pipefail
+          # workflow_run lists no pull requests for a fork, so look it up by its head.
+          # -f encodes the branch name, which may contain characters like "&".
+          pr=$(gh api -X GET "repos/$REPO/pulls" -f state=open -f "head=$HEAD_OWNER:$HEAD_BRANCH" --jq '.[0].number // empty')
+          if [ -z "$pr" ]; then echo "No open PR for $HEAD_OWNER:$HEAD_BRANCH; nothing to upload."; fi
+          {
+            echo "pr=$pr"
+            echo "branch<<__EOF__"
+            echo "$HEAD_OWNER:$HEAD_BRANCH" # a fork's "main" must not look like ours
+            echo "__EOF__"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Fetch the commit's history (objects only, no checkout)
+        if: steps.meta.outputs.pr != ''
+        env:
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          git init -q "$RUNNER_TEMP/repo"
+          cd "$RUNNER_TEMP/repo"
+          git remote add origin "https://github.com/$REPO"
+          git fetch -q --filter=blob:none --no-tags origin "$HEAD_SHA"
+          git update-ref HEAD "$HEAD_SHA"
+
+      - name: Upload to UI Verify
+        if: steps.meta.outputs.pr != ''
+        env:
+          UIVERIFY_API_KEY: ${{ secrets.UIVERIFY_API_KEY }}
+          COMMIT_SHA: ${{ github.event.workflow_run.head_sha }}
+          BRANCH: ${{ steps.meta.outputs.branch }}
+          PR_NUMBER: ${{ steps.meta.outputs.pr }}
+        run: |
+          set -euo pipefail
+          # Pinned CLI, run from an empty directory so nothing from the pull request can swap it.
+          mkdir -p "$RUNNER_TEMP/clean" && cd "$RUNNER_TEMP/clean"
+          npx -y uiverify@1.8.0 upload \
+            --static-dir "$RUNNER_TEMP/archive" \
+            --working-directory "$RUNNER_TEMP/repo" \
+            --exit-zero-on-changes

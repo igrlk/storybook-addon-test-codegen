@@ -7,6 +7,9 @@ on:
   workflow_dispatch:
 
 # Read-only: the PR check itself is posted by the UI Verify GitHub App, not this job.
+# A fork's pull request gets no secrets, so for those this job only builds Storybook and saves it as
+# an artifact; `uiverify-upload.yml` then uploads it with the key. See
+# https://uiverify.ai/docs/open-source-and-forks
 permissions:
   contents: read
 
@@ -29,8 +32,23 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       # The addon is loaded from its own dist, and the preview imports a generated
-      # tailwind.css, so both have to exist before Storybook builds.
-      - run: pnpm build && pnpm tailwind && pnpm build-storybook
-      - run: pnpm dlx uiverify@1.4.0 upload --static-dir ./storybook-static --only-changed
+      # tailwind.css, so both have to exist before Storybook builds. --stats-json writes
+      # preview-stats.json, which UI Verify uses to render only the stories a change affects.
+      - run: pnpm build && pnpm tailwind && pnpm build-storybook --stats-json
+
+      # Pushes and pull requests from this repo's own branches: upload here, with the key.
+      - name: Upload to UI Verify
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        run: pnpm dlx uiverify@1.8.0 upload --static-dir ./storybook-static
         env:
           UIVERIFY_API_KEY: ${{ secrets.UIVERIFY_API_KEY }}
+
+      # A fork's pull request has no key: save the build for uiverify-upload.yml.
+      - name: Save the Storybook build
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+        uses: actions/upload-artifact@v4
+        with:
+          name: uiverify-archive
+          path: ./storybook-static/
+          if-no-files-found: error
+          retention-days: 7
