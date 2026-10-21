@@ -152,7 +152,7 @@ I also build UI Verify, and use this addon to test it on a real
 open-source project.
 
 [Browse our visual test builds](https://uiverify.ai/dashboard/teams/storybook-addon-test-codegen/projects/storybook-addon-test-codegen)
-· [See our CI setup](.github/workflows/uiverify.yml)
+· [See our CI setup](.github/workflows/uiverify.yml) ([fork PRs](.github/workflows/uiverify-upload.yml))
 · [Add visual testing to your Storybook](https://uiverify.ai/docs/quickstart-storybook)
 
 ## Contributing

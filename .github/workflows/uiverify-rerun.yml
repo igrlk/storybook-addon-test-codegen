@@ -7,6 +7,9 @@ name: UI Verify Auto-Rerun
 # re-runs the failed visual run so its status turns green too, with no manual "Re-run jobs" click. The
 # re-uploaded build sees the now-accepted baseline, finds no changes, and exits 0.
 #
+# A fork's pull request never has a red job to re-run: its upload happens in `uiverify-upload.yml`
+# with --exit-zero-on-changes, so the `UI Verify: <project>` status is its only gate.
+#
 # Note: `status` events only fire for the copy of this workflow on the default branch, so it starts
 # working once this is merged to main.
 #
