@@ -57,6 +57,7 @@ jobs:
           # workflow_run lists no pull requests for a fork, so look it up by its head.
           # -f encodes the branch name, which may contain characters like "&".
           pr=$(gh api -X GET "repos/$REPO/pulls" -f state=open -f "head=$HEAD_OWNER:$HEAD_BRANCH" --jq '.[0].number // empty')
+          if [ -z "$pr" ]; then echo "No open PR for $HEAD_OWNER:$HEAD_BRANCH; nothing to upload."; fi
           {
             echo "pr=$pr"
             echo "branch<<__EOF__"
