@@ -28,9 +28,9 @@ export const Default: Story = {};`,
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from 'storybook/test';
-import type { Meta, StoryObj } from '@storybook/react-vite';
+			result: `import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
+import { userEvent, within } from 'storybook/test';
 
 const meta: Meta<typeof Component> = {
     component: Component
@@ -163,9 +163,9 @@ export const Default: Story = {};`,
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from 'storybook/test';
-import type { Meta, StoryObj } from '@storybook/react-vite';
+			result: `import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
+import { userEvent, within } from 'storybook/test';
 
 const meta: Meta<typeof Component> = {
     component: Component
@@ -203,8 +203,8 @@ export const Default = {};`,
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from 'storybook/test';
-import { Component } from './Component';
+			result: `import { Component } from './Component';
+import { userEvent, within } from 'storybook/test';
 
 export default {
     component: Component
@@ -253,9 +253,9 @@ export const Default: Story = {};`,
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from 'storybook/test';
-import type { Meta, StoryObj } from '@storybook/react-vite';
+			result: `import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
+import { userEvent, within } from 'storybook/test';
 
 const meta: Meta<typeof Component> = {
     component: Component
@@ -312,9 +312,9 @@ export const Default: Story = {
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from 'storybook/test';
-import type { Meta, StoryObj } from '@storybook/react-vite';
+			result: `import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
+import { userEvent, within } from 'storybook/test';
 
 const meta: Meta<typeof Component> = {
     component: Component
@@ -361,9 +361,9 @@ export const Default: Story = {
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from 'storybook/test';
-import type { Meta, StoryObj } from '@storybook/react-vite';
+			result: `import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
+import { userEvent, within } from 'storybook/test';
 
 const meta: Meta<typeof Component> = {
     component: Component
@@ -410,9 +410,9 @@ export const CustomName: Story = {
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from 'storybook/test';
-import type { Meta, StoryObj } from '@storybook/react-vite';
+			result: `import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from './Component';
+import { userEvent, within } from 'storybook/test';
 
 const meta: Meta<typeof Component> = {
     component: Component
@@ -454,8 +454,8 @@ export const Primary = { args: { primary: true } };`,
 				],
 			},
 			result: `// Stories for the button
-import { userEvent, within } from 'storybook/test';
 import { Button } from './Button';
+import { userEvent, within } from 'storybook/test';
 
 export default {
     component: Button
@@ -497,8 +497,8 @@ export const Primary = {
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from 'storybook/test';
-import { Button } from './Button';
+			result: `import { Button } from './Button';
+import { userEvent, within } from 'storybook/test';
 
 export default {
     component: Button
@@ -515,7 +515,7 @@ export const Primary = {
 		},
 	],
 	[
-		'New import above a comment about the first import',
+		'New import after an import with a comment above it',
 		{
 			storyName: 'Default',
 			csfId: 'form--default',
@@ -536,9 +536,9 @@ export const Default = {};`,
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from 'storybook/test';
-// @ts-expect-error untyped
+			result: `// @ts-expect-error untyped
 import { Component } from './Component';
+import { userEvent, within } from 'storybook/test';
 
 export default {
     component: Component
@@ -554,7 +554,7 @@ export const Default = {
 		},
 	],
 	[
-		'New import below a Flow pragma',
+		'New import in a file with a Flow pragma',
 		{
 			storyName: 'Default',
 			csfId: 'form--default',
@@ -578,8 +578,8 @@ export const Default = {};`,
 				],
 			},
 			result: `// @flow
-import { userEvent, within } from 'storybook/test';
 import { Component } from './Component';
+import { userEvent, within } from 'storybook/test';
 
 type Props = { label: string };
 
@@ -619,8 +619,8 @@ export const Default = {
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from 'storybook/test';
-import { Component } from './Component';
+			result: `import { Component } from './Component';
+import { userEvent, within } from 'storybook/test';
 
 export default {
     component: Component
@@ -668,8 +668,8 @@ Primary.args = { label: 'Button' };`,
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from 'storybook/test';
-import { Button } from './Button';
+			result: `import { Button } from './Button';
+import { userEvent, within } from 'storybook/test';
 
 export default {
     component: Button
@@ -710,8 +710,8 @@ export const Primary = { ...Base };`,
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from 'storybook/test';
-import { Button } from './Button';
+			result: `import { Button } from './Button';
+import { userEvent, within } from 'storybook/test';
 
 export default {
     component: Button
@@ -753,8 +753,8 @@ export const Secondary = { ...Primary, args: { primary: false } };`,
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from 'storybook/test';
-import { Button } from './Button';
+			result: `import { Button } from './Button';
+import { userEvent, within } from 'storybook/test';
 
 export default {
     component: Button
@@ -796,8 +796,8 @@ export const Default = {
 					{ text: '}' },
 				],
 			},
-			result: `import { userEvent, within } from 'storybook/test'
-import { Component } from './Component'
+			result: `import { Component } from './Component'
+import { userEvent, within } from 'storybook/test'
 
 export default {
   component: Component

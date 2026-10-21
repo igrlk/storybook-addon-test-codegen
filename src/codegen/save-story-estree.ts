@@ -5,42 +5,31 @@
 import {
 	type CsfFile,
 	type CsfMutationResult,
-	type CsfObject,
 	type CsfValue,
 	type ESTree,
 	SourceEditor,
-	appendStatement,
-	isCsfFactoryCall,
 	objectList,
 	outerSpan,
 	parseExpression,
 	parseModule,
-	prependStatement,
 	printCsf,
 	removeFromList,
-	setImportSpecifiers,
 	staticKey,
+	textOf,
 	unwrapExpression,
 } from 'storybook/internal/csf-tools';
 import type { StorySaver } from './story-saver';
 
 class SaveStoryError extends Error {}
 
-const storyObject = (csf: CsfFile, exportName: string): CsfObject => {
-	const object = csf
-		.objects({ meta: false })
-		.find(
-			({ target }) => target.kind === 'story' && target.exportName === exportName,
-		);
-	if (!object) {
-		const diagnostic = csf.mutationDiagnostics.find(
-			({ target }) => 'exportName' in target && target.exportName === exportName,
-		);
+const storyObject = (csf: CsfFile, exportName: string) => {
+	const found = csf.storyObject(exportName);
+	if (!found?.ok) {
 		throw new SaveStoryError(
-			diagnostic?.message ?? `Cannot edit the story ${exportName}`,
+			found?.diagnostic.message ?? `Cannot edit the story ${exportName}`,
 		);
 	}
-	return object;
+	return found.object;
 };
 
 const statementEnd = (editor: SourceEditor) => (editor.semicolons ? ';' : '');
@@ -90,38 +79,46 @@ export const duplicateStoryWithNewName = (
 	originalStoryName: string,
 	newStoryName: string,
 ) => {
-	const node = csf._storyExports[originalStoryName];
+	const { editor } = csf;
+	const story = csf.stories.find(
+		({ exportName }) => exportName === originalStoryName,
+	);
+	const node = story
+		? editor.scopes.program.bindings.get(story.localName ?? story.exportName)
+				?.node
+		: undefined;
 	const declarator = node?.type === 'VariableDeclarator' ? node : undefined;
 	const value = unwrapExpression(declarator?.init);
 	if (
+		!story ||
 		!declarator?.init ||
 		!value ||
 		value.type === 'ArrowFunctionExpression' ||
 		value.type === 'FunctionExpression' ||
-		(value.type === 'CallExpression' && !isCsfFactoryCall(value))
+		(value.type === 'CallExpression' && !story.factory)
 	) {
 		throw new SaveStoryError(
 			'Creating a new story based on a CSF2 story is not supported',
 		);
 	}
 
-	const editor = csf._editor;
 	const typeAnnotation =
 		declarator.id.type === 'Identifier' && declarator.id.typeAnnotation
-			? editor.source(declarator.id.typeAnnotation)
+			? textOf(declarator.id.typeAnnotation)
 			: '';
 
 	// The copy is parsed on its own, so its `args` and `name` can be removed even after a spread,
 	// which csf-tools refuses to do on the story itself.
 	const copy = new SourceEditor(
 		`(${editor.source(outerSpan(declarator.init))})`,
-		csf._options.fileName,
+		editor.fileName,
 	);
 	const { expression } = copy.program.body[0] as ESTree.ExpressionStatement;
-	const story = unwrapExpression(expression);
-	const object = isCsfFactoryCall(story)
-		? unwrapExpression(story.arguments[0])
-		: story;
+	const copied = unwrapExpression(expression);
+	const object =
+		story.factory && copied?.type === 'CallExpression'
+			? unwrapExpression(copied.arguments[0])
+			: copied;
 	if (object?.type === 'ObjectExpression') {
 		const removed = object.properties.filter((property) => {
 			const key = staticKey(property);
@@ -132,8 +129,7 @@ export const duplicateStoryWithNewName = (
 		}
 	}
 
-	appendStatement(
-		editor,
+	csf.appendStatement(
 		`export const ${newStoryName}${typeAnnotation} = ${copy.toString().slice(1, -1)}${statementEnd(editor)}`,
 	);
 	editor.commit();
@@ -147,7 +143,7 @@ export const updatePlayInCsfFile = (
 ) => {
 	const story = storyObject(csf, exportName);
 
-	const editor = csf._editor;
+	const { editor } = csf;
 	const lines = play.map(
 		(line) => `${editor.indent}${line}${statementEnd(editor)}`,
 	);
@@ -163,59 +159,29 @@ export const updatePlayInCsfFile = (
 	);
 };
 
+/** Adds each import statement's bindings through `CsfFile.setImport`. */
 export const updateImportsInCsfFile = (csf: CsfFile, imports: string[]) => {
-	const editor = csf._editor;
 	for (const importString of imports) {
-		const parsed = parseModule(importString);
-		const importNode = parsed.program.body[0];
+		const [importNode] = parseModule(importString).program.body;
 		if (importNode?.type !== 'ImportDeclaration') {
 			throw new SaveStoryError(`Not an import: ${importString}`);
 		}
-
-		// Values cannot be added to a type-only import, and named ones not to a namespace import.
-		const sameSource = csf._program.body.filter(
-			(statement): statement is ESTree.ImportDeclaration =>
-				statement.type === 'ImportDeclaration' &&
-				statement.importKind !== 'type' &&
-				statement.source.value === importNode.source.value,
-		);
-		const imported = new Set(
-			sameSource.flatMap((declaration) =>
-				declaration.specifiers.map((specifier) => specifier.local.name),
-			),
-		);
-		const added = importNode.specifiers
-			.filter(
-				(specifier) =>
-					specifier.type === 'ImportSpecifier' &&
-					!imported.has(specifier.local.name),
-			)
-			.map((specifier) => parsed.code.slice(specifier.start, specifier.end));
-		const mergeInto = sameSource.findLast(
-			(declaration) =>
-				!declaration.specifiers.some(
-					(specifier) => specifier.type === 'ImportNamespaceSpecifier',
-				),
-		);
-
-		if (sameSource.length === 0) {
-			prependStatement(
-				editor,
-				`${importString.replace(/;$/, '')}${statementEnd(editor)}`,
-			);
-		} else if (added.length === 0) {
-			continue;
-		} else if (mergeInto) {
-			setImportSpecifiers(editor, mergeInto, mergeInto.specifiers, {
-				named: added,
-			});
-		} else {
-			prependStatement(
-				editor,
-				`import { ${added.join(', ')} } from ${editor.source(sameSource[0].source)}${statementEnd(editor)}`,
-			);
+		const source = importNode.source.value;
+		const named: string[] = [];
+		for (const specifier of importNode.specifiers) {
+			if (specifier.type === 'ImportSpecifier') {
+				named.push(textOf(specifier));
+			} else if (specifier.type === 'ImportDefaultSpecifier') {
+				check(csf.setImport(specifier.local.name, source));
+			} else {
+				check(csf.setImport({ namespace: specifier.local.name }, source));
+			}
 		}
-		editor.commit();
+		if (named.length > 0) {
+			check(csf.setImport(named, source));
+		} else if (importNode.specifiers.length === 0) {
+			check(csf.setImport(null, source));
+		}
 	}
 };
 
