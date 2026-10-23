@@ -10,6 +10,27 @@ you. To see this live, check out the [demo](https://main--01a08f2e-809f-7f94-837
 
 ![Alt Text](/assets/addon.gif)
 
+## Visual testing with UI Verify
+
+Shipping UI with AI agents? [UI Verify](https://uiverify.ai), a new project by
+the author of this addon, catches visual bugs before they reach production. It
+screenshots your Storybook on every pull request, shows exactly what changed, and
+lets your agent see and fix it over MCP.
+
+This addon uses it too: every PR is checked against light and dark baselines of
+the Interaction Recorder, save-to-story UI, and selector warnings.
+
+[Browse our visual test builds](https://uiverify.ai/dashboard/teams/storybook-addon-test-codegen/projects/storybook-addon-test-codegen)
+· [See our CI setup](.github/workflows/uiverify.yml)
+· [Add visual testing to your Storybook](https://uiverify.ai/docs/quickstart-storybook)
+
+<a href="https://uiverify.ai">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="/assets/uiverify-dark.png" />
+    <img src="/assets/uiverify-light.png" width="200" alt="UI Verify" />
+  </picture>
+</a>
+
 ## Installation
 
 First, install the package using Storybook's commands:
@@ -139,21 +160,6 @@ configure({
   testIdAttribute: 'my-custom-attribute',
 });
 ```
-
-## Visual testing with UI Verify
-
-This addon uses [UI Verify](https://uiverify.ai) to catch unintended
-visual changes in pull requests. It compares screenshots of our
-Storybook stories against a baseline, including light and dark
-variants of the Interaction Recorder, save-to-story UI, and
-selector warnings.
-
-I also build UI Verify, and use this addon to test it on a real
-open-source project.
-
-[Browse our visual test builds](https://uiverify.ai/dashboard/teams/storybook-addon-test-codegen/projects/storybook-addon-test-codegen)
-· [See our CI setup](.github/workflows/uiverify.yml) ([fork PRs](.github/workflows/uiverify-upload.yml))
-· [Add visual testing to your Storybook](https://uiverify.ai/docs/quickstart-storybook)
 
 ## Contributing
 
