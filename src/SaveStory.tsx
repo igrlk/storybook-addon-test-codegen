@@ -3,7 +3,6 @@ import { dequal as deepEqual } from 'dequal';
 // biome-ignore lint/correctness/noUnusedImports: Must be here for react@19 and non-react projects support
 import React from 'react';
 import { type ChangeEvent, useEffect, useState } from 'react';
-import { TooltipNote, WithTooltip } from 'storybook/internal/components';
 import type { Args } from 'storybook/internal/types';
 import {
 	experimental_requestResponse,
@@ -64,22 +63,20 @@ export const SaveStoryView = ({
 }) => (
 	<SaveContainer>
 		{state === 'button' && isDevelopment && (
-			<StyledButton onClick={onStartInput} variant="outline">
+			<StyledButton onClick={onStartInput} variant="outline" ariaLabel={false}>
 				<SaveIconColorful size={16} /> Save to story
 			</StyledButton>
 		)}
 
 		{state === 'button' && !isDevelopment && (
-			<WithTooltip
-				as="div"
-				hasChrome={false}
-				trigger="hover"
-				tooltip={<TooltipNote note="Only available in development mode" />}
+			<DisabledButton
+				variant="outline"
+				type="button"
+				ariaLabel={false}
+				tooltip="Only available in development mode"
 			>
-				<DisabledButton variant="outline" type="button">
-					<SaveIconColorful size={16} /> Save to story
-				</DisabledButton>
-			</WithTooltip>
+				<SaveIconColorful size={16} /> Save to story
+			</DisabledButton>
 		)}
 
 		{state === 'input' && (
@@ -93,26 +90,31 @@ export const SaveStoryView = ({
 						onNameChange(e.target.value)
 					}
 				/>
-				<StyledButton onClick={onSave} type="submit" variant="outline">
+				<StyledButton
+					onClick={onSave}
+					type="submit"
+					variant="outline"
+					ariaLabel={false}
+				>
 					Save
 				</StyledButton>
 			</>
 		)}
 
 		{state === 'creating' && (
-			<StyledButton onClick={onStartInput} variant="outline">
+			<StyledButton onClick={onStartInput} variant="outline" ariaLabel={false}>
 				<RotatingIcon /> Saving
 			</StyledButton>
 		)}
 
 		{state === 'success' && (
-			<SavedButton variant="solid" type="button">
+			<SavedButton variant="solid" type="button" ariaLabel={false}>
 				<StyledCheckIcon /> Saved
 			</SavedButton>
 		)}
 
 		{state === 'error' && (
-			<ErrorButton variant="ghost" type="button">
+			<ErrorButton variant="ghost" type="button" ariaLabel={false}>
 				<ErrorIcon /> Failed to save
 			</ErrorButton>
 		)}
