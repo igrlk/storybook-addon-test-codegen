@@ -4,10 +4,10 @@ import React from 'react';
 import { useState } from 'react';
 import { createElement } from 'react-syntax-highlighter';
 import {
-	IconButton,
+	Button,
 	SyntaxHighlighter,
-	TooltipNote,
-	WithTooltip,
+	Tooltip,
+	TooltipProvider,
 } from 'storybook/internal/components';
 import { styled } from 'storybook/theming';
 import type {
@@ -59,11 +59,21 @@ const CopyIconContainer = styled.div({
 	zIndex: 1,
 });
 
-const WarningButton = styled(IconButton)(({ theme }) => ({
+const WarningButton = styled.button(({ theme }) => ({
+	display: 'inline-flex',
+	alignItems: 'center',
+	justifyContent: 'center',
 	padding: 0,
 	width: 20,
 	height: 20,
 	marginRight: 4,
+	border: 'none',
+	borderRadius: 4,
+	background: 'transparent',
+	cursor: 'help',
+	'&:hover, &:focus-visible': {
+		background: theme.background.hoverable,
+	},
 }));
 
 const WarningIcon = styled(AlertIcon)(({ theme }) => ({
@@ -103,33 +113,28 @@ export function CodeBlock({
 				{name}
 
 				<CopyIconContainer>
-					<WithTooltip
-						placement={'top'}
-						as="div"
-						hasChrome={false}
-						trigger="hover"
-						tooltip={<TooltipNote note="Copy" />}
-					>
-						<IconButton
-							onClick={() =>
-								navigator.clipboard.writeText(code).then(() => {
-									setIsCopied(true);
-									if (copiedTimeoutId) {
-										clearTimeout(copiedTimeoutId);
-									}
+					<Button
+						variant="ghost"
+						padding="small"
+						ariaLabel="Copy"
+						onClick={() =>
+							navigator.clipboard.writeText(code).then(() => {
+								setIsCopied(true);
+								if (copiedTimeoutId) {
+									clearTimeout(copiedTimeoutId);
+								}
 
-									setCopiedTimeoutId(
-										setTimeout(() => {
-											setIsCopied(false);
-											setCopiedTimeoutId(null);
-										}, 2000),
-									);
-								})
-							}
-						>
-							{isCopied ? <CheckIcon size={16} /> : <CopyIcon size={16} />}
-						</IconButton>
-					</WithTooltip>
+								setCopiedTimeoutId(
+									setTimeout(() => {
+										setIsCopied(false);
+										setCopiedTimeoutId(null);
+									}, 2000),
+								);
+							})
+						}
+					>
+						{isCopied ? <CheckIcon size={16} /> : <CopyIcon size={16} />}
+					</Button>
 				</CopyIconContainer>
 			</Label>
 
@@ -289,13 +294,16 @@ export function WarningExplanation({ warning }: { warning: Warning }) {
 
 function WarningIndicator({ warning }: { warning: Warning }) {
 	return (
-		<WithTooltip
-			trigger="hover"
-			tooltip={<WarningExplanation warning={warning} />}
+		<TooltipProvider
+			tooltip={
+				<Tooltip hasChrome>
+					<WarningExplanation warning={warning} />
+				</Tooltip>
+			}
 		>
-			<WarningButton>
+			<WarningButton type="button" aria-label={warningToRender[warning].title}>
 				<WarningIcon />
 			</WarningButton>
-		</WithTooltip>
+		</TooltipProvider>
 	);
 }

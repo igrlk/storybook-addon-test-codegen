@@ -91,7 +91,11 @@ export const InteractionRecorderView = ({
 				<Bar>
 					<StyledSubnav>
 						<Group>
-							<StyledButton onClick={onToggleRecording}>
+							<StyledButton
+								onClick={onToggleRecording}
+								ariaLabel={isRecording ? 'Stop recording' : 'Start recording'}
+								disableAllTooltips
+							>
 								<StyledButtonBigContent isHidden={isRecording}>
 									<RecordIcon isRecording={false} />
 									Start recording
@@ -106,12 +110,17 @@ export const InteractionRecorderView = ({
 								disabled={!isRecording}
 								onClick={onToggleAsserting}
 								isAsserting={isAsserting}
+								ariaLabel={false}
 							>
 								<AssertIcon />
 								{isAsserting ? 'Choose element' : 'Add assertion'}
 							</AssertionButton>
 
-							<StyledButton onClick={onReset} disabled={!code.play.length}>
+							<StyledButton
+								onClick={onReset}
+								disabled={!code.play.length}
+								ariaLabel={false}
+							>
 								<DeleteIcon />
 								Reset
 							</StyledButton>
